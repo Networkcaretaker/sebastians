@@ -9,10 +9,10 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "firebase": "^10.13.2",
-    "@sebastians/shared-types": "*"
+    "firebase": "^10.13.2"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@types/node": "^20.0.0"
   }
 }

@@ -1,5 +1,17 @@
 {
   "projects": {
-    "default": "sebastian-cafe"
+    "default": "sebastians-cafe"
+  },
+  "targets": {
+    "your-firebase-project-id": {
+      "hosting": {
+        "admin": [
+          "sebastians-admin"
+        ],
+        "menu": [
+          "sebastians-menu"
+        ]
+      }
+    }
   }
 }
