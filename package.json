@@ -1,45 +1,34 @@
 {
-  "name": "sebastians",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:sebastians": "node dist/sebastians/server/server.mjs"
-  },
+  "name": "sebastians-restaurant",
   "private": true,
-  "dependencies": {
-    "@angular/cdk": "^20.0.1",
-    "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/material": "^20.0.1",
-    "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-server": "^20.0.0",
-    "@angular/router": "^20.0.0",
-    "@angular/service-worker": "^20.0.0",
-    "@angular/ssr": "^20.0.0",
-    "express": "^5.1.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+  "version": "1.0.0",
+  "description": "Restaurant QR Menu App - Monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:menu": "npm run dev --workspace=apps/menu",
+    "dev:all": "concurrently \"npm run dev:admin\" \"npm run dev:menu\"",
+    "build:admin": "npm run build --workspace=apps/admin",
+    "build:menu": "npm run build --workspace=apps/menu",
+    "build:all": "npm run build:admin && npm run build:menu",
+    "build:packages": "npm run build --workspace=packages/shared-types && npm run build --workspace=packages/firebase-config",
+    "deploy:admin": "firebase deploy --only hosting:admin",
+    "deploy:menu": "firebase deploy --only hosting:menu",
+    "deploy:all": "firebase deploy",
+    "clean": "npm run clean --workspaces",
+    "install:all": "npm install && npm install --workspaces",
+    "lint": "npm run lint --workspaces",
+    "type-check": "npm run type-check --workspaces"
   },
   "devDependencies": {
-    "@angular/build": "^20.0.0",
-    "@angular/cli": "^20.0.0",
-    "@angular/compiler-cli": "^20.0.0",
-    "@types/express": "^5.0.1",
-    "@types/jasmine": "~5.1.0",
-    "@types/node": "^20.17.19",
-    "jasmine-core": "~5.7.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2"
+    "concurrently": "^8.2.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

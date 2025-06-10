@@ -53,3 +53,6 @@ src/environments/environment.ts
 # IDE
 .vscode/
 .idea/
+
+# Notes and docs
+.docs/
