@@ -47,11 +47,6 @@ const SortableCategory: React.FC<SortableCategoryProps> = ({
           </span>
           <div className="flex-1">
             <p className="font-medium">{category.cat_name}</p>
-            {category.cat_description && (
-              <p className="text-sm text-gray-600 truncate">
-                {category.cat_description}
-              </p>
-            )}
           </div>
         </div>
         
