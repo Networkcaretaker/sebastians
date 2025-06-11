@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ItemForm from '../components/ItemForm';
 import ItemCard from '../components/ItemCard';
 import ItemTable from '../components/ItemTable';
-import menuService from '../services/menuService';
+import menuItemService from '../services/menuItemService';
 import { MenuItem, CreateMenuItemDTO, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
@@ -43,7 +43,7 @@ const MenuItems: React.FC = () => {
     setError(null);
     try {
       console.log('Fetching menu items...');
-      const items = await menuService.getAllMenuItems();
+      const items = await menuItemService.getAllMenuItems();
       console.log('Successfully fetched items:', items);
       setMenuItems(items);
     } catch (error) {
@@ -87,7 +87,7 @@ const MenuItems: React.FC = () => {
       };
       
       // Add the menu item
-      const newItem = await menuService.addMenuItem(sanitizedData);
+      const newItem = await menuItemService.addMenuItem(sanitizedData);
       
       // If category is selected, update the category's items array
       if (itemData.category) {
@@ -111,7 +111,7 @@ const MenuItems: React.FC = () => {
       const newCategory = itemData.category;
       
       // Update the menu item first
-      await menuService.updateMenuItem(selectedItem.id, itemData);
+      await menuItemService.updateMenuItem(selectedItem.id, itemData);
       
       // Handle category changes if needed
       if (previousCategory !== newCategory) {
@@ -158,7 +158,7 @@ const MenuItems: React.FC = () => {
 
   const handleToggleStatus = async (itemId: string, currentStatus: boolean) => {
     try {
-      await menuService.toggleItemStatus(itemId, !currentStatus);
+      await menuItemService.toggleItemStatus(itemId, !currentStatus);
       fetchMenuItems();
     } catch (error) {
       console.error('Error toggling item status:', error);
@@ -172,7 +172,7 @@ const MenuItems: React.FC = () => {
         const item = menuItems.find(item => item.id === itemId);
         
         // Delete the menu item
-        await menuService.deleteMenuItem(itemId);
+        await menuItemService.deleteMenuItem(itemId);
         
         // If item was in a category, remove it from the category's items array
         if (item && item.category) {

@@ -8,6 +8,9 @@ import CategoryDetail from './pages/CategoryDetail';
 import Login from './components/Login';
 import Navigation from './components/Navigation';
 import { AuthProvider, useAuth } from './context/AuthContext';
+// Add these imports after the existing ones
+import Menus from './pages/Menus';
+import MenuDetail from './pages/MenuDetail';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
@@ -33,6 +36,8 @@ function AppRoutes() {
       <Route path="/menu-items/:itemId" element={<ProtectedRoute element={<ItemDetail />} />} />
       <Route path="/categories" element={<ProtectedRoute element={<Categories />} />} />
       <Route path="/categories/:categoryId" element={<ProtectedRoute element={<CategoryDetail />} />} />
+      <Route path="/menus" element={<ProtectedRoute element={<Menus />} />} />
+      <Route path="/menus/:menuId" element={<ProtectedRoute element={<MenuDetail />} />} />
     </Routes>
   );
 }

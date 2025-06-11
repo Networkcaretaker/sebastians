@@ -9,233 +9,228 @@ import {
   deleteDoc,
   query,
   where,
+  orderBy,
   writeBatch
 } from 'firebase/firestore';
 
 import {
-  MenuItem,
-  CreateMenuItemDTO,
-  UpdateMenuItemDTO,
-  ToggleStatusResponse,
-  UpdateExtrasResponse,
-  UpdateOptionsResponse,
-  UpdateAllergiesResponse,
-  MenuItemExtra,
-  MenuItemOption
+  Menu,
+  CreateMenuDTO,
+  UpdateMenuDTO,
+  ToggleMenuStatusResponse,
+  UpdateMenuCategoriesResponse
 } from '../types/menu.types';
 
-const COLLECTION_NAME = 'menu_items';
+const COLLECTION_NAME = 'menus';
 
 export const menuService = {
-  // Add new menu item
-  addMenuItem: async (itemData: CreateMenuItemDTO): Promise<MenuItem> => {
+  // Add new menu
+  addMenu: async (menuData: CreateMenuDTO): Promise<Menu> => {
     try {
-      console.log('Adding menu item:', itemData);
+      console.log('Adding menu:', menuData);
       
       // Create a plain object with only the necessary data
-      // This helps avoid any potential issues with class instances or non-serializable data
-      const menuItem = {
-        item_name: itemData.item_name,
-        item_description: itemData.item_description,
-        category: itemData.category,
-        price: Number(itemData.price), // Ensure it's a number
-        options: itemData.options || [],
-        extras: itemData.extras || [],
-        addons: itemData.addons || [],
-        menu_order: itemData.menu_order || 0, // Include menu_order
-        flags: {
-          active: Boolean(itemData.flags?.active),
-          vegetarian: Boolean(itemData.flags?.vegetarian),
-          extras: Boolean(itemData.extras?.length),
-          addons: Boolean(itemData.addons?.length),
-          options: Boolean(itemData.options?.length)
-        },
-        allergies: itemData.allergies || []
+      const menu = {
+        menu_name: menuData.menu_name,
+        menu_description: menuData.menu_description,
+        menu_type: menuData.menu_type,
+        categories: menuData.categories || [],
+        isActive: Boolean(menuData.isActive),
+        menu_order: menuData.menu_order || 0,
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
 
-      // Log the exact data being sent to Firestore
-      console.log('Sanitized data for Firestore:', JSON.stringify(menuItem));
+      console.log('Sanitized data for Firestore:', JSON.stringify(menu));
       
       const menuCollection = collection(db, COLLECTION_NAME);
-      const docRef = await addDoc(menuCollection, menuItem);
+      const docRef = await addDoc(menuCollection, menu);
       
-      console.log('Document added with ID:', docRef.id);
-      return { id: docRef.id, ...menuItem };
+      console.log('Menu added with ID:', docRef.id);
+      return { id: docRef.id, ...menu };
     } catch (error) {
-      console.error('Detailed error adding menu item:', error);
+      console.error('Detailed error adding menu:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to add menu item: ${error.message}`);
+        throw new Error(`Failed to add menu: ${error.message}`);
       }
       throw error;
     }
   },
 
-  initializeMenuOrder: async (categoryId: string): Promise<void> => {
+  // Initialize menu order for menus of the same type
+  initializeMenuOrder: async (menuType: 'web' | 'printable'): Promise<void> => {
     try {
-      // Get all items in this category
+      // Get all menus of this type
       const q = query(
         collection(db, COLLECTION_NAME),
-        where('category', '==', categoryId)
+        where('menu_type', '==', menuType),
+        orderBy('menu_order', 'asc')
       );
       const querySnapshot = await getDocs(q);
       
-      // If there are no items, just return
+      // If there are no menus, just return
       if (querySnapshot.empty) return;
       
       const batch = writeBatch(db);
       
-      // For each item, set menu_order if it doesn't exist
+      // For each menu, set menu_order if it doesn't exist
       querySnapshot.docs.forEach((docSnapshot, index) => {
-        const itemData = docSnapshot.data();
-        if (itemData.menu_order === undefined) {
-          const itemRef = doc(db, COLLECTION_NAME, docSnapshot.id);
-          batch.update(itemRef, { menu_order: index });
+        const menuData = docSnapshot.data();
+        if (menuData.menu_order === undefined) {
+          const menuRef = doc(db, COLLECTION_NAME, docSnapshot.id);
+          batch.update(menuRef, { menu_order: index });
         }
       });
       
       await batch.commit();
-      console.log(`Initialized menu_order for items in category ${categoryId}`);
+      console.log(`Initialized menu_order for ${menuType} menus`);
     } catch (error) {
       console.error('Error initializing menu_order:', error);
       throw error;
     }
   },
 
-  // Update menu_order for multiple items
-  updateMenuOrder: async (items: { id: string; menu_order: number }[]): Promise<void> => {
+  // Update menu_order for multiple menus
+  updateMenuOrder: async (menus: { id: string; menu_order: number }[]): Promise<void> => {
     try {
       const batch = writeBatch(db);
       
-      items.forEach(item => {
-        const itemRef = doc(db, COLLECTION_NAME, item.id);
-        batch.update(itemRef, { menu_order: item.menu_order });
+      menus.forEach(menu => {
+        const menuRef = doc(db, COLLECTION_NAME, menu.id);
+        batch.update(menuRef, { 
+          menu_order: menu.menu_order,
+          updatedAt: new Date()
+        });
       });
       
       await batch.commit();
-      console.log('Updated menu_order for multiple items');
+      console.log('Updated menu_order for multiple menus');
     } catch (error) {
       console.error('Error updating menu_order:', error);
       throw error;
     }
   },
 
-  // Get all menu items
-  getAllMenuItems: async (): Promise<MenuItem[]> => {
+  // Get all menus
+  getAllMenus: async (): Promise<Menu[]> => {
     try {
-      console.log('Fetching all menu items');
-      const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
+      console.log('Fetching all menus');
+      const q = query(collection(db, COLLECTION_NAME), orderBy('menu_order', 'asc'));
+      const querySnapshot = await getDocs(q);
       
-      const items = querySnapshot.docs.map(doc => {
+      const menus = querySnapshot.docs.map(doc => {
         const data = doc.data();
-        console.log(`Item ${doc.id} data:`, data);
+        console.log(`Menu ${doc.id} data:`, data);
         return {
           id: doc.id,
-          ...data
+          ...data,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date()
         };
-      }) as MenuItem[];
+      }) as Menu[];
       
-      return items;
+      return menus;
     } catch (error) {
-      console.error('Error getting menu items:', error);
+      console.error('Error getting menus:', error);
       throw error;
     }
   },
 
-  // Get active menu items
-  getActiveMenuItems: async (): Promise<MenuItem[]> => {
+  // Get menus by type
+  getMenusByType: async (menuType: 'web' | 'printable'): Promise<Menu[]> => {
     try {
       const q = query(
         collection(db, COLLECTION_NAME),
-        where('flags.active', '==', true)
+        where('menu_type', '==', menuType),
+        orderBy('menu_order', 'asc')
       );
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
-      })) as MenuItem[];
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date()
+      })) as Menu[];
     } catch (error) {
-      console.error('Error getting active menu items:', error);
+      console.error('Error getting menus by type:', error);
       throw error;
     }
   },
 
-  // Update menu item
-  updateMenuItem: async (itemId: string, updateData: UpdateMenuItemDTO): Promise<MenuItem> => {
+  // Get active menus
+  getActiveMenus: async (): Promise<Menu[]> => {
     try {
-      const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, updateData);
-      return { id: itemId, ...updateData } as MenuItem;
+      const q = query(
+        collection(db, COLLECTION_NAME),
+        where('isActive', '==', true),
+        orderBy('menu_order', 'asc')
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date()
+      })) as Menu[];
     } catch (error) {
-      console.error('Error updating menu item:', error);
+      console.error('Error getting active menus:', error);
       throw error;
     }
   },
 
-  // Delete menu item
-  deleteMenuItem: async (itemId: string): Promise<string> => {
+  // Update menu
+  updateMenu: async (menuId: string, updateData: UpdateMenuDTO): Promise<Menu> => {
     try {
-      await deleteDoc(doc(db, COLLECTION_NAME, itemId));
-      return itemId;
+      const menuRef = doc(db, COLLECTION_NAME, menuId);
+      const dataToUpdate = {
+        ...updateData,
+        updatedAt: new Date()
+      };
+      await updateDoc(menuRef, dataToUpdate);
+      return { id: menuId, ...dataToUpdate } as Menu;
     } catch (error) {
-      console.error('Error deleting menu item:', error);
+      console.error('Error updating menu:', error);
       throw error;
     }
   },
 
-  // Toggle item status (active/inactive)
-  toggleItemStatus: async (itemId: string, isActive: boolean): Promise<ToggleStatusResponse> => {
+  // Delete menu
+  deleteMenu: async (menuId: string): Promise<string> => {
     try {
-      const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, {
-        'flags.active': isActive
+      await deleteDoc(doc(db, COLLECTION_NAME, menuId));
+      return menuId;
+    } catch (error) {
+      console.error('Error deleting menu:', error);
+      throw error;
+    }
+  },
+
+  // Toggle menu status (active/inactive)
+  toggleMenuStatus: async (menuId: string, isActive: boolean): Promise<ToggleMenuStatusResponse> => {
+    try {
+      const menuRef = doc(db, COLLECTION_NAME, menuId);
+      await updateDoc(menuRef, {
+        isActive: isActive,
+        updatedAt: new Date()
       });
-      return { id: itemId, isActive };
+      return { id: menuId, isActive };
     } catch (error) {
-      console.error('Error toggling item status:', error);
+      console.error('Error toggling menu status:', error);
       throw error;
     }
   },
 
-  // Add/Update extras
-  updateExtras: async (itemId: string, extras: MenuItemExtra[]): Promise<UpdateExtrasResponse> => {
+  // Update menu categories
+  updateMenuCategories: async (menuId: string, categories: string[]): Promise<UpdateMenuCategoriesResponse> => {
     try {
-      const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, {
-        extras: extras,
-        'flags.extras': extras.length > 0
+      const menuRef = doc(db, COLLECTION_NAME, menuId);
+      await updateDoc(menuRef, {
+        categories: categories,
+        updatedAt: new Date()
       });
-      return { id: itemId, extras };
+      return { id: menuId, categories };
     } catch (error) {
-      console.error('Error updating extras:', error);
-      throw error;
-    }
-  },
-
-  // Add/Update options
-  updateOptions: async (itemId: string, options: MenuItemOption[]): Promise<UpdateOptionsResponse> => {
-    try {
-      const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, {
-        options: options,
-        'flags.options': options.length > 0
-      });
-      return { id: itemId, options };
-    } catch (error) {
-      console.error('Error updating options:', error);
-      throw error;
-    }
-  },
-
-  // Update allergies
-  updateAllergies: async (itemId: string, allergies: string[]): Promise<UpdateAllergiesResponse> => {
-    try {
-      const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, {
-        allergies: allergies
-      });
-      return { id: itemId, allergies };
-    } catch (error) {
-      console.error('Error updating allergies:', error);
+      console.error('Error updating menu categories:', error);
       throw error;
     }
   }

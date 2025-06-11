@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import SortableItem from './SortableItem';
-import menuService from '../services/menuService';
+import menuService from '../services/menuItemService';
 
 interface CategoryViewOrderProps {
   category: MenuCategory;

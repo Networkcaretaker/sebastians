@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import CategoryViewFull from '../components/CategoryViewFull';
 import CategoryViewStyle from '../components/CategoryViewStyle';
 import CategoryViewOrder from '../components/CategoryViewOrder';
-import menuService from '../services/menuService';
+import menuItemService from '../services/menuItemService';
 
 // View options type
 type ViewType = 'style' | 'full' | 'order';
@@ -80,7 +80,7 @@ const CategoryDetail: React.FC = () => {
         setCategory(categoryData);
 
         // Initialize menu_order for items if needed
-        await menuService.initializeMenuOrder(categoryId);
+        await menuItemService.initializeMenuOrder(categoryId);
         
         // Fetch all menu items associated with this category
         const itemIds = categoryData.items || [];

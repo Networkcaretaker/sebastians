@@ -50,3 +50,41 @@ export interface MenuCategory {
   header: string;
   footer: string;
 }
+
+// Menu management interfaces
+export interface Menu {
+  id?: string;
+  menu_name: string;
+  menu_description: string;
+  menu_type: 'web' | 'printable';
+  categories: string[]; // array of category IDs in order
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  menu_order: number;
+}
+
+// DTO for creating menus
+export type CreateMenuDTO = Omit<Menu, 'id' | 'createdAt' | 'updatedAt'>;
+
+// DTO for updating menus
+export type UpdateMenuDTO = Partial<Menu>;
+
+// Menu type options
+export const MENU_TYPES = {
+  WEB: 'web' as const,
+  PRINTABLE: 'printable' as const
+} as const;
+
+export type MenuType = typeof MENU_TYPES[keyof typeof MENU_TYPES];
+
+// Response interfaces for menu service methods
+export interface ToggleMenuStatusResponse {
+  id: string;
+  isActive: boolean;
+}
+
+export interface UpdateMenuCategoriesResponse {
+  id: string;
+  categories: string[];
+}

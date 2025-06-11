@@ -5,7 +5,14 @@ import {
   MenuItemOption,
   MenuItemExtra,
   MenuItemAddon,
-  MenuItemFlags
+  MenuItemFlags,
+  Menu,
+  CreateMenuDTO,
+  UpdateMenuDTO,
+  MenuType,
+  MENU_TYPES,
+  ToggleMenuStatusResponse,
+  UpdateMenuCategoriesResponse
 } from '@sebastians/shared-types';
 
 // Re-export shared types for convenience
@@ -15,8 +22,16 @@ export type {
   MenuItemOption,
   MenuItemExtra,
   MenuItemAddon,
-  MenuItemFlags
+  MenuItemFlags,
+  Menu,
+  CreateMenuDTO,
+  UpdateMenuDTO,
+  MenuType,
+  ToggleMenuStatusResponse,
+  UpdateMenuCategoriesResponse
 };
+
+export { MENU_TYPES };
 
 // Admin-specific types below
 
