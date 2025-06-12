@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "sebastians-cafe"
+    "default": "sebastian-cafe"
   },
   "targets": {
     "your-firebase-project-id": {
