@@ -1,13 +1,13 @@
-// src/components/ItemViewOrder.tsx
+// src/components/ItemSort.tsx
 import React from 'react';
 import { MenuItem } from '../types/menu.types';
 
-interface ItemViewOrderProps {
+interface ItemSortProps {
   item: MenuItem;
   index: number;
 }
 
-const ItemViewOrder: React.FC<ItemViewOrderProps> = ({ item, index }) => {
+const ItemSort: React.FC<ItemSortProps> = ({ item, index }) => {
   return (
     <div className="flex justify-between items-center p-3 bg-white border rounded-md mb-2 hover:bg-gray-50">
       <div className="flex items-center gap-3">
@@ -28,4 +28,4 @@ const ItemViewOrder: React.FC<ItemViewOrderProps> = ({ item, index }) => {
   );
 };
 
-export default ItemViewOrder;
+export default ItemSort;

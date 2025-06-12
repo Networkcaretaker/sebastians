@@ -1,15 +1,15 @@
-// In CategoryViewStyle.tsx
+// In CategoryPreview.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MenuCategory, MenuItem } from '../types/menu.types';
-import ItemViewStyle from './ItemViewStyle';
+import ItemPreview from './ItemPreview';
 
-interface CategoryViewStyleProps {
+interface CategoryPreviewProps {
   category: MenuCategory;
   menuItems: MenuItem[];
 }
 
-const CategoryViewStyle: React.FC<CategoryViewStyleProps> = ({ category, menuItems }) => {
+const CategoryPreview: React.FC<CategoryPreviewProps> = ({ category, menuItems }) => {
   // Sort the items by menu_order before rendering
   const sortedMenuItems = [...menuItems].sort((a, b) => (a.menu_order || 0) - (b.menu_order || 0));
   
@@ -32,7 +32,7 @@ const CategoryViewStyle: React.FC<CategoryViewStyleProps> = ({ category, menuIte
           {sortedMenuItems.length > 0 ? (
             <div className="">
               {sortedMenuItems.map(item => (
-                <ItemViewStyle key={item.id} item={item} />
+                <ItemPreview key={item.id} item={item} />
               ))}
             </div>
           ) : (
@@ -87,4 +87,4 @@ const CategoryViewStyle: React.FC<CategoryViewStyleProps> = ({ category, menuIte
   );
 };
 
-export default CategoryViewStyle;
+export default CategoryPreview;

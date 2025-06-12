@@ -1,6 +1,8 @@
 {
   "projects": {
-    "default": "sebastian-cafe"
+    "default": "sebastian-cafe",
+    "source": "qr-cuisine",
+    "target": "sebastian-cafe"
   },
   "targets": {
     "your-firebase-project-id": {
@@ -13,5 +15,6 @@
         ]
       }
     }
-  }
+  },
+  "etags": {}
 }

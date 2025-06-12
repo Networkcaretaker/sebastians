@@ -1,15 +1,15 @@
-// src/components/MenuViewStyle.tsx
+// src/components/MenuPreview.tsx
 import React, { useState, useEffect } from 'react';
 import { Menu, MenuCategory, MenuItem } from '../types/menu.types';
 import { db } from '../config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import ItemViewStyle from './ItemViewStyle';
+import ItemPreview from './ItemPreview';
 
-interface MenuViewStyleProps {
+interface MenuPreviewProps {
   menu: Menu;
 }
 
-const MenuViewStyle: React.FC<MenuViewStyleProps> = ({ menu }) => {
+const MenuPreview: React.FC<MenuPreviewProps> = ({ menu }) => {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [categoryItems, setCategoryItems] = useState<{ [categoryId: string]: MenuItem[] }>({});
   const [loading, setLoading] = useState(true);
@@ -170,7 +170,7 @@ const MenuViewStyle: React.FC<MenuViewStyleProps> = ({ menu }) => {
             {items.length > 0 ? (
               <div className="space-y-4">
                 {items.map(item => (
-                  <ItemViewStyle key={item.id} item={item} />
+                  <ItemPreview key={item.id} item={item} />
                 ))}
               </div>
             ) : (
@@ -230,4 +230,4 @@ const MenuViewStyle: React.FC<MenuViewStyleProps> = ({ menu }) => {
   );
 };
 
-export default MenuViewStyle;
+export default MenuPreview;

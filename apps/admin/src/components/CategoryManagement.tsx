@@ -109,9 +109,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   >
                     <div>
                       <p className="font-medium">{category.cat_name}</p>
-                      <p className="text-sm text-gray-600 truncate">
-                        {category.cat_description || 'No description'}
-                      </p>
                     </div>
                     <button
                       onClick={() => handleAddCategory(category.id!)}

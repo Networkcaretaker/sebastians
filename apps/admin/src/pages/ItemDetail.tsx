@@ -6,7 +6,7 @@ import { db } from '../config/firebase';
 import { MenuCategory, MenuItem } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import ItemViewFull from '../components/ItemViewFull';
-import ItemViewStyle from '../components/ItemViewStyle';
+import ItemPreview from '../components/ItemPreview';
 
 // View options type
 type ViewType = 'style' | 'full';
@@ -157,7 +157,7 @@ const ItemDetail: React.FC = () => {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Style View
+            Preview
           </button>
           <button
             onClick={() => setViewType('full')}
@@ -167,14 +167,14 @@ const ItemDetail: React.FC = () => {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Full View
+            Edit
           </button>
         </div>
       </div>
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         {/* Render the appropriate view component based on viewType */}
         {viewType === 'style' ? (
-            <ItemViewStyle item={item} />
+            <ItemPreview item={item} />
         ) : (
             <ItemViewFull item={item} />
         )}

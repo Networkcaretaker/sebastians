@@ -5,7 +5,7 @@ import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Menu, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
-import MenuViewStyle from '../components/MenuViewStyle';
+import MenuPreview from '../components/MenuPreview';
 
 // View options type
 type ViewType = 'details' | 'preview';
@@ -189,7 +189,7 @@ const MenuDetail: React.FC = () => {
         // Menu Preview View
         <div>
           {menuCategories.length > 0 ? (
-            <MenuViewStyle menu={menu} />
+            <MenuPreview menu={menu} />
           ) : (
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-center py-8">

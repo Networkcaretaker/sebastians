@@ -6,7 +6,7 @@ interface ItemViewProps {
   item: MenuItem;
 }
 
-const ItemViewStyle: React.FC<ItemViewProps> = ({ item }) => {
+const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
   return (
     <div>
       <div className="mb-2 mt-2">
@@ -97,4 +97,4 @@ const ItemViewStyle: React.FC<ItemViewProps> = ({ item }) => {
   );
 };
 
-export default ItemViewStyle;
+export default ItemPreview;

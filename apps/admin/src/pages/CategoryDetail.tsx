@@ -6,8 +6,8 @@ import { db } from '../config/firebase';
 import { MenuCategory, MenuItem } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import CategoryViewFull from '../components/CategoryViewFull';
-import CategoryViewStyle from '../components/CategoryViewStyle';
-import CategoryViewOrder from '../components/CategoryViewOrder';
+import CategoryPreview from '../components/CategoryPreview';
+import CategorySort from '../components/CategorySort';
 import menuItemService from '../services/menuItemService';
 
 // View options type
@@ -209,7 +209,7 @@ const CategoryDetail: React.FC = () => {
     );
   }
 
-  // Filter active items for style view
+  // Filter active items for preview (Style view)
   const activeMenuItems = menuItems.filter(item => item.flags && item.flags.active);
 
   return (
@@ -273,7 +273,7 @@ const CategoryDetail: React.FC = () => {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             } ${viewType === 'order' ? 'rounded-l-lg' : viewType === 'full' ? 'rounded-l-lg' : 'rounded-l-lg'}`}
           >
-            Style View
+            Preview
           </button>
           <button
             onClick={() => setViewType('order')}
@@ -283,7 +283,7 @@ const CategoryDetail: React.FC = () => {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             } ${viewType === 'style' ? 'rounded-none' : viewType === 'order' ? 'rounded-none' : 'rounded-none'}`}
           >
-            Order View
+            Sort
           </button>
           <button
             onClick={() => setViewType('full')}
@@ -293,16 +293,16 @@ const CategoryDetail: React.FC = () => {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Full View
+            Edit
           </button>
         </div>
       </div>
 
       {/* Render the appropriate view component based on viewType */}
       {viewType === 'style' ? (
-        <CategoryViewStyle category={category} menuItems={activeMenuItems} />
+        <CategoryPreview category={category} menuItems={activeMenuItems} />
       ) : viewType === 'order' ? (
-        <CategoryViewOrder category={category} menuItems={menuItems} onOrderSaved={() => setOrderChanged(true)} />
+        <CategorySort category={category} menuItems={menuItems} onOrderSaved={() => setOrderChanged(true)} />
       ) : (
         <CategoryViewFull category={category} menuItems={menuItems} />
       )}

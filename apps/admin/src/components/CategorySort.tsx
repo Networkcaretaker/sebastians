@@ -1,4 +1,4 @@
-// src/components/CategoryViewOrder.tsx
+// src/components/CategorySort.tsx
 import React, { useState } from 'react';
 import { MenuCategory, MenuItem } from '../types/menu.types';
 import {
@@ -19,13 +19,13 @@ import {
 import SortableItem from './SortableItem';
 import menuService from '../services/menuItemService';
 
-interface CategoryViewOrderProps {
+interface CategorySortProps {
   category: MenuCategory;
   menuItems: MenuItem[];
   onOrderSaved?: () => void;
 }
 
-const CategoryViewOrder: React.FC<CategoryViewOrderProps> = ({ category, menuItems, onOrderSaved }) => {
+const CategorySort: React.FC<CategorySortProps> = ({ category, menuItems, onOrderSaved }) => {
   // Sort the items by menu_order
   const [items, setItems] = useState(
     [...menuItems].sort((a, b) => (a.menu_order || 0) - (b.menu_order || 0))
@@ -157,4 +157,4 @@ const CategoryViewOrder: React.FC<CategoryViewOrderProps> = ({ category, menuIte
   );
 };
 
-export default CategoryViewOrder;
+export default CategorySort;
