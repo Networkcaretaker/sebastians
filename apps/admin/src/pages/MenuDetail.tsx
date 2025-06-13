@@ -6,6 +6,7 @@ import { db } from '../config/firebase';
 import { Menu, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import MenuPreview from '../components/MenuPreview';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // View options type
 type ViewType = 'details' | 'preview';
@@ -72,6 +73,29 @@ const MenuDetail: React.FC = () => {
 
     fetchMenuAndCategories();
   }, [menuId, currentUser]);
+
+  const testExportMenu = async () => {
+    try {
+      console.log('Testing export menu function...');
+      
+      const functions = getFunctions();
+      const exportMenu = httpsCallable(functions, 'exportMenu');
+      
+      // Use the current menu ID
+      const result = await exportMenu({ menuId: menu?.id });
+      
+      console.log('Export result:', result.data);
+      
+      if (result.data.success) {
+        alert('Export successful! Check console for data.');
+      } else {
+        alert(`Export failed: ${result.data.message}`);
+      }
+    } catch (error) {
+      console.error('Error calling function:', error);
+      alert('Error calling function. Check console.');
+    }
+  };
 
   // Get category names from IDs
   const getMenuCategories = () => {
@@ -162,6 +186,12 @@ const MenuDetail: React.FC = () => {
               }`}
             >
               Preview
+            </button>
+            <button
+              onClick={testExportMenu}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Test Export Menu
             </button>
           </div>
 
