@@ -50,7 +50,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           channelId: live
           target: menu
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
@@ -63,7 +63,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           channelId: live
           target: admin
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
@@ -76,7 +76,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           channelId: dev
           target: menu
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
@@ -90,7 +90,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           channelId: dev
           target: admin
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}

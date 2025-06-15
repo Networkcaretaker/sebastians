@@ -36,7 +36,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           target: menu
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           expires: 7d
@@ -49,7 +49,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIANS_CAFE }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
           target: admin
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           expires: 7d
