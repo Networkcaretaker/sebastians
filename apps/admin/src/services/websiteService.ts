@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db } from '../config/firebase';
+import app from '../config/firebase'; // Import the app instance
 import { 
   WebsiteConfig, 
   UpdateWebsiteConfigDTO, 
@@ -22,7 +23,7 @@ const MENUS_COLLECTION = 'menus';
 const WEBSITE_CONFIG_DOC_ID = 'default'; // Single config document
 
 // Initialize Firebase Functions
-const functions = getFunctions();
+const functions = getFunctions(app);
 const exportMenuFunction = httpsCallable(functions, 'exportMenu');
 
 /**
