@@ -63,7 +63,7 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
   
   // Add state for categories
   const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   // Fetch available categories when component mounts
   useEffect(() => {

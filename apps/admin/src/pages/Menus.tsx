@@ -77,7 +77,7 @@ const Menus: React.FC = () => {
       console.log('Adding menu with data:', menuData);
       
       // Add the menu
-      const newMenu = await menuService.addMenu(menuData);
+      await menuService.addMenu(menuData);
       
       setIsFormVisible(false);
       fetchMenus();

@@ -8,10 +8,7 @@ import {
   getDocs, 
   doc, 
   updateDoc, 
-  deleteDoc,
-  query,
-  arrayUnion,
-  arrayRemove
+  deleteDoc
 } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 

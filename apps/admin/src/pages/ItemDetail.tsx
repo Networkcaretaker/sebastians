@@ -1,9 +1,9 @@
 // src/pages/ItemDetail.tsx
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { MenuCategory, MenuItem } from '../types/menu.types';
+import { MenuItem } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import ItemViewFull from '../components/ItemViewFull';
 import ItemPreview from '../components/ItemPreview';
@@ -15,12 +15,11 @@ const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const [item, setItem] = useState<MenuItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [allItems, setAllItems] = useState<MenuItem[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [_allItems, setAllItems] = useState<MenuItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<ViewType>('style');
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   // Fetch all Items for the dropdown
   useEffect(() => {
@@ -86,13 +85,6 @@ const ItemDetail: React.FC = () => {
     fetchItems();
     // Close dropdown when changing items
   }, [itemId, currentUser]);
-
-  // Handler for selecting a Item from the dropdown
-  const handleItemSelect = (selectedItemId: string) => {
-    if (selectedItemId !== itemId) {
-      navigate(`/menu-items/${selectedItemId}`);
-    }
-  };
 
   if (loading) {
     return (

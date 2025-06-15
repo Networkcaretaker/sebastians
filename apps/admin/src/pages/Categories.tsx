@@ -13,9 +13,7 @@ import {
   getDocs, 
   doc, 
   updateDoc, 
-  deleteDoc,
-  arrayUnion,
-  arrayRemove
+  deleteDoc
 } from 'firebase/firestore';
 
 // View options type

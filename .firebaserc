@@ -1,17 +1,25 @@
 {
   "projects": {
-    "default": "sebastian-cafe",
-    "source": "qr-cuisine",
-    "target": "sebastian-cafe"
+    "default": "sebastian-cafe"
   },
   "targets": {
     "your-firebase-project-id": {
       "hosting": {
-        "admin": [
-          "sebastians-admin"
-        ],
         "menu": [
-          "sebastians-menu"
+          "sebastians-cafe"
+        ],
+        "admin": [
+          "admin-sebastians-cafe"
+        ]
+      }
+    },
+    "sebastian-cafe": {
+      "hosting": {
+        "menu": [
+          "sebastians-cafe"
+        ],
+        "admin": [
+          "admin-sebastians-cafe"
         ]
       }
     }

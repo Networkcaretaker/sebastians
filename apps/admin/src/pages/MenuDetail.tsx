@@ -11,6 +11,14 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 // View options type
 type ViewType = 'details' | 'preview';
 
+// Export response interface
+interface ExportResponse {
+  success: boolean;
+  message: string;
+  url?: string;
+  data?: any;
+}
+
 const MenuDetail: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
   const [menu, setMenu] = useState<Menu | null>(null);
@@ -86,10 +94,13 @@ const MenuDetail: React.FC = () => {
       
       console.log('Export result:', result.data);
       
-      if (result.data.success) {
-        alert('Export successful! Check console for data.');
+      // Type assertion with proper interface
+      const response = result.data as ExportResponse;
+      
+      if (response.success) {
+        alert(`Export successful! URL: ${response.url || 'Check console for data'}`);
       } else {
-        alert(`Export failed: ${result.data.message}`);
+        alert(`Export failed: ${response.message}`);
       }
     } catch (error) {
       console.error('Error calling function:', error);
@@ -264,8 +275,8 @@ const MenuDetail: React.FC = () => {
               </div>
               <div className="text-right text-sm text-gray-500">
                 <p>Order: {menu.menu_order}</p>
-                <p>Created: {menu.createdAt.toLocaleDateString()}</p>
-                <p>Updated: {menu.updatedAt.toLocaleDateString()}</p>
+                <p>Created: {menu.createdAt?.toLocaleDateString() || 'Unknown'}</p>
+                <p>Updated: {menu.updatedAt?.toLocaleDateString() || 'Unknown'}</p>
               </div>
             </div>
             
@@ -292,14 +303,14 @@ const MenuDetail: React.FC = () => {
               
               {menuCategories.length > 0 ? (
                 <div className="space-y-3">
-                  {menuCategories.map((category, index) => (
+                  {menuCategories.map((category) => (
                     <div 
                       key={category.id} 
                       className="flex items-center justify-between bg-gray-50 p-4 rounded border"
                     >
                       <div className="flex items-center space-x-3">
                         <span className="text-sm font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded">
-                          #{index + 1}
+                          #{menuCategories.indexOf(category) + 1}
                         </span>
                         <div>
                           <h4 className="font-medium">{category.cat_name}</h4>
@@ -348,7 +359,7 @@ const MenuDetail: React.FC = () => {
                   This is how your menu categories will be ordered:
                 </p>
                 <ol className="list-decimal list-inside space-y-1">
-                  {menuCategories.map((category, index) => (
+                  {menuCategories.map((category) => (
                     <li key={category.id} className="text-sm">
                       <span className="font-medium">{category.cat_name}</span>
                       {category.cat_description && (
