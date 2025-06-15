@@ -12,7 +12,15 @@ import {
   MenuType,
   MENU_TYPES,
   ToggleMenuStatusResponse,
-  UpdateMenuCategoriesResponse
+  UpdateMenuCategoriesResponse,
+  // Website-related types
+  WebsiteConfig,
+  UpdateWebsiteConfigDTO,
+  PublishMenuRequest,
+  PublishMenuResponse,
+  PublishedMenu,
+  PublishStatus,
+  GeneratedMenu
 } from '@sebastians/shared-types';
 
 // Re-export shared types for convenience
@@ -28,7 +36,15 @@ export type {
   UpdateMenuDTO,
   MenuType,
   ToggleMenuStatusResponse,
-  UpdateMenuCategoriesResponse
+  UpdateMenuCategoriesResponse,
+  // Website-related types
+  WebsiteConfig,
+  UpdateWebsiteConfigDTO,
+  PublishMenuRequest,
+  PublishMenuResponse,
+  PublishedMenu,
+  PublishStatus,
+  GeneratedMenu
 };
 
 export { MENU_TYPES };

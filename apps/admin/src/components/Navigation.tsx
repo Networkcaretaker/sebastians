@@ -142,6 +142,17 @@ const Navigation: React.FC = () => {
               Dashboard
             </Link>
             <Link
+              to="/menu-items"
+              className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+                isActive('/menu-items') 
+                  ? 'bg-blue-50 border-blue-500 text-blue-700' 
+                  : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Items
+            </Link>
+            <Link
               to="/categories"
               className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
                 isActive('/categories') 
@@ -162,6 +173,17 @@ const Navigation: React.FC = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Menus
+            </Link>
+            <Link
+              to="/website"
+              className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+                isActive('/website') 
+                  ? 'bg-blue-50 border-blue-500 text-blue-700' 
+                  : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Website
             </Link>
           </div>
           
