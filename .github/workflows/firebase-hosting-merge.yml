@@ -27,6 +27,17 @@ jobs:
           npm install
           npm audit fix --force || true
       
+      # Install missing dependencies
+      - name: Install missing dependencies
+        run: |
+          cd apps/admin
+          npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+      
+      # Build shared packages first
+      - name: Build shared packages
+        run: |
+          npm run build:packages
+      
       - name: Set Development Environment
         if: github.ref == 'refs/heads/dev'
         run: |
