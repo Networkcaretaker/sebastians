@@ -1,7 +1,11 @@
+// apps/menu/src/pages/MenuDisplay.tsx
+// Keep all your existing imports and logic, just replace the main content section
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMenuData, MenuData } from '../services/menuService';
 import { APP_CONFIG } from '../services/config';
+import MenuPreview from '../components/MenuPreview'; // Add this import
 
 const MenuDisplay: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
@@ -94,106 +98,9 @@ const MenuDisplay: React.FC = () => {
         </div>
       </header>
 
-      {/* Menu Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {menuData.categories
-            .sort((a, b) => a.cat_order - b.cat_order)
-            .map((category) => (
-              <div key={category.id} className="bg-white rounded-lg shadow-md p-6">
-                {/* Category Header */}
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    {category.cat_name}
-                  </h2>
-                  {category.cat_description && (
-                    <p className="text-gray-600">{category.cat_description}</p>
-                  )}
-                  {category.cat_header && (
-                    <div className="mt-2 text-sm text-gray-700 italic">
-                      {category.cat_header}
-                    </div>
-                  )}
-                </div>
-
-                {/* Menu Items */}
-                <div className="space-y-4">
-                  {category.items
-                    .filter(item => item.isActive)
-                    .sort((a, b) => a.item_order - b.item_order)
-                    .map((item) => (
-                      <div key={item.id} className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">
-                            {item.item_name}
-                          </h3>
-                          {item.item_description && (
-                            <p className="text-gray-600 text-sm mt-1">
-                              {item.item_description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="ml-4 flex-shrink-0">
-                          <span className="text-green-600 font-semibold">
-                            ${item.item_price.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-
-                {/* Category Extras */}
-                {category.extras && category.extras.length > 0 && (
-                  <div className="mt-6 pt-4 border-t">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {category.cat_name} Extras
-                    </h3>
-                    <div className="space-y-2">
-                      {category.extras.map((extra, idx) => (
-                        <div key={idx} className="flex justify-between">
-                          <span className="text-gray-700">{extra.item}</span>
-                          <span className="text-green-600 font-medium">
-                            ${extra.price.toFixed(2)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Category Add-ons */}
-                {category.addons && category.addons.length > 0 && (
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Available Add-ons
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {category.addons.map((addon, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
-                        >
-                          {addon.item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Category Footer */}
-                {category.cat_footer && (
-                  <div className="mt-6 pt-4 border-t text-center">
-                    <p className="text-gray-600 italic">{category.cat_footer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-        </div>
-
-        {/* Menu Footer */}
-        <div className="mt-8 text-center text-gray-500">
-          <p>Last updated: {new Date(menuData.lastUpdated).toLocaleDateString()}</p>
-        </div>
+      {/* Replace the entire main section with MenuPreview component */}
+      <main className="pb-8">
+        <MenuPreview menuData={menuData} />
       </main>
     </div>
   );
