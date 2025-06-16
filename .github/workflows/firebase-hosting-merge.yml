@@ -38,6 +38,18 @@ jobs:
         run: |
           npm run build:packages
       
+      # Install Functions dependencies
+      - name: Install Functions dependencies
+        run: |
+          cd functions
+          npm install
+      
+      # Build Functions
+      - name: Build Functions
+        run: |
+          cd functions
+          npm run build
+      
       - name: Set Development Environment
         if: github.ref == 'refs/heads/dev'
         run: |
@@ -67,56 +79,20 @@ jobs:
         run: |
           npm run build:all
       
-      # Deploy Menu App to Production (Live Channel)
-      - name: Deploy Menu to Production
+      # Deploy everything (Functions + Hosting) together
+      - name: Deploy to Firebase Production
         if: github.ref == 'refs/heads/main'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
-          channelId: live
-          target: menu
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}' > $HOME/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp-key.json
+          npm install -g firebase-tools
+          firebase deploy --project ${{ secrets.FIREBASE_PROJECT_ID }}
       
-      # Deploy Admin App to Production (Live Channel)
-      - name: Deploy Admin to Production
-        if: github.ref == 'refs/heads/main'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
-          channelId: live
-          target: admin
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-      
-      # Deploy Menu App to Dev Channel
-      - name: Deploy Menu to Dev
-        if: github.ref == 'refs/heads/dev'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
-          channelId: dev
-          target: menu
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
-          expires: 7d
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-      
-      # Deploy Admin App to Dev Channel
-      - name: Deploy Admin to Dev
-        if: github.ref == 'refs/heads/dev'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}'
-          channelId: dev
-          target: admin
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
-          expires: 7d
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+      # Deploy to Dev Environment
+      - name: Deploy to Firebase Dev
+        if: github.ref == 'refs/heads/dev'  
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEBASTIAN_CAFE }}' > $HOME/gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp-key.json
+          npm install -g firebase-tools
+          firebase deploy --project ${{ secrets.FIREBASE_PROJECT_ID }}
