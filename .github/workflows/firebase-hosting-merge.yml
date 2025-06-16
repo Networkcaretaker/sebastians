@@ -1,3 +1,4 @@
+# workflows/firebase-hosting-merge.yml
 name: Deploy to Firebase Hosting
 
 on:
