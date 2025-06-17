@@ -122,3 +122,8 @@ export const exportMenu = onCall(async (request: any) => {
     };
   }
 });
+
+// Simple test function
+export const helloWorld = onRequest((request: any, response: any) => {
+  response.send("Hello from Firebase Functions!");
+});
