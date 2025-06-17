@@ -23,7 +23,7 @@ const MENUS_COLLECTION = 'menus';
 const WEBSITE_CONFIG_DOC_ID = 'default'; // Single config document
 
 // Initialize Firebase Functions
-const functions = getFunctions(app, 'us-central1');
+const functions = getFunctions(app);
 const exportMenuFunction = httpsCallable(functions, 'exportMenu');
 
 /**
