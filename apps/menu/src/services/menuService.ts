@@ -172,10 +172,10 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
  */
 const transformMenuData = (data: any, menuId: string, url: string): MenuData => {
   return {
-    id: data.id || menuId,
-    menu_name: data.menu_name || data.name || 'Untitled Menu',
-    menu_description: data.menu_description || data.description || '',
-    menu_type: data.menu_type || 'web',
+    id: menuId || data.menu.id,
+    menu_name: data.menu.name || 'Untitled Menu',
+    menu_description: data.menu.description || '',
+    menu_type: data.menu.type || 'web',
     lastUpdated: data.lastUpdated || data.updatedAt || new Date().toISOString(),
     publishedUrl: url,
     categories: (data.categories || []).map((category: any) => ({
@@ -193,6 +193,9 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
         item_description: item.item_description || item.description,
         item_price: parseFloat(item.item_price || item.price || '0'),
         item_order: item.item_order || item.order || 0,
+        addons: item.addons || [],
+        options: item.options || [],
+        extras: item.extras || [],
         isActive: item.isActive !== false // Default to true if not specified
       }))
     }))

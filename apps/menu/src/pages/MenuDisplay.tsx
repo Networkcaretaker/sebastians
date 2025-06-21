@@ -100,6 +100,9 @@ const MenuDisplay: React.FC = () => {
 
       {/* Replace the entire main section with MenuPreview component */}
       <main className="pb-8">
+        <div className="flex justify-center p-4">
+            <img src="/Sebastian_Logo.png"></img>
+        </div>
         <MenuPreview menuData={menuData} />
       </main>
     </div>

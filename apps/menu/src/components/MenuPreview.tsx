@@ -10,13 +10,7 @@ interface MenuPreviewProps {
 const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Menu Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">{menuData.menu_name}</h1>
-        {menuData.menu_description && (
-          <p className="text-lg text-gray-600">{menuData.menu_description}</p>
-        )}
-      </div>
+
 
       {/* Categories */}
       {menuData.categories

@@ -50,9 +50,9 @@ const Home: React.FC = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              {APP_CONFIG.restaurantName}
-            </h1>
+            <div className="flex justify-center p-4">
+               <img src="/Sebastian_Logo.png"></img>
+            </div>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Welcome to our restaurant! Browse our delicious menu offerings below.
             </p>
