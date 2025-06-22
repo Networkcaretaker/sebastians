@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db } from '../config/firebase';
-import app from '../config/firebase'; // Import the app instance
+import app from '../config/firebase';
 import { 
   WebsiteConfig, 
   UpdateWebsiteConfigDTO, 
@@ -20,7 +20,7 @@ import {
 
 const WEBSITE_CONFIG_COLLECTION = 'websiteConfig';
 const MENUS_COLLECTION = 'menus';
-const WEBSITE_CONFIG_DOC_ID = 'default'; // Single config document
+const WEBSITE_CONFIG_DOC_ID = 'default';
 
 // Initialize Firebase Functions
 const functions = getFunctions(app);
@@ -49,7 +49,6 @@ export const getWebsiteConfig = async (): Promise<WebsiteConfig | null> => {
       } as WebsiteConfig;
     }
     
-    // Return default config if none exists
     return getDefaultWebsiteConfig();
   } catch (error) {
     console.error('Error fetching website config:', error);
@@ -66,13 +65,12 @@ export const updateWebsiteConfig = async (updates: UpdateWebsiteConfigDTO): Prom
     const now = new Date();
     
     const updateData = {
-      ...updates,
+      publishedMenus: updates.publishedMenus || [],
       lastUpdated: Timestamp.fromDate(now)
     };
     
     await updateDoc(docRef, updateData);
     
-    // Return updated config
     const updated = await getWebsiteConfig();
     if (!updated) {
       throw new Error('Failed to retrieve updated website config');
@@ -133,10 +131,7 @@ export const publishMenu = async (menuId: string): Promise<PublishMenuResponse> 
     const response = result.data as any;
     
     if (response.success) {
-      // Update the menu's publish status in Firestore
       await updateMenuPublishStatus(menuId, 'published', response.url);
-      
-      // Update website config with published menu
       await addPublishedMenuToConfig(menuId, response.url);
       
       return {
@@ -168,10 +163,7 @@ export const publishMenu = async (menuId: string): Promise<PublishMenuResponse> 
  */
 export const unpublishMenu = async (menuId: string): Promise<PublishMenuResponse> => {
   try {
-    // Update the menu's publish status in Firestore
     await updateMenuPublishStatus(menuId, 'unpublished');
-    
-    // Remove from website config
     await removePublishedMenuFromConfig(menuId);
     
     return {
@@ -209,7 +201,6 @@ export const getMenusWithPublishStatus = async (): Promise<MenuWithPublishStatus
         menu_order: data.menu_order,
         createdAt: data.createdAt?.toDate(),
         updatedAt: data.updatedAt?.toDate(),
-        // Publication fields
         publishStatus: data.publishStatus || 'draft',
         publishedAt: data.publishedAt?.toDate(),
         publishedUrl: data.publishedUrl,
@@ -256,7 +247,6 @@ const updateMenuPublishStatus = async (
  */
 const addPublishedMenuToConfig = async (menuId: string, url: string): Promise<void> => {
   try {
-    // Get menu details
     const menuRef = doc(db, MENUS_COLLECTION, menuId);
     const menuSnap = await getDoc(menuRef);
     
@@ -271,23 +261,42 @@ const addPublishedMenuToConfig = async (menuId: string, url: string): Promise<vo
       throw new Error('Website config not found');
     }
     
-    // Create slug from menu name
     const slug = menuData.menu_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     
-    // Update published menus list
-    const updatedMenus = config.publishedMenus.filter(m => m.menuId !== menuId);
-    updatedMenus.push({
+    // Clean existing menus to remove undefined values
+    const cleanedExistingMenus = config.publishedMenus
+      .filter(m => m.menuId !== menuId)
+      .map(menu => {
+        const cleanMenu: any = {
+          menuId: menu.menuId,
+          name: menu.name,
+          slug: menu.slug,
+          description: menu.description || '',
+          isActive: menu.isActive !== false,
+          order: menu.order || 0,
+          publishedAt: menu.publishedAt,
+          publishedUrl: menu.publishedUrl
+        };
+        
+        if (menu.lastPublished !== undefined) {
+          cleanMenu.lastPublished = menu.lastPublished;
+        }
+        
+        return cleanMenu;
+      });
+    
+    const newMenuEntry = {
       menuId,
       name: menuData.menu_name,
       slug,
-      description: menuData.menu_description,
-      isActive: menuData.isActive,
-      order: menuData.menu_order,
+      description: menuData.menu_description || '',
+      isActive: menuData.isActive !== false,
+      order: menuData.menu_order || 0,
       publishedAt: new Date(),
       publishedUrl: url
-    });
+    };
     
-    // Sort by order
+    const updatedMenus = [...cleanedExistingMenus, newMenuEntry];
     updatedMenus.sort((a, b) => a.order - b.order);
     
     await updateWebsiteConfig({
@@ -310,10 +319,30 @@ const removePublishedMenuFromConfig = async (menuId: string): Promise<void> => {
       return;
     }
     
-    const updatedMenus = config.publishedMenus.filter(m => m.menuId !== menuId);
+    // Clean remaining menus to remove undefined values
+    const cleanedRemainingMenus = config.publishedMenus
+      .filter(m => m.menuId !== menuId)
+      .map(menu => {
+        const cleanMenu: any = {
+          menuId: menu.menuId,
+          name: menu.name,
+          slug: menu.slug,
+          description: menu.description || '',
+          isActive: menu.isActive !== false,
+          order: menu.order || 0,
+          publishedAt: menu.publishedAt,
+          publishedUrl: menu.publishedUrl
+        };
+        
+        if (menu.lastPublished !== undefined) {
+          cleanMenu.lastPublished = menu.lastPublished;
+        }
+        
+        return cleanMenu;
+      });
     
     await updateWebsiteConfig({
-      publishedMenus: updatedMenus
+      publishedMenus: cleanedRemainingMenus
     });
   } catch (error) {
     console.error('Error removing published menu from config:', error);
