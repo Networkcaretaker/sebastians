@@ -159,24 +159,44 @@ export const publishMenu = async (menuId: string): Promise<PublishMenuResponse> 
 };
 
 /**
- * Unpublish a menu
+ * Unpublish a menu - now with storage cleanup
  */
 export const unpublishMenu = async (menuId: string): Promise<PublishMenuResponse> => {
   try {
-    await updateMenuPublishStatus(menuId, 'unpublished');
-    await removePublishedMenuFromConfig(menuId);
-    
-    return {
-      success: true,
+    const request: PublishMenuRequest = {
       menuId,
-      message: 'Menu unpublished successfully'
+      action: 'unpublish'  // Add this parameter
     };
+    
+    // Call the same function but with unpublish action
+    const result = await exportMenuFunction(request);
+    const response = result.data as any;
+    
+    if (response.success) {
+      // Update the menu's publish status in Firestore
+      await updateMenuPublishStatus(menuId, 'unpublished');
+      
+      // Remove from website config
+      await removePublishedMenuFromConfig(menuId);
+      
+      return {
+        success: true,
+        menuId,
+        message: 'Menu unpublished and files removed successfully'
+      };
+    } else {
+      return {
+        success: false,
+        menuId,
+        error: response.message || 'Failed to unpublish menu'
+      };
+    }
   } catch (error) {
     console.error('Error unpublishing menu:', error);
     return {
       success: false,
       menuId,
-      error: error instanceof Error ? error.message : 'Failed to unpublish menu'
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     };
   }
 };

@@ -14,13 +14,55 @@ const db = admin.firestore();
  * Takes a menuId and returns complete menu data as JSON
  */
 export const exportMenu = onCall(async (request: any) => {
+  // Initialize variables with default values
+  let menuId: string = '';
+  let action: string = '';
+  
   try {
-    const { menuId } = request.data;
+    // Safely destructure the request data
+    const data = request.data || {};
+    menuId = data.menuId;
+    action = data.action;
     
     if (!menuId) {
       throw new Error("Menu ID is required");
     }
 
+    if (!action || !['publish', 'unpublish'].includes(action)) {
+      throw new Error("Action must be 'publish' or 'unpublish'");
+    }
+
+    logger.info(`${action} menu: ${menuId}`);
+
+    if (action === 'unpublish') {
+      // Handle unpublish - remove JSON file from storage
+      const bucket = admin.storage().bucket();
+      const fileName = `menus/menu-${menuId}.json`;
+      const file = bucket.file(fileName);
+      
+      try {
+        // Check if file exists before trying to delete
+        const [exists] = await file.exists();
+        if (exists) {
+          await file.delete();
+          logger.info(`Deleted menu file: ${fileName}`);
+        } else {
+          logger.info(`Menu file not found (already deleted?): ${fileName}`);
+        }
+      } catch (deleteError) {
+        logger.warn(`Could not delete menu file ${fileName}:`, deleteError);
+        // Don't throw error - unpublish should succeed even if file doesn't exist
+      }
+
+      return {
+        success: true,
+        message: `Menu unpublished successfully`,
+        action: 'unpublish',
+        menuId
+      };
+    }
+
+    // If we get here, action is 'publish'
     logger.info(`Exporting menu: ${menuId}`);
 
     // Get the menu
@@ -115,10 +157,12 @@ export const exportMenu = onCall(async (request: any) => {
     };
 
   } catch (error: any) {
-    logger.error("Export error:", error);
+    logger.error(`Error in ${action || 'unknown action'}:`, error);
     return {
       success: false,
-      message: error.message || "Export failed"
+      message: error.message || `Operation failed`,
+      action: action || 'unknown',
+      menuId: menuId || 'unknown'
     };
   }
 });

@@ -27,6 +27,11 @@ export interface PublishedMenu {
   lastPublished?: Date;
 }
 
+export interface PublishMenuRequest {
+  menuId: string;
+  action: 'publish' | 'unpublish';
+}
+
 // Interface for website configuration
 export interface WebsiteConfig {
   id?: string;
