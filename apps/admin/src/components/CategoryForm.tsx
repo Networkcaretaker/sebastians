@@ -153,7 +153,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSubmit, onCa
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{extra.item}</span>
               <div className="flex items-center">
-                <span className="mr-2">${extra.price.toFixed(2)}</span>
+                <span className="mr-2">{extra.price.toFixed(2)}€</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveExtra(index)}

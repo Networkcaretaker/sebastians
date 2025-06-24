@@ -186,7 +186,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menu }) => {
                 {category.extras.map((extra, idx) => (
                   <div key={idx} className="flex justify-between">
                     <span className="text-base font-base px-4">{extra.item}</span>
-                    <span className="text-green-600 font-medium">${extra.price.toFixed(2)}</span>
+                    <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
                   </div>
                 ))}
               </div>

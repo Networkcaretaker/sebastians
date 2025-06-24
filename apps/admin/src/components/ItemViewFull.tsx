@@ -27,7 +27,7 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item }) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Price:</label>
-          <div className="text-green-600 font-medium">${item.price.toFixed(2)}</div>
+          <div className="text-green-600 font-medium">{item.price.toFixed(2)}€</div>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Status:</label>
@@ -52,7 +52,7 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item }) => {
               {item.options.map((option, idx) => (
                 <div key={idx} className="flex justify-between">
                   <span>{option.option}</span>
-                  <span className="text-green-600">${option.price.toFixed(2)}</span>
+                  <span className="text-green-600">{option.price.toFixed(2)}€</span>
                 </div>
               ))}
             </div>
@@ -69,7 +69,7 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item }) => {
               {item.extras.map((extra, idx) => (
                 <div key={idx} className="flex justify-between">
                   <span>{extra.item}</span>
-                  <span className="text-green-600">${extra.price.toFixed(2)}</span>
+                  <span className="text-green-600">{extra.price.toFixed(2)}€</span>
                 </div>
               ))}
             </div>

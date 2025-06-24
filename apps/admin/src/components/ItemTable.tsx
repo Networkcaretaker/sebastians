@@ -58,9 +58,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                 {item.flags.options ? (
-                  <div className="text-green-600 text-sm font-medium"><span className=" text-xs font-thin">from </span>${item.price.toFixed(2)}</div>
+                  <div className="text-green-600 text-sm font-medium"><span className=" text-xs font-thin">from </span>{item.price.toFixed(2)}€</div>
                   ):
-                  <div className="text-sm font-medium text-green-600">${item.price.toFixed(2)}</div>
+                  <div className="text-sm font-medium text-green-600">{item.price.toFixed(2)}€</div>
                 }
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

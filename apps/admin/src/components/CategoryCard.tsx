@@ -49,7 +49,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 {category.extras.map((extra, idx) => (
                   <div key={idx} className="flex justify-between">
                     <span>{extra.item}</span>
-                    <span>${extra.price.toFixed(2)}</span>
+                    <span>{extra.price.toFixed(2)}€</span>
                   </div>
                 ))}
               </div>

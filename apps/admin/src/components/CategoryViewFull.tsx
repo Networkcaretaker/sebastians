@@ -53,7 +53,7 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({ category, menuItems
                 {category.extras.map((extra, idx) => (
                   <div key={idx} className="flex justify-between bg-gray-50 p-2 rounded">
                     <span>{extra.item}</span>
-                    <span className="text-green-600">${extra.price.toFixed(2)}</span>
+                    <span className="text-green-600">{extra.price.toFixed(2)}€</span>
                   </div>
                 ))}
               </div>

@@ -166,7 +166,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, onSubmit, onCa
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{extra.item}</span>
               <div className="flex items-center">
-                <span className="mr-2">${extra.price.toFixed(2)}</span>
+                <span className="mr-2">{extra.price.toFixed(2)}€</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveExtra(index)}
@@ -306,7 +306,7 @@ const ItemsManagement: React.FC<ItemsManagementProps> = ({ category, onSave, onC
                 />
                 <div>
                   <p className="font-medium">{item.item_name}</p>
-                  <p className="text-sm text-gray-600">${item.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-600">{item.price.toFixed(2)}€</p>
                 </div>
               </div>
             </div>
@@ -567,7 +567,7 @@ const Categories: React.FC = () => {
                       {category.extras.map((extra, idx) => (
                         <div key={idx} className="flex justify-between">
                           <span>{extra.item}</span>
-                          <span>${extra.price.toFixed(2)}</span>
+                          <span>{extra.price.toFixed(2)}€</span>
                         </div>
                       ))}
                     </div>

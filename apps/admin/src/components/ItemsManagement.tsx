@@ -75,7 +75,7 @@ const ItemsManagement: React.FC<ItemsManagementProps> = ({ category, onSave, onC
                 />
                 <div>
                   <p className="font-medium">{item.item_name}</p>
-                  <p className="text-sm text-gray-600">${item.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-600">{item.price.toFixed(2)}€</p>
                 </div>
               </div>
             </div>

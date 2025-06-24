@@ -40,7 +40,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
         </div>
         
         <p className="text-gray-600 mb-2">{item.item_description}</p>
-        <p className="text-green-600 font-semibold mb-2">${item.price}</p>
+        <p className="text-green-600 font-semibold mb-2">{item.price.toFixed(2)}€</p>
         
         {/* Show category if available */}
         {itemCategory && (
@@ -57,7 +57,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <div className="text-sm text-gray-600">
                 {item.options.map((opt, idx) => (
                   <div key={idx}>
-                    {opt.option}: ${opt.price}
+                    {opt.option}: {opt.price.toFixed(2)}€
                   </div>
                 ))}
               </div>
@@ -70,7 +70,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
               <div className="text-sm text-gray-600">
                 {item.extras.map((extra, idx) => (
                   <div key={idx}>
-                    {extra.item}: ${extra.price}
+                    {extra.item}: {extra.price.toFixed(2)}€
                   </div>
                 ))}
               </div>

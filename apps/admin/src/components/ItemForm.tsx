@@ -351,7 +351,7 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
           {formData.options.map((option, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{option.option}</span>
-              <span>${option.price.toFixed(2)}</span>
+              <span>{option.price.toFixed(2)}€</span>
             </div>
           ))}
         </div>
@@ -389,7 +389,7 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
           {formData.extras.map((extra, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{extra.item}</span>
-              <span>${extra.price.toFixed(2)}</span>
+              <span>{extra.price.toFixed(2)}€</span>
             </div>
           ))}
         </div>
