@@ -50,10 +50,10 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           </div>
           {item.hasOptions || (item.options && item.options.length > 0) ? (
             <div className="text-green-600 text-lg font-bold">
-              <span className="text-sm font-medium">from </span>${item.item_price.toFixed(2)}
+              <span className="text-sm font-medium">from </span>{item.item_price.toFixed(2)}€
             </div>
           ) : (
-            <div className="text-green-600 text-lg font-bold">${item.item_price.toFixed(2)}</div>
+            <div className="text-green-600 text-lg font-bold">{item.item_price.toFixed(2)}€</div>
           )}
         </div>
       </div>
@@ -81,7 +81,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{option.option}</span>
-                <span className="text-green-600 font-medium">${option.price.toFixed(2)}</span>
+                <span className="text-green-600 font-medium">{option.price.toFixed(2)}€</span>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{extra.item}</span>
-                <span className="text-green-600 font-medium">${extra.price.toFixed(2)}</span>
+                <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
               </div>
             ))}
           </div>
