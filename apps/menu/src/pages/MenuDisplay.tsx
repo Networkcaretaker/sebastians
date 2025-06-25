@@ -80,29 +80,20 @@ const MenuDisplay: React.FC = () => {
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4 flex items-center justify-between">
+            <img src="/Sebastian_Logo.png" className="w-40" alt="Sebastian's Logo" />
             <Link
               to="/"
-              className="flex items-center text-blue-500 hover:text-blue-600"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               <span className="mr-2">←</span>
               Back to Menus
             </Link>
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900">{menuData.menu_name}</h1>
-              {menuData.menu_description && (
-                <p className="text-gray-600 text-sm">{menuData.menu_description}</p>
-              )}
-            </div>
-            <div className="w-20"></div> {/* Spacer for centering */}
           </div>
         </div>
       </header>
 
       {/* Replace the entire main section with MenuPreview component */}
       <main className="pb-8">
-        <div className="flex justify-center p-4">
-            <img src="/Sebastian_Logo.png"></img>
-        </div>
         <MenuPreview menuData={menuData} />
       </main>
     </div>

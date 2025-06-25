@@ -28,7 +28,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
       <div className="mb-2 mt-2">
         <div className="flex justify-between items-center mb-2">
           <div className="flex gap-2">
-            <h3 className="text-xl font-bold">{item.item_name}</h3>
+            <h3 className="text-base font-bold">{item.item_name}</h3>
             <div className="flex gap-1">
               {item.vegetarian && (
                 <div className="flex gap-1 mt-1">
@@ -49,18 +49,18 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             </div>
           </div>
           {item.hasOptions || (item.options && item.options.length > 0) ? (
-            <div className="text-green-600 text-lg font-bold">
-              <span className="text-sm font-medium">from </span>{item.item_price.toFixed(2)}€
+            <div className="text-green-600 text-base font-bold">
+              <span className="text-xs font-medium">from </span>{item.item_price.toFixed(2)}€
             </div>
           ) : (
-            <div className="text-green-600 text-lg font-bold">{item.item_price.toFixed(2)}€</div>
+            <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)}€</div>
           )}
         </div>
       </div>
       
       <div className="space-y-2">
         <div className="mt-2">
-          <p className="text-gray-600">{item.item_description || ''}</p>
+          <p className="text-gray-600 text-sm">{item.item_description || ''}</p>
         </div>
 
         {/* Add-ons */}
@@ -77,7 +77,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Options */}
         {item.options && item.options.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-sm font-medium text-gray-700">Options:</h4>
+            <h4 className="text-xs font-medium text-gray-700">Options:</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{option.option}</span>
@@ -90,7 +90,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Extras */}
         {item.extras && item.extras.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-sm font-medium text-gray-700">Extras:</h4>
+            <h4 className="text-xs font-medium text-gray-700">Extras:</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{extra.item}</span>

@@ -61,7 +61,7 @@ const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
             <div className="flex items-center">
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
             </div>
 
             {/* Menu Grid */}
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-1">
               {menus.map((menu) => (
                 <div
                   key={menu.id}
@@ -99,24 +99,17 @@ const Home: React.FC = () => {
                 >
                   {/* Card Header */}
                   <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-xl text-center font-bold text-white">
                       {menu.name}
                     </h3>
                   </div>
 
                   {/* Card Body */}
                   <div className="p-6">
-                    <p className="text-gray-600 mb-6 min-h-[3rem]">
-                      {menu.description}
-                    </p>
-                    
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-500">
-                        Updated: {new Date(menu.lastUpdated).toLocaleDateString()}
-                      </p>
+                    <div className="flex items-center">
                       <Link
                         to={`/menu/${menu.id}`}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
+                        className="bg-blue-500 hover:bg-blue-600 text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
                       >
                         View Menu
                       </Link>

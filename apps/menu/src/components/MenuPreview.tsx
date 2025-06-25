@@ -22,7 +22,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
             <div key={category.id} className="bg-white rounded-lg shadow-md p-4 mb-8">
               {/* Category Header */}
               <div className="flex justify-center items-center">
-                <h2 className="text-3xl font-bold mb-2">{category.cat_name}</h2>
+                <h2 className="text-2xl font-bold mb-2">{category.cat_name}</h2>
               </div>
               
               {category.cat_header && (
