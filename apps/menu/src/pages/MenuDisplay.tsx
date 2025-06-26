@@ -83,10 +83,9 @@ const MenuDisplay: React.FC = () => {
             <img src="/Sebastian_Logo.png" className="w-40" alt="Sebastian's Logo" />
             <Link
               to="/"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
             >
-              <span className="mr-2">←</span>
-              Back to Menus
+              ←
             </Link>
           </div>
         </div>

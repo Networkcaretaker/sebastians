@@ -44,6 +44,34 @@ const Website: React.FC = () => {
     }
   };
 
+  const handleUpdateMenu = async (menuId: string) => {
+    if (publishingMenus.has(menuId)) return;
+
+    try {
+      setPublishingMenus(prev => new Set(prev).add(menuId));
+      
+      // Update uses the same publish logic - just re-exports the menu
+      const result = await publishMenu(menuId);
+      
+      if (result.success) {
+        // Reload data to get updated status
+        await loadData();
+        alert(`Menu updated successfully! URL: ${result.url}`);
+      } else {
+        alert(`Failed to update menu: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating menu:', error);
+      alert('Error updating menu. Please try again.');
+    } finally {
+      setPublishingMenus(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(menuId);
+        return newSet;
+      });
+    }
+  };
+
   const handlePublishMenu = async (menuId: string) => {
     if (publishingMenus.has(menuId)) return;
 
@@ -327,8 +355,24 @@ const Website: React.FC = () => {
                               {publishingMenus.has(menu.id!) ? 'Publishing...' : 'Publish'}
                             </button>
                           )}
-                          
-                          {menu.publishStatus === 'published' && (
+
+                          {/* NEW: Update button - shows when menu is published but content is newer */}
+                          {menu.publishStatus === 'published' && 
+                          menu.updatedAt && 
+                          menu.lastPublished && 
+                          menu.updatedAt > menu.lastPublished && (
+                            <button
+                              onClick={() => handleUpdateMenu(menu.id!)}
+                              disabled={publishingMenus.has(menu.id!)}
+                              className="px-3 py-1 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
+                            >
+                              {publishingMenus.has(menu.id!) ? 'Updating...' : 'Update'}
+                            </button>
+                          )}
+
+                          {/* MODIFIED: Unpublish button - only shows when published AND no updates needed */}
+                          {menu.publishStatus === 'published' && 
+                          (!menu.updatedAt || !menu.lastPublished || menu.updatedAt <= menu.lastPublished) && (
                             <button
                               onClick={() => handleUnpublishMenu(menu.id!)}
                               disabled={publishingMenus.has(menu.id!)}
