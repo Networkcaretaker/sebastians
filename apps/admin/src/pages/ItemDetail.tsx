@@ -6,14 +6,14 @@ import ItemPreview from '../components/ItemPreview';
 import ItemViewFull from '../components/ItemViewFull';
 import menuItemService from '../services/menuItemService';
 
-type ViewType = 'style' | 'full';
+type ViewType = 'preview' | 'edit' | 'translate';
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const [item, setItem] = useState<MenuItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<ViewType>('full');
+  const [viewType, setViewType] = useState<ViewType>('preview');
 
   const fetchItem = async () => {
     if (!itemId) {
@@ -114,9 +114,9 @@ const ItemDetail: React.FC = () => {
         {/* View Type Toggle */}
         <div className="flex rounded-md shadow-sm" role="group">
           <button
-            onClick={() => setViewType('style')}
+            onClick={() => setViewType('preview')}
             className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
-              viewType === 'style'
+              viewType === 'preview'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
@@ -124,20 +124,30 @@ const ItemDetail: React.FC = () => {
             Preview
           </button>
           <button
-            onClick={() => setViewType('full')}
-            className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
-              viewType === 'full'
+            onClick={() => setViewType('edit')}
+            className={`px-4 py-2 text-sm font-medium border ${
+              viewType === 'edit'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             Edit
           </button>
+          <button
+            onClick={() => setViewType('translate')}
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+              viewType === 'translate'
+                ? 'bg-blue-500 text-white border-blue-500'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            Translate
+          </button>
         </div>
       </div>
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         {/* Render the appropriate view component based on viewType */}
-        {viewType === 'style' ? (
+        {viewType === 'preview' ? (
             <ItemPreview item={item} />
         ) : (
             <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />

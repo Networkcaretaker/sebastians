@@ -11,7 +11,7 @@ import CategorySort from '../components/CategorySort';
 import menuItemService from '../services/menuItemService';
 
 // View options type
-type ViewType = 'style' | 'full' | 'order';
+type ViewType = 'preview' | 'edit' | 'order';
 
 const CategoryDetail: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -20,7 +20,7 @@ const CategoryDetail: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<ViewType>('style');
+  const [viewType, setViewType] = useState<ViewType>('preview');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -209,7 +209,7 @@ const CategoryDetail: React.FC = () => {
     );
   }
 
-  // Filter active items for preview (Style view)
+  // Filter active items for preview
   const activeMenuItems = menuItems.filter(item => item.flags && item.flags.active);
 
   return (
@@ -266,12 +266,12 @@ const CategoryDetail: React.FC = () => {
         {/* View Type Toggle */}
         <div className="flex rounded-md shadow-sm" role="group">
           <button
-            onClick={() => setViewType('style')}
+            onClick={() => setViewType('preview')}
             className={`px-4 py-2 text-sm font-medium border ${
-              viewType === 'style'
+              viewType === 'preview'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            } ${viewType === 'order' ? 'rounded-l-lg' : viewType === 'full' ? 'rounded-l-lg' : 'rounded-l-lg'}`}
+            } ${viewType === 'order' ? 'rounded-l-lg' : viewType === 'edit' ? 'rounded-l-lg' : 'rounded-l-lg'}`}
           >
             Preview
           </button>
@@ -281,14 +281,14 @@ const CategoryDetail: React.FC = () => {
               viewType === 'order'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            } ${viewType === 'style' ? 'rounded-none' : viewType === 'order' ? 'rounded-none' : 'rounded-none'}`}
+            } ${viewType === 'preview' ? 'rounded-none' : viewType === 'order' ? 'rounded-none' : 'rounded-none'}`}
           >
             Sort
           </button>
           <button
-            onClick={() => setViewType('full')}
+            onClick={() => setViewType('edit')}
             className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
-              viewType === 'full'
+              viewType === 'edit'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
@@ -299,7 +299,7 @@ const CategoryDetail: React.FC = () => {
       </div>
 
       {/* Render the appropriate view component based on viewType */}
-      {viewType === 'style' ? (
+      {viewType === 'preview' ? (
         <CategoryPreview category={category} menuItems={activeMenuItems} />
       ) : viewType === 'order' ? (
         <CategorySort category={category} menuItems={menuItems} onOrderSaved={() => setOrderChanged(true)} />
