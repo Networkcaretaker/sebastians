@@ -5,6 +5,7 @@ import { MenuItem } from '../types/menu.types';
 import ItemPreview from '../components/ItemPreview';
 import ItemViewFull from '../components/ItemViewFull';
 import menuItemService from '../services/menuItemService';
+import ItemTranslate from '../components/ItemTranslate';
 
 type ViewType = 'preview' | 'edit' | 'translate';
 
@@ -148,9 +149,13 @@ const ItemDetail: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         {/* Render the appropriate view component based on viewType */}
         {viewType === 'preview' ? (
-            <ItemPreview item={item} />
+          <ItemPreview item={item} />
+        ) : viewType === 'edit' ? (
+          <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />
+        ) : viewType === 'translate' ? (
+          <ItemTranslate item={item} onTranslationUpdated={handleItemUpdated} />
         ) : (
-            <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />
+          <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />
         )}
       </div>
     </div>

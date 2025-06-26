@@ -88,3 +88,40 @@ export interface UpdateMenuCategoriesResponse {
   id: string;
   categories: string[];
 }
+
+export interface MenuItemTranslation {
+  id?: string;
+  item_name: string;
+  item_description: string;
+  updatedAt?: Date;
+  createdAt?: Date;
+}
+
+export interface CreateTranslationDTO {
+  item_name: string;
+  item_description: string;
+}
+
+export interface UpdateTranslationDTO {
+  item_name?: string;
+  item_description?: string;
+}
+
+export interface Language {
+  code: string;
+  name: string;
+  flag: string; // For future flag emoji display
+}
+
+// Response types for translation operations
+export interface TranslationResponse {
+  success: boolean;
+  message: string;
+  translation?: MenuItemTranslation;
+}
+
+export interface GetTranslationsResponse {
+  success: boolean;
+  message: string;
+  translations?: Record<string, MenuItemTranslation>; // languageCode -> translation
+}

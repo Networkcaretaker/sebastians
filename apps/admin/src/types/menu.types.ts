@@ -20,7 +20,14 @@ import {
   PublishMenuResponse,
   PublishedMenu,
   PublishStatus,
-  GeneratedMenu
+  GeneratedMenu,
+  // Translations
+  MenuItemTranslation,
+  CreateTranslationDTO,
+  UpdateTranslationDTO,
+  TranslationResponse,
+  GetTranslationsResponse,
+  Language
 } from '@sebastians/shared-types';
 
 // Re-export shared types for convenience
@@ -44,7 +51,14 @@ export type {
   PublishMenuResponse,
   PublishedMenu,
   PublishStatus,
-  GeneratedMenu
+  GeneratedMenu,
+  // Translations
+  MenuItemTranslation,
+  CreateTranslationDTO,
+  UpdateTranslationDTO,
+  TranslationResponse,
+  GetTranslationsResponse,
+  Language
 };
 
 export { MENU_TYPES };
