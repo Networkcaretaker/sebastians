@@ -1,95 +1,67 @@
 // src/pages/ItemDetail.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
 import { MenuItem } from '../types/menu.types';
-import { useAuth } from '../context/AuthContext';
-import ItemViewFull from '../components/ItemViewFull';
 import ItemPreview from '../components/ItemPreview';
+import ItemViewFull from '../components/ItemViewFull';
+import menuItemService from '../services/menuItemService';
 
-// View options type
 type ViewType = 'style' | 'full';
 
 const ItemDetail: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const [item, setItem] = useState<MenuItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [_allItems, setAllItems] = useState<MenuItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<ViewType>('style');
-  const { currentUser } = useAuth();
-  //const navigate = useNavigate();
+  const [viewType, setViewType] = useState<ViewType>('full');
 
-  // Fetch all Items for the dropdown
-  useEffect(() => {
-    if (currentUser) {
-      const fetchAllItems = async () => {
-        try {
-          const querySnapshot = await getDocs(collection(db, 'menu_items'));
-          const itemsData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          })) as MenuItem[];
-          
-          setAllItems(itemsData);
-        } catch (err) {
-          console.error('Error fetching items:', err);
-        }
-      };
-      
-      fetchAllItems();
-    }
-  }, [currentUser]);
-
-  // Fetch current Item and its items
-  useEffect(() => {
-    if (!currentUser) {
-      setLoading(false);
-      setError('You must be logged in to view Item details');
-      return;
-    }
-
+  const fetchItem = async () => {
     if (!itemId) {
+      setError('No item ID provided');
       setLoading(false);
-      setError('Item ID is missing');
       return;
     }
 
-    const fetchItems = async () => {
-      try {
-        // Fetch the item
-        const itemDoc = await getDoc(doc(db, 'menu_items', itemId));
-        
-        if (!itemDoc.exists()) {
-          setError('Item not found');
-          setLoading(false);
-          return;
-        }
-        
-        const itemData = {
-          id: itemDoc.id,
-          ...itemDoc.data()
-        } as MenuItem;
-        
-        setItem(itemData);
-        
-      } catch (err) {
-        console.error('Error fetching item details:', err);
-        setError('Failed to load item details');
-      } finally {
-        setLoading(false);
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Get all items and find the specific one
+      // Note: You may want to create a getMenuItemById function in your service
+      const allItems = await menuItemService.getAllMenuItems();
+      const foundItem = allItems.find(item => item.id === itemId);
+      
+      if (foundItem) {
+        setItem(foundItem);
+      } else {
+        setError('Item not found');
       }
-    };
+    } catch (error) {
+      console.error('Error fetching item:', error);
+      setError('Failed to load item');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchItems();
-    // Close dropdown when changing items
-  }, [itemId, currentUser]);
+  useEffect(() => {
+    fetchItem();
+  }, [itemId]);
+
+  // Callback function to refresh item data after update
+  const handleItemUpdated = () => {
+    fetchItem(); // Refresh the item data
+  };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div className="h-32 bg-gray-200 rounded"></div>
+        </div>
       </div>
     );
   }
@@ -168,7 +140,7 @@ const ItemDetail: React.FC = () => {
         {viewType === 'style' ? (
             <ItemPreview item={item} />
         ) : (
-            <ItemViewFull item={item} />
+            <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />
         )}
       </div>
     </div>

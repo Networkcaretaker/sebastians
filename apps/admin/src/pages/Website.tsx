@@ -83,7 +83,7 @@ const Website: React.FC = () => {
       if (result.success) {
         // Reload data to get updated status
         await loadData();
-        alert(`Menu published successfully! URL: ${result.url}`);
+        alert(`Menu published successfully!`);
       } else {
         alert(`Failed to publish menu: ${result.error}`);
       }

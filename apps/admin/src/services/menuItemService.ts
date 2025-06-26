@@ -1,4 +1,4 @@
-// src/services/menuService.ts
+// src/services/menuItemService.ts
 import { db } from '../config/firebase';
 import { 
   collection, 
@@ -50,7 +50,9 @@ export const menuService = {
           addons: Boolean(itemData.addons?.length),
           options: Boolean(itemData.options?.length)
         },
-        allergies: itemData.allergies || []
+        allergies: itemData.allergies || [],
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
 
       // Log the exact data being sent to Firestore
@@ -59,7 +61,7 @@ export const menuService = {
       const menuCollection = collection(db, COLLECTION_NAME);
       const docRef = await addDoc(menuCollection, menuItem);
       
-      console.log('Document added with ID:', docRef.id);
+      console.log('Menu item added with ID:', docRef.id);
       return { id: docRef.id, ...menuItem };
     } catch (error) {
       console.error('Detailed error adding menu item:', error);
@@ -70,49 +72,44 @@ export const menuService = {
     }
   },
 
-  initializeMenuOrder: async (categoryId: string): Promise<void> => {
+  // Initialize menu order for items in the same category
+  initializeMenuOrder: async (category: string): Promise<void> => {
     try {
       // Get all items in this category
       const q = query(
         collection(db, COLLECTION_NAME),
-        where('category', '==', categoryId)
+        where('category', '==', category)
       );
       const querySnapshot = await getDocs(q);
       
-      // If there are no items, just return
-      if (querySnapshot.empty) return;
-      
+      // Update each item with its index as menu_order
       const batch = writeBatch(db);
       
-      // For each item, set menu_order if it doesn't exist
-      querySnapshot.docs.forEach((docSnapshot, index) => {
-        const itemData = docSnapshot.data();
-        if (itemData.menu_order === undefined) {
-          const itemRef = doc(db, COLLECTION_NAME, docSnapshot.id);
-          batch.update(itemRef, { menu_order: index });
-        }
+      querySnapshot.docs.forEach((doc, index) => {
+        const itemRef = doc.ref;
+        batch.update(itemRef, { 
+          menu_order: index,
+          updatedAt: new Date()
+        });
       });
       
       await batch.commit();
-      console.log(`Initialized menu_order for items in category ${categoryId}`);
+      console.log(`Initialized menu order for ${querySnapshot.docs.length} items in category: ${category}`);
     } catch (error) {
       console.error('Error initializing menu_order:', error);
       throw error;
     }
   },
 
-  // Update menu_order for multiple items
-  updateMenuOrder: async (items: { id: string; menu_order: number }[]): Promise<void> => {
+  // Update menu order for a specific item
+  updateMenuOrder: async (itemId: string, newOrder: number): Promise<void> => {
     try {
-      const batch = writeBatch(db);
-      
-      items.forEach(item => {
-        const itemRef = doc(db, COLLECTION_NAME, item.id);
-        batch.update(itemRef, { menu_order: item.menu_order });
+      const itemRef = doc(db, COLLECTION_NAME, itemId);
+      await updateDoc(itemRef, { 
+        menu_order: newOrder,
+        updatedAt: new Date()
       });
-      
-      await batch.commit();
-      console.log('Updated menu_order for multiple items');
+      console.log(`Updated menu order for item ${itemId} to ${newOrder}`);
     } catch (error) {
       console.error('Error updating menu_order:', error);
       throw error;
@@ -159,12 +156,20 @@ export const menuService = {
     }
   },
 
-  // Update menu item
+  // Update menu item - NOW WITH updatedAt FIELD
   updateMenuItem: async (itemId: string, updateData: UpdateMenuItemDTO): Promise<MenuItem> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
-      await updateDoc(itemRef, updateData);
-      return { id: itemId, ...updateData } as MenuItem;
+      
+      // Add updatedAt timestamp to the update data
+      const dataWithTimestamp = {
+        ...updateData,
+        updatedAt: new Date()
+      };
+      
+      await updateDoc(itemRef, dataWithTimestamp);
+      console.log(`Menu item ${itemId} updated successfully with timestamp`);
+      return { id: itemId, ...dataWithTimestamp } as MenuItem;
     } catch (error) {
       console.error('Error updating menu item:', error);
       throw error;
@@ -182,12 +187,13 @@ export const menuService = {
     }
   },
 
-  // Toggle item status (active/inactive)
+  // Toggle item status (active/inactive) - NOW WITH updatedAt FIELD
   toggleItemStatus: async (itemId: string, isActive: boolean): Promise<ToggleStatusResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
       await updateDoc(itemRef, {
-        'flags.active': isActive
+        'flags.active': isActive,
+        updatedAt: new Date()
       });
       return { id: itemId, isActive };
     } catch (error) {
@@ -196,13 +202,14 @@ export const menuService = {
     }
   },
 
-  // Add/Update extras
+  // Add/Update extras - NOW WITH updatedAt FIELD
   updateExtras: async (itemId: string, extras: MenuItemExtra[]): Promise<UpdateExtrasResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
       await updateDoc(itemRef, {
         extras: extras,
-        'flags.extras': extras.length > 0
+        'flags.extras': extras.length > 0,
+        updatedAt: new Date()
       });
       return { id: itemId, extras };
     } catch (error) {
@@ -211,13 +218,14 @@ export const menuService = {
     }
   },
 
-  // Add/Update options
+  // Add/Update options - NOW WITH updatedAt FIELD
   updateOptions: async (itemId: string, options: MenuItemOption[]): Promise<UpdateOptionsResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
       await updateDoc(itemRef, {
         options: options,
-        'flags.options': options.length > 0
+        'flags.options': options.length > 0,
+        updatedAt: new Date()
       });
       return { id: itemId, options };
     } catch (error) {
@@ -226,12 +234,13 @@ export const menuService = {
     }
   },
 
-  // Update allergies
+  // Update allergies - NOW WITH updatedAt FIELD
   updateAllergies: async (itemId: string, allergies: string[]): Promise<UpdateAllergiesResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
       await updateDoc(itemRef, {
-        allergies: allergies
+        allergies: allergies,
+        updatedAt: new Date()
       });
       return { id: itemId, allergies };
     } catch (error) {
