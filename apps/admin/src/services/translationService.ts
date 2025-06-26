@@ -1,4 +1,4 @@
-// Create: apps/admin/src/services/translationService.ts
+// Replace: apps/admin/src/services/translationService.ts
 
 import { db } from '../config/firebase';
 import {
@@ -41,6 +41,9 @@ export const translationService = {
           id: doc.id,
           item_name: data.item_name || '',
           item_description: data.item_description || '',
+          translated_options: data.translated_options || [],
+          translated_extras: data.translated_extras || [],
+          translated_addons: data.translated_addons || [],
           createdAt: data.createdAt?.toDate(),
           updatedAt: data.updatedAt?.toDate()
         };
@@ -82,6 +85,9 @@ export const translationService = {
         id: translationDoc.id,
         item_name: data.item_name || '',
         item_description: data.item_description || '',
+        translated_options: data.translated_options || [],
+        translated_extras: data.translated_extras || [],
+        translated_addons: data.translated_addons || [],
         createdAt: data.createdAt?.toDate(),
         updatedAt: data.updatedAt?.toDate()
       };
@@ -121,20 +127,24 @@ export const translationService = {
       const existingTranslation = await getDoc(translationRef);
       const now = new Date();
       
+      // Prepare translation data with all fields
+      const translationDoc = {
+        item_name: translationData.item_name,
+        item_description: translationData.item_description,
+        translated_options: translationData.translated_options || [],
+        translated_extras: translationData.translated_extras || [],
+        translated_addons: translationData.translated_addons || [],
+        updatedAt: now
+      };
+      
       if (existingTranslation.exists()) {
         // Update existing translation
-        batch.update(translationRef, {
-          item_name: translationData.item_name,
-          item_description: translationData.item_description,
-          updatedAt: now
-        });
+        batch.update(translationRef, translationDoc);
       } else {
         // Create new translation
         batch.set(translationRef, {
-          item_name: translationData.item_name,
-          item_description: translationData.item_description,
-          createdAt: now,
-          updatedAt: now
+          ...translationDoc,
+          createdAt: now
         });
       }
       
@@ -149,9 +159,7 @@ export const translationService = {
       
       const savedTranslation: MenuItemTranslation = {
         id: languageCode,
-        item_name: translationData.item_name,
-        item_description: translationData.item_description,
-        updatedAt: now
+        ...translationDoc
       };
       
       return {

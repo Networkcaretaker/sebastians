@@ -93,6 +93,10 @@ export interface MenuItemTranslation {
   id?: string;
   item_name: string;
   item_description: string;
+  // Simple text translations for existing fields
+  translated_options?: string[]; // Array of translated "option" text
+  translated_extras?: string[];  // Array of translated "item" text for extras
+  translated_addons?: string[];  // Array of translated "item" text for addons
   updatedAt?: Date;
   createdAt?: Date;
 }
@@ -100,20 +104,25 @@ export interface MenuItemTranslation {
 export interface CreateTranslationDTO {
   item_name: string;
   item_description: string;
+  translated_options?: string[];
+  translated_extras?: string[];
+  translated_addons?: string[];
 }
 
 export interface UpdateTranslationDTO {
   item_name?: string;
   item_description?: string;
+  translated_options?: string[];
+  translated_extras?: string[];
+  translated_addons?: string[];
 }
 
 export interface Language {
   code: string;
   name: string;
-  flag: string; // For future flag emoji display
+  flag: string;
 }
 
-// Response types for translation operations
 export interface TranslationResponse {
   success: boolean;
   message: string;
@@ -123,5 +132,5 @@ export interface TranslationResponse {
 export interface GetTranslationsResponse {
   success: boolean;
   message: string;
-  translations?: Record<string, MenuItemTranslation>; // languageCode -> translation
+  translations?: Record<string, MenuItemTranslation>;
 }
