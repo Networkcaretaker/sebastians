@@ -101,8 +101,8 @@ export const menuService = {
     }
   },
 
-  // Update menu order for a specific item
-  updateMenuOrder: async (itemId: string, newOrder: number): Promise<void> => {
+  // KEEP ORIGINAL: Update menu order for a single item (DON'T CHANGE THIS!)
+  updateSingleMenuOrder: async (itemId: string, newOrder: number): Promise<void> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
       await updateDoc(itemRef, { 
@@ -112,6 +112,28 @@ export const menuService = {
       console.log(`Updated menu order for item ${itemId} to ${newOrder}`);
     } catch (error) {
       console.error('Error updating menu_order:', error);
+      throw error;
+    }
+  },
+
+  // ADD NEW: Batch update menu order for multiple items (for CategorySort.tsx)
+  updateMenuOrder: async (orderUpdates: Array<{ id: string; menu_order: number }>): Promise<void> => {
+    try {
+      const batch = writeBatch(db);
+      const updateTime = new Date();
+      
+      orderUpdates.forEach(({ id, menu_order }) => {
+        const itemRef = doc(db, COLLECTION_NAME, id);
+        batch.update(itemRef, { 
+          menu_order,
+          updatedAt: updateTime
+        });
+      });
+      
+      await batch.commit();
+      console.log(`Updated menu order for ${orderUpdates.length} items`);
+    } catch (error) {
+      console.error('Error updating menu orders:', error);
       throw error;
     }
   },
@@ -156,7 +178,7 @@ export const menuService = {
     }
   },
 
-  // Update menu item - NOW WITH updatedAt FIELD
+  // Update menu item - WITH updatedAt FIELD
   updateMenuItem: async (itemId: string, updateData: UpdateMenuItemDTO): Promise<MenuItem> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
@@ -187,7 +209,7 @@ export const menuService = {
     }
   },
 
-  // Toggle item status (active/inactive) - NOW WITH updatedAt FIELD
+  // Toggle item status (active/inactive) - WITH updatedAt FIELD
   toggleItemStatus: async (itemId: string, isActive: boolean): Promise<ToggleStatusResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
@@ -202,7 +224,7 @@ export const menuService = {
     }
   },
 
-  // Add/Update extras - NOW WITH updatedAt FIELD
+  // Add/Update extras - WITH updatedAt FIELD
   updateExtras: async (itemId: string, extras: MenuItemExtra[]): Promise<UpdateExtrasResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
@@ -218,7 +240,7 @@ export const menuService = {
     }
   },
 
-  // Add/Update options - NOW WITH updatedAt FIELD
+  // Add/Update options - WITH updatedAt FIELD
   updateOptions: async (itemId: string, options: MenuItemOption[]): Promise<UpdateOptionsResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
@@ -234,7 +256,7 @@ export const menuService = {
     }
   },
 
-  // Update allergies - NOW WITH updatedAt FIELD
+  // Update allergies - WITH updatedAt FIELD
   updateAllergies: async (itemId: string, allergies: string[]): Promise<UpdateAllergiesResponse> => {
     try {
       const itemRef = doc(db, COLLECTION_NAME, itemId);
