@@ -49,12 +49,18 @@ const ItemTable: React.FC<ItemTableProps> = ({
               <tr key={item.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col">
-                    <div className="text-sm font-medium text-gray-900">{item.item_name}</div>
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{item.item_description}</div>
+                    <Link to={`/menu-items/${item.id}`}>
+                      <div className="text-sm font-medium text-gray-900">{item.item_name}</div>
+                    </Link>
+                    <Link to={`/menu-items/${item.id}`}>
+                      <div className="text-sm text-gray-500 truncate max-w-xs">{item.item_description}</div>
+                    </Link>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{itemCategory?.cat_name || 'Uncategorized'}</div>
+                  <Link to={`/categories/${item.category}`}>
+                    <div className="text-sm text-gray-900">{itemCategory?.cat_name || 'Uncategorized'}</div>
+                  </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                 {item.flags.options ? (

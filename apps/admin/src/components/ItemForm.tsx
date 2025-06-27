@@ -259,6 +259,20 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
             className="w-full p-2 border rounded"
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+          <input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleInputChange}
+            placeholder="Base Price"
+            className="w-full p-2 border rounded"
+            required
+            min="0"
+            step="0.01"
+          />
+        </div>
         
         {/* Category Dropdown */}
         <div>
@@ -278,43 +292,30 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
             ))}
           </select>
         </div>
-        
-        <div>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            placeholder="Base Price"
-            className="w-full p-2 border rounded"
-            required
-            min="0"
-            step="0.01"
-          />
-        </div>
+
       </div>
 
       {/* Flags */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Item Flags</h3>
         <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Active</label>
           <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="active"
-              checked={formData.flags.active}
-              onChange={handleFlagChange}
-            />
-            <span>Active</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="vegetarian"
-              checked={formData.flags.vegetarian}
-              onChange={handleFlagChange}
-            />
-            <span>Vegetarian</span>
+            <div className="relative">
+              <input
+                type="checkbox"
+                name="active"
+                checked={formData.flags.active}
+                onChange={handleFlagChange}
+                className="sr-only"
+              />
+              <div className={`w-12 h-8 py-1 rounded-full cursor-pointer transition-colors ${
+                formData.flags.active ? 'bg-blue-500' : 'bg-gray-300'
+              }`}>
+                <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform mt-1 ${
+                  formData.flags.active ? 'translate-x-7' : 'translate-x-1'
+                }`}></div>
+              </div>
+            </div>
           </label>
         </div>
       </div>
@@ -392,109 +393,6 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
               <span>{extra.price.toFixed(2)}€</span>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Addons - Multi-select from predefined options (No price) */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Add-ons (Selection options)</h3>
-        <p className="text-sm text-gray-600">Select options like bread types, sauces, etc. for this menu item:</p>
-        
-        {/* Option to add custom addon */}
-        <div className="flex space-x-2 mb-3">
-          <input
-            type="text"
-            value={newAddon}
-            onChange={(e) => setNewAddon(e.target.value)}
-            placeholder="Add custom option"
-            className="flex-1 p-2 border rounded"
-          />
-          <button
-            type="button"
-            onClick={handleAddCustomAddon}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Add
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-          {PREDEFINED_ADDONS.map((addonName, index) => {
-            const isSelected = formData.addons.some(item => item.item === addonName);
-            return (
-              <div 
-                key={index} 
-                className={`border p-2 rounded cursor-pointer flex items-center ${
-                  isSelected ? 'bg-blue-50 border-blue-500' : 'bg-gray-50'
-                }`}
-                onClick={() => handleAddonToggle(addonName)}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {}} // Handled by the div onClick
-                  className="mr-2"
-                />
-                <span>{addonName}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="mt-2">
-          <p className="font-medium">Selected Add-ons:</p>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {formData.addons.length === 0 ? (
-              <span className="text-gray-500 italic">No options selected</span>
-            ) : (
-              formData.addons.map((addon, index) => (
-                <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
-                  {addon.item}
-                </span>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Allergies - Multi-select from predefined options */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Allergies</h3>
-        <p className="text-sm text-gray-600">Select all allergies that apply to this menu item:</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-          {PREDEFINED_ALLERGIES.map((allergy, index) => {
-            const isSelected = formData.allergies.includes(allergy);
-            return (
-              <div 
-                key={index} 
-                className={`border p-2 rounded cursor-pointer flex items-center ${
-                  isSelected ? 'bg-red-50 border-red-500' : 'bg-gray-50'
-                }`}
-                onClick={() => handleAllergyToggle(allergy)}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {}} // Handled by the div onClick
-                  className="mr-2"
-                />
-                <span>{allergy}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="mt-2">
-          <p className="font-medium">Selected Allergies:</p>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {formData.allergies.length === 0 ? (
-              <span className="text-gray-500 italic">No allergies selected</span>
-            ) : (
-              formData.allergies.map((allergy, index) => (
-                <span key={index} className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">
-                  {allergy}
-                </span>
-              ))
-            )}
-          </div>
         </div>
       </div>
 

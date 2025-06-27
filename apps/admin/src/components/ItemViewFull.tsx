@@ -234,6 +234,10 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
             </div>
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700">Description:</label>
+            <p className="text-gray-600 mt-1">{item.item_description || 'None'}</p>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700">Price:</label>
             <div className="text-green-600 font-medium">{item.price.toFixed(2)}€</div>
           </div>
@@ -246,10 +250,6 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
             }`}>
               {item.flags.active ? 'Active' : 'Inactive'}
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Description:</label>
-            <p className="text-gray-600 mt-1">{item.item_description || 'None'}</p>
           </div>
           
           {/* Options */}
@@ -372,6 +372,18 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
           />
         </div>
 
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea
+            name="item_description"
+            value={formData.item_description}
+            onChange={handleInputChange}
+            rows={3}
+            className="w-full p-2 border rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
         {/* Price */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Price (€)</label>
@@ -388,28 +400,25 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
 
         {/* Status */}
         <div>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="active"
-              checked={formData.flags.active}
-              onChange={handleInputChange}
-              className="mr-2"
-            />
-            <span className="text-sm font-medium text-gray-700">Active</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Active</label>
+          <label className="flex items-center space-x-2">
+            <div className="relative">
+              <input
+                type="checkbox"
+                name="active"
+                checked={formData.flags.active}
+                onChange={handleInputChange}
+                className="sr-only"
+              />
+              <div className={`w-12 h-8 py-1 rounded-full cursor-pointer transition-colors ${
+                formData.flags.active ? 'bg-blue-500' : 'bg-gray-300'
+              }`}>
+                <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform mt-1 ${
+                  formData.flags.active ? 'translate-x-7' : 'translate-x-1'
+                }`}></div>
+              </div>
+            </div>
           </label>
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea
-            name="item_description"
-            value={formData.item_description}
-            onChange={handleInputChange}
-            rows={3}
-            className="w-full p-2 border rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          />
         </div>
 
         {/* Options */}

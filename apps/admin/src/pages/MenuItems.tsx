@@ -11,7 +11,7 @@ import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'fi
 
 // View options type
 type ViewType = 'table' | 'cards';
-type ColumnCount = 2 | 3;
+type ColumnCount = 1 | 2 | 3;
 
 const MenuItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -24,8 +24,12 @@ const MenuItems: React.FC = () => {
   const { currentUser } = useAuth();
   
   // View options state
-  const [viewType, setViewType] = useState<ViewType>('table');
-  const [columnCount, setColumnCount] = useState<ColumnCount>(3);
+  const [viewType, setViewType] = useState<ViewType>(
+    window.innerWidth < 768 ? 'cards' : 'table'
+  );
+  const [columnCount, setColumnCount] = useState<ColumnCount>(
+    window.innerWidth < 768 ? 1 : 3
+  );
 
   useEffect(() => {
     if (currentUser) {
@@ -234,7 +238,7 @@ const MenuItems: React.FC = () => {
             <button
               key={category}
               onClick={() => setCurrentCategory(category)}
-              className={`px-4 py-2 rounded-full whitespace-nowrap ${
+              className={`text-sm px-2 py-1 rounded-full whitespace-nowrap ${
                 currentCategory === category
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-700'
@@ -270,9 +274,9 @@ const MenuItems: React.FC = () => {
             </button>
           </div>
           
-          {/* Column Count (only show when card view is active) */}
+          {/* Column Count (only show when card view is active and not on mobile) */}
           {viewType === 'cards' && (
-            <div className="flex rounded-md shadow-sm" role="group">
+            <div className="hidden md:flex rounded-md shadow-sm" role="group">
               <button
                 onClick={() => setColumnCount(2)}
                 className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${

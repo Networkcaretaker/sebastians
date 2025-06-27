@@ -21,8 +21,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   const itemCategory = categories.find(cat => cat.id === item.category);
   
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-4">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+      <div className="p-4 flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-xl font-semibold">{item.item_name}</h3>
           <div className="flex items-center space-x-2">
@@ -50,7 +50,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
         )}
         
         {/* Item Details */}
-        <div className="space-y-2">
+        <div className="space-y-2 flex-grow">
           {item.options.length > 0 && (
             <div>
               <p className="font-medium">Options:</p>
@@ -94,7 +94,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
           )}
         </div>
 
-        <div className="mt-4 flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2 pt-4">
           <button
             onClick={() => onEdit(item)}
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
