@@ -91,15 +91,6 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
             </div>
           );
         })}
-      
-      {/* Menu Footer */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="text-center text-sm text-gray-500">
-          <p>End of {menuData.menu_name}</p>
-          <p className="mt-2">Digital Menu</p>
-          <p className="mt-2">Last updated: {new Date(menuData.lastUpdated).toLocaleDateString()}</p>
-        </div>
-      </div>
     </div>
   );
 };

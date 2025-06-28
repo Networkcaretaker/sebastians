@@ -5,7 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMenuData, MenuData } from '../services/menuService';
 import { APP_CONFIG } from '../services/config';
-import MenuPreview from '../components/MenuPreview'; // Add this import
+import MenuPreview from '../components/MenuPreview';
+import MenuFooter from '../components/Footer'; 
 
 const MenuDisplay: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
@@ -92,9 +93,12 @@ const MenuDisplay: React.FC = () => {
       </header>
 
       {/* Replace the entire main section with MenuPreview component */}
-      <main className="pb-8">
+      <main className="pb-4">
         <MenuPreview menuData={menuData} />
       </main>
+      <footer>
+        <MenuFooter />
+      </footer>
     </div>
   );
 };

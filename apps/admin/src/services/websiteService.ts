@@ -382,7 +382,8 @@ const getDefaultWebsiteConfig = (): Omit<WebsiteConfig, 'id' | 'createdAt'> => {
         email: "",
         phone: "",
         address: "",
-        website: ""
+        website: "",
+        facebook: ""
       }
     },
     publishedMenus: [],

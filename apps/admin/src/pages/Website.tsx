@@ -449,6 +449,12 @@ const Website: React.FC = () => {
                     </label>
                     <p className="text-gray-900">{websiteConfig.restaurant.contactInfo.website || 'Not set'}</p>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Facebook
+                    </label>
+                    <p className="text-gray-900">{websiteConfig.restaurant.contactInfo.facebook || 'Not set'}</p>
+                  </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Address

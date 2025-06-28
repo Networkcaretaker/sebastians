@@ -14,6 +14,7 @@ export interface ContactInfo {
   phone?: string;
   address?: string;
   website?: string;
+  facebook?: string;
 }
 
 export interface RestaurantSettings {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPublishedMenus } from '../services/menuService';
-import { APP_CONFIG } from '../services/config';
+import MenuFooter from '../components/Footer';
 
 interface PublishedMenu {
   id: string;
@@ -121,18 +121,8 @@ const Home: React.FC = () => {
           </div>
         )}
       </main>
-
-      {/* Enhanced Footer */}
-      <footer className="bg-white border-t mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">{APP_CONFIG.restaurantName}</h3>
-            <p className="text-gray-600 mb-6">Thank you for dining with us!</p>
-            <div className="text-sm text-gray-500">
-              <p>&copy; 2025 {APP_CONFIG.restaurantName}. All rights reserved.</p>
-            </div>
-          </div>
-        </div>
+      <footer>
+        <MenuFooter />
       </footer>
     </div>
   );

@@ -24,9 +24,10 @@ export const FIREBASE_CONFIG = {
 // App configuration
 export const APP_CONFIG = {
   // App title and branding
-  restaurantName: "Sebastian's Restaurant",
+  restaurantName: "Sebastian Bar & Grill",
   restaurantDescription: "Choose from our delicious menu options",
-  
+  facebookURL: "https://www.facebook.com/profile.php?id=100090102195879",
+ 
   // Cache settings
   cacheTimeout: 5 * 60 * 1000, // 5 minutes in milliseconds
   
