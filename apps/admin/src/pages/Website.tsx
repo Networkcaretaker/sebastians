@@ -56,7 +56,7 @@ const Website: React.FC = () => {
       if (result.success) {
         // Reload data to get updated status
         await loadData();
-        alert(`Menu updated successfully! URL: ${result.url}`);
+        alert(`Menu updated successfully!`);
       } else {
         alert(`Failed to update menu: ${result.error}`);
       }

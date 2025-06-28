@@ -201,16 +201,12 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 pb-4">
+      <div className="border-b border-gray-200 pb-4 columns-2">
         <h3 className="text-lg font-semibold text-gray-900">Item Translations</h3>
         <p className="text-sm text-gray-600 mt-1">
           Translate "{item.item_name}" into different languages
         </p>
-      </div>
-
-      {/* Language Selection */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-end space-x-4">
           <label htmlFor="language-select" className="text-sm font-medium text-gray-700">
             Select Language:
           </label>
@@ -218,7 +214,7 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             id="language-select"
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             {SUPPORTED_LANGUAGES.map((language) => (
               <option key={language.code} value={language.code}>
@@ -227,25 +223,23 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             ))}
           </select>
         </div>
-
-        {/* Translation Status */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-end space-x-2 py-1">
           {hasExistingTranslation ? (
             <>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Translated
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-green-600">
+                ✅Translated
               </span>
               <button
                 onClick={handleDeleteTranslation}
                 disabled={isSaving}
-                className="text-sm text-red-600 hover:text-red-800 disabled:opacity-50"
+                className="text-xs text-red-500 hover:text-red-800 disabled:opacity-50"
               >
-                Delete Translation
+                ⛔Delete Translation
               </button>
             </>
           ) : (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-              Not Translated
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-light text-gray-800">
+              <i>Not Translated</i>
             </span>
           )}
         </div>

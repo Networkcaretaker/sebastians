@@ -128,11 +128,21 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
   }, [formData.category, initialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, type } = e.target;
+    
+    // Handle number inputs by converting string to number
+    if (type === 'number' && name === 'price') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: parseFloat(value) || 0  // Convert to number, default to 0 if invalid
+      }));
+    } else {
+      // Handle all other inputs as strings
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleFlagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
