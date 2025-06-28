@@ -37,6 +37,9 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Check if item has a description
+  const hasDescription = item.item_description && item.item_description.trim().length > 0;
+
   // Load all translations for this item
   useEffect(() => {
     loadTranslations();
@@ -258,12 +261,15 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <div className="px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700 min-h-[100px]">
-              {item.item_description || 'No description provided'}
+          {/* Only show description section if item has a description */}
+          {hasDescription && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <div className="px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700 min-h-[100px]">
+                {item.item_description}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Translation Content (Right Side) */}
@@ -283,16 +289,19 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Translated Description</label>
-            <textarea
-              value={currentTranslation.item_description}
-              onChange={(e) => updateBasicTranslation('item_description', e.target.value)}
-              placeholder={`Translate the description to ${selectedLanguageInfo?.name}`}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+          {/* Only show description translation section if item has a description */}
+          {hasDescription && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Translated Description</label>
+              <textarea
+                value={currentTranslation.item_description}
+                onChange={(e) => updateBasicTranslation('item_description', e.target.value)}
+                placeholder={`Translate the description to ${selectedLanguageInfo?.name}`}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          )}
         </div>
       </div>
 
