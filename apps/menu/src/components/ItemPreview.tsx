@@ -81,7 +81,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{option.option}</span>
-                <span className="text-green-600 font-medium">{option.price.toFixed(2)}€</span>
+                <span className="text-green-600 font-bold">{option.price.toFixed(2)}€</span>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{extra.item}</span>
-                <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
+                <span className="text-green-600 font-bold">{extra.price.toFixed(2)}€</span>
               </div>
             ))}
           </div>

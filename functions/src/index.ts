@@ -111,8 +111,12 @@ export const exportMenu = onCall(async (request: any) => {
         categories.push({
           id: categoryDoc.id,
           name: categoryData.cat_name,
+          header: categoryData.header,
           description: categoryData.cat_description,
-          items: items
+          footer: categoryData.footer,
+          items: items,
+          addons: categoryData.addons,
+          extras: categoryData.extras
         });
       }
     }

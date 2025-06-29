@@ -25,13 +25,13 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
                 <h2 className="text-2xl font-bold mb-2">{category.cat_name}</h2>
               </div>
               
-              {category.cat_header && (
-                <div className="flex justify-center items-center border-b pb-3 mb-3">
-                  <h2 className="text-lg text-center font-bold">
+              <div className="flex justify-center items-center border-b pb-3 mb-3">
+                {category.cat_header && (
+                  <h2 className="text-base text-center font-medium">
                     <i>{category.cat_header}</i>
                   </h2>
-                </div>
-              )}
+                )}
+              </div>
               
               {category.cat_description && (
                 <div className="mb-4">
@@ -57,11 +57,11 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
               {/* Category Extras */}
               {category.extras && category.extras.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="text-xl font-bold pb-2">{category.cat_name} Extras</h3>
+                  <h3 className="text-base font-bold pb-2">{category.cat_name} Extras</h3>
                   {category.extras.map((extra, idx) => (
                     <div key={idx} className="flex justify-between">
-                      <span className="text-base font-base px-4">{extra.item}</span>
-                      <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
+                      <span className="text-gray-600 text-sm">{extra.item}</span>
+                      <span className="text-green-600 text-sm font-bold">{extra.price.toFixed(2)}€</span>
                     </div>
                   ))}
                 </div>
@@ -70,7 +70,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
               {/* Category Add-ons */}
               {category.addons && category.addons.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-xl font-bold pb-2">{category.cat_name} Add-ons</h3>
+                  <h3 className="text-base font-bold pb-2">{category.cat_name} Add-ons</h3>
                   <div className="flex flex-wrap">
                     {category.addons.map((addon, idx) => (
                       <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 m-1 rounded text-xs">
@@ -83,7 +83,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
 
               {category.cat_footer && (
                 <div className="flex justify-center items-center border-t pt-3 mt-6">
-                  <h2 className="text-lg text-center font-light">
+                  <h2 className="text-base text-center font-light">
                     <i>{category.cat_footer}</i>
                   </h2>
                 </div>
