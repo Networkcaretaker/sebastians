@@ -2,23 +2,23 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { Translate } from '@google-cloud/translate/build/src/v2';
 
-// Initialize Google Translate client
-const translate = new Translate();
-
 // Supported language codes that match your frontend
-const SUPPORTED_LANGUAGES = ['es', 'fr', 'de', 'it', 'pt'];
+const SUPPORTED_LANGUAGES = ['es', 'fr', 'de', 'it', 'pt', 'nl'];
 
 // Simple auto-translate function that follows your exact pattern
 export const autoTranslateItem = functions.https.onCall(async (data: any, context: any) => {
   const logger = functions.logger;
   
   try {
-    // Check authentication like your other functions
-    if (!context.auth) {
+    // Check authentication using the Gen 2 structure
+    const authData = data?.auth;
+    if (!authData || !authData.uid) {
       throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
     }
 
-    const { itemId, targetLanguage } = data;
+    // Extract data from the correct location (data.data)
+    const itemId = data?.data?.itemId;
+    const targetLanguage = data?.data?.targetLanguage;
 
     if (!itemId || !targetLanguage) {
       throw new functions.https.HttpsError('invalid-argument', 'itemId and targetLanguage required');
@@ -28,7 +28,17 @@ export const autoTranslateItem = functions.https.onCall(async (data: any, contex
       throw new functions.https.HttpsError('invalid-argument', `Unsupported language: ${targetLanguage}`);
     }
 
-    logger.info(`Auto-translating item ${itemId} to ${targetLanguage}`);
+    logger.info(`Auto-translating item ${itemId} to ${targetLanguage} for user ${authData.uid}`);
+
+    // Get API key from environment variable
+    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
+    if (!apiKey) {
+      throw new functions.https.HttpsError('failed-precondition', 'Google Translate API key not configured');
+    }
+
+    const translate = new Translate({
+      key: apiKey
+    });
 
     const db = admin.firestore();
     

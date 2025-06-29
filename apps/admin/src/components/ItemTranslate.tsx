@@ -14,8 +14,9 @@ import app, {auth} from '../config/firebase';
 // Define supported languages directly in the component
 const SUPPORTED_LANGUAGES: Language[] = [
   { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-  { code: 'fr', name: 'French', flag: '🇫🇷' },
   { code: 'de', name: 'German', flag: '🇩🇪' },
+  { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
+  { code: 'fr', name: 'French', flag: '🇫🇷' },
   { code: 'it', name: 'Italian', flag: '🇮🇹' },
   { code: 'pt', name: 'Portuguese', flag: '🇵🇹' }
 ];
@@ -498,13 +499,16 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
 
       {/* Action Buttons */}
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-        <button
-          onClick={handleAutoTranslate}
-          disabled={isAutoTranslating || isSaving}
-          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isAutoTranslating ? 'Auto Translating...' : 'Auto Translate'}
-        </button>
+        {!hasExistingTranslation ? (
+          <button
+            onClick={handleAutoTranslate}
+            disabled={isAutoTranslating || isSaving}
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isAutoTranslating ? 'Auto Translating...' : 'Auto Translate'}
+          </button>) : <div/>
+        }
+
         <button
           onClick={handleSaveTranslation}
           disabled={isSaving || isAutoTranslating}
