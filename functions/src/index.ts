@@ -9,6 +9,8 @@ admin.initializeApp();
 // Get Firestore instance
 const db = admin.firestore();
 
+export { autoTranslateItem } from './translate';
+
 /**
  * Export Menu Function
  * Takes a menuId and returns complete menu data as JSON

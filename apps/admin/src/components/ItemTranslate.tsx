@@ -8,6 +8,8 @@ import {
   Language
 } from '../types/menu.types';
 import { translationService } from '../services/translationService';
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions';
+import app, {auth} from '../config/firebase';
 
 // Define supported languages directly in the component
 const SUPPORTED_LANGUAGES: Language[] = [
@@ -36,6 +38,8 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isAutoTranslating, setIsAutoTranslating] = useState(false);
+
 
   // Check if item has a description
   const hasDescription = item.item_description && item.item_description.trim().length > 0;
@@ -153,6 +157,80 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
       setMessage({ type: 'error', text: 'Failed to delete translation' });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleAutoTranslate = async () => {
+    if (!item.id || !selectedLanguage) return;
+
+    setIsAutoTranslating(true);
+    setMessage(null);
+
+    try {
+      // Initialize Firebase Functions with auth
+      const functions = getFunctions(app);
+
+      // Connect to emulator in development
+      if (process.env.NODE_ENV === 'development') {
+        connectFunctionsEmulator(functions, 'localhost', 5001);
+      }
+      
+      // Make sure we're authenticated
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error('You must be logged in to use auto-translate');
+      }
+
+      // Get fresh auth token
+      const idToken = await currentUser.getIdToken(true);
+      console.log('Using auth token:', idToken.substring(0, 20) + '...');
+
+      const autoTranslateFunction = httpsCallable(functions, 'autoTranslateItem');
+
+      console.log(`Calling auto-translate for item ${item.id} to ${selectedLanguage}`);
+
+      // Call the cloud function
+      const result = await autoTranslateFunction({ 
+        itemId: item.id, 
+        targetLanguage: selectedLanguage 
+      });
+
+      console.log('Auto-translate result:', result);
+
+      // Type the result data properly
+      const responseData = result.data as any;
+
+      if (responseData?.success) {
+        const translatedData = responseData.translation;
+        
+        // Update the form with translated content
+        setCurrentTranslation({
+          item_name: translatedData?.item_name || '',
+          item_description: translatedData?.item_description || '',
+          translated_options: translatedData?.translated_options || [],
+          translated_extras: translatedData?.translated_extras || [],
+          translated_addons: translatedData?.translated_addons || []
+        });
+
+        setMessage({ 
+          type: 'success', 
+          text: `Auto-translation completed! You can now review and save the translation.`
+        });
+      } else {
+        setMessage({ 
+          type: 'error', 
+          text: responseData?.message || 'Auto-translation failed' 
+        });
+      }
+
+    } catch (error: any) {
+      console.error('Auto-translate error:', error);
+      setMessage({ 
+        type: 'error', 
+        text: error.message || 'Failed to auto-translate. Please try again.' 
+      });
+    } finally {
+      setIsAutoTranslating(false);
     }
   };
 
@@ -421,8 +499,15 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
       {/* Action Buttons */}
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
         <button
+          onClick={handleAutoTranslate}
+          disabled={isAutoTranslating || isSaving}
+          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isAutoTranslating ? 'Auto Translating...' : 'Auto Translate'}
+        </button>
+        <button
           onClick={handleSaveTranslation}
-          disabled={isSaving}
+          disabled={isSaving || isAutoTranslating}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSaving ? 'Saving...' : 'Save Translation'}
