@@ -24,20 +24,23 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
               <div className="flex justify-center items-center">
                 <h2 className="text-2xl font-bold mb-2">{category.cat_name}</h2>
               </div>
-              
-              <div className="flex justify-center items-center border-b pb-3 mb-3">
-                {category.cat_header && (
-                  <h2 className="text-base text-center font-medium">
-                    <i>{category.cat_header}</i>
-                  </h2>
+              <div className="border-b">
+                <div className="flex justify-center items-center pb-2">
+                  {category.cat_header && (
+                    <h2 className="text-base text-center font-medium">
+                      <i>{category.cat_header}</i>
+                    </h2>
+                  )}
+                </div>
+                
+                {category.cat_description && (
+                  <div className="mb-4">
+                    <p className="text-center">{category.cat_description}</p>
+                  </div>
                 )}
               </div>
               
-              {category.cat_description && (
-                <div className="mb-4">
-                  <p className="text-center">{category.cat_description}</p>
-                </div>
-              )}
+              
 
               {/* Menu Items */}
               {activeItems.length > 0 ? (

@@ -196,7 +196,9 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
         addons: item.addons || [],
         options: item.options || [],
         extras: item.extras || [],
-        isActive: item.isActive !== false // Default to true if not specified
+        allergies: item.allergies || [],
+        vegetarian: item.flags.vegetarian || false,
+        isActive: item.flags.active !== false // Default to true if not specified
       }))
     }))
   };
