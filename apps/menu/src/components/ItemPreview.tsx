@@ -1,5 +1,6 @@
 // apps/menu/src/components/ItemPreview.tsx
 import React from 'react';
+import AllergyIcon from './AllergyIcon';
 
 // Corrected interface to match your actual data structure
 interface MenuItem {
@@ -92,20 +93,25 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           </div>
         )}
         
-        {/* Allergies Section - Cleaned up */}
-        {item.allergies && item.allergies.length > 0 ? (
-          <div className="flex text-center mt-2">
-            <h4 className="text-xs font-medium text-red-700 px-1 py-1">Allergens: </h4>
+        {/* Allergies Section - Updated with Icons */}
+        {item.allergies && item.allergies.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <h4 className="text-xs font-medium text-red-700">Allergens:</h4>
             <div className="flex flex-wrap gap-1">
               {item.allergies.map((allergy, idx) => (
-                <span key={idx} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-medium">
-                  {allergy}
+                <span 
+                  key={idx} 
+                  className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-medium"
+                >
+                  <AllergyIcon 
+                    allergy={allergy} 
+                    size="sm"
+                    className="text-red-800"
+                  />
                 </span>
               ))}
             </div>
           </div>
-        ) : (
-          <div/>
         )}
 
       </div>

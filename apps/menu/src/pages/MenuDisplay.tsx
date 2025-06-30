@@ -6,7 +6,8 @@ import { useParams, Link } from 'react-router-dom';
 import { getMenuData, MenuData } from '../services/menuService';
 import { APP_CONFIG } from '../services/config';
 import MenuPreview from '../components/MenuPreview';
-import MenuFooter from '../components/Footer'; 
+import MenuFooter from '../components/Footer';
+import Allergies from '../components/Allergies'
 
 const MenuDisplay: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
@@ -95,6 +96,7 @@ const MenuDisplay: React.FC = () => {
       {/* Replace the entire main section with MenuPreview component */}
       <main className="pb-4">
         <MenuPreview menuData={menuData} />
+        <Allergies />
       </main>
       <footer>
         <MenuFooter />
