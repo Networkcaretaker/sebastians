@@ -10,6 +10,12 @@ export interface MenuItem {
   item_price: number;
   item_order: number;
   isActive: boolean;
+  vegetarian?: boolean;  // Add this
+  allergies: string[];   // Add this
+  options?: Array<{ option: string; price: number }>;  // Add this
+  extras?: Array<{ item: string; price: number }>;     // Add this
+  addons?: Array<{ item: string }>;                    // Add this
+  hasOptions?: boolean;  // Add this
 }
 
 export interface MenuCategory {
