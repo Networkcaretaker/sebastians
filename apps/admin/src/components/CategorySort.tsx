@@ -18,6 +18,9 @@ import {
 } from '@dnd-kit/sortable';
 import SortableItem from './SortableItem';
 import menuService from '../services/menuItemService';
+// ADD THIS IMPORT for Firestore operations
+import { db } from '../config/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 interface CategorySortProps {
   category: MenuCategory;
@@ -53,18 +56,33 @@ const CategorySort: React.FC<CategorySortProps> = ({ category, menuItems, onOrde
     }
   };
 
+  // FIXED: This function now updates BOTH menu items AND category items array
   const handleSaveOrder = async () => {
     try {
       setIsSaving(true);
       setSaveStatus('idle');
       
-      // Create an array of { id, menu_order } objects for the update
+      // 1. Update menu_order fields in menu_items collection
       const updatedOrder = items.map((item, index) => ({
         id: item.id!,
         menu_order: index
       }));
       
       await menuService.updateMenuOrder(updatedOrder);
+      
+      // 2. UPDATE THE CATEGORY'S ITEMS ARRAY TO MATCH THE NEW ORDER
+      if (category.id) {
+        const categoryRef = doc(db, 'categories', category.id);
+        const newItemsOrder = items.map(item => item.id!);
+        
+        await updateDoc(categoryRef, {
+          items: newItemsOrder,
+          updatedAt: new Date()
+        });
+        
+        console.log(`Updated category ${category.id} items order:`, newItemsOrder);
+      }
+      
       setSaveStatus('success');
       
       // Check if onOrderSaved exists before calling it

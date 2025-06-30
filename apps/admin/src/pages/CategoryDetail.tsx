@@ -79,8 +79,8 @@ const CategoryDetail: React.FC = () => {
         
         setCategory(categoryData);
 
-        // Initialize menu_order for items if needed
-        await menuItemService.initializeMenuOrder(categoryId);
+        // 🔧 REMOVED: This was the problematic line that was resetting your custom order!
+        // await menuItemService.initializeMenuOrder(categoryId);
         
         // Fetch all menu items associated with this category
         const itemIds = categoryData.items || [];
@@ -160,6 +160,7 @@ const CategoryDetail: React.FC = () => {
       setLoading(false);
     }
   };
+
   // In the useEffect that tracks orderChanged
   useEffect(() => {
     if (orderChanged) {
@@ -179,16 +180,10 @@ const CategoryDetail: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
-        <Link 
-          to="/categories" 
-          className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          ← Back to Categories
-        </Link>
       </div>
     );
   }
@@ -196,54 +191,42 @@ const CategoryDetail: React.FC = () => {
   if (!category) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
           <p>Category not found</p>
         </div>
-        <Link 
-          to="/categories" 
-          className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          ← Back to Categories
-        </Link>
       </div>
     );
   }
 
-  // Filter active items for preview
-  const activeMenuItems = menuItems.filter(item => item.flags && item.flags.active);
+  // Filter out non-active items for preview
+  const activeMenuItems = menuItems.filter(item => item.flags?.active);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="flex flex-wrap items-center justify-between mb-6">
-        <div className="flex items-center mb-2 md:mb-0">
-          <Link 
-            to="/categories" 
-            className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-4"
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="flex items-center space-x-4">
+          <Link
+            to="/categories"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
           >
             ← Back to Categories
           </Link>
           
-          {/* Category Selector Dropdown */}
+          {/* Category Dropdown Navigation */}
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-between px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
             >
-              <span className="truncate">-- {category.cat_name} --</span>
-              <svg 
-                className={`w-4 h-4 ml-2 transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
+              ↑↓ {category.cat_name}
+              <span className="ml-2">▼</span>
             </button>
             
             {isDropdownOpen && (
-              <div className="absolute z-10 w-56 mt-1 bg-white rounded-md shadow-lg">
-                <ul className="py-1 overflow-auto max-h-60">
-                  {allCategories.map(cat => (
+              <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                <ul className="py-1 max-h-60 overflow-auto">
+                  {allCategories.map((cat) => (
                     <li key={cat.id}>
                       <button
                         onClick={() => handleCategorySelect(cat.id!)}
