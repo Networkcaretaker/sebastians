@@ -7,7 +7,7 @@ const Allergies: React.FC = () => {
   const availableAllergies = getAvailableAllergies();
   
   // Filter to get unique allergies (remove duplicates like 'soy'/'soya', 'dairy'/'milk')
-  const uniqueAllergies = availableAllergies.filter((allergy, index, array) => {
+  const uniqueAllergies = availableAllergies.filter((allergy, _index, array) => {
     // Keep the first occurrence and filter out common duplicates
     const duplicates: Record<string, string> = {
       'soy': 'soya',
@@ -44,7 +44,7 @@ const Allergies: React.FC = () => {
         </div>
 
         {/* Allergy Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {sortedAllergies.map((allergy) => {
             const iconUrl = getAllergyIcon(allergy);
             
