@@ -51,15 +51,17 @@ const Settings: React.FC = () => {
 
       {/* General Settings Tab */}
       {activeTab === 'general' && (
-        <div>
-          <p>General Settings</p>
+        <div className="bg-white shadow-sm rounded-lg border p-6">
+          <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">General Settings</h3>
+          <div className="py-4 border-b"></div>
         </div>
       )}
 
       {/* Account Settings Tab */}
       {activeTab === 'account' && (
-        <div>
-          <p>Account Settings</p>
+        <div className="bg-white shadow-sm rounded-lg border p-6">
+          <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">Account Settings</h3>
+          <div className="py-4 border-b"></div>
         </div>   
       )}
 
@@ -70,14 +72,20 @@ const Settings: React.FC = () => {
           <div className="py-4 border-b">
              <p className="text-lg font-semibold text-gray-900 pb-2">Google Translate API</p>
              <p>Characters: <span className="text-gray-500 italic">Max 500,000 per month</span></p>
+             <p>Requests: <span className="text-gray-500 italic">Max ? per day</span></p>
           </div>
           <div className="py-4 border-b">
              <p className="text-lg font-semibold text-gray-900 pb-2">Google Gemini API</p>
              <p>Tokens: <span className="text-gray-500 italic">Max 1,000,000 per month</span></p>
           </div>
-          <p>Firebase Storage:</p>
-          <p>Firestore Database:</p>
-          
+          <div className="py-4 border-b">
+             <p className="text-lg font-semibold text-gray-900 pb-2">Firestore Database</p>
+             <p>Usage: <span className="text-gray-500 italic">Max ? GB</span></p>
+          </div>
+          <div className="py-4 border-b">
+             <p className="text-lg font-semibold text-gray-900 pb-2">Firebase Storage</p>
+             <p>Usage: <span className="text-gray-500 italic">Max ? GB</span></p>
+          </div>      
         </div>   
       )}
 

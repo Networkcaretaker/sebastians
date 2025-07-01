@@ -33,7 +33,10 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
     price: item.price,
     item_description: item.item_description || '',
     flags: {
-      active: item.flags.active
+      active: item.flags.active,
+      vegetarian: item.flags.vegetarian,
+      vegan: item.flags.vegan,
+      spicy: item.flags.spicy
     },
     options: [...(item.options || [])],
     extras: [...(item.extras || [])],
@@ -55,6 +58,24 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
         setFormData(prev => ({
           ...prev,
           flags: { ...prev.flags, active: checked }
+        }));
+      }
+      else if (name === 'vegetarian') {
+        setFormData(prev => ({
+          ...prev,
+          flags: { ...prev.flags, vegetarian: checked }
+        }));
+      }
+      else if (name === 'vegan') {
+        setFormData(prev => ({
+          ...prev,
+          flags: { ...prev.flags, vegan: checked }
+        }));
+      }
+      else if (name === 'spicy') {
+        setFormData(prev => ({
+          ...prev,
+          flags: { ...prev.flags, spicy: checked }
         }));
       }
     } else if (name === 'price') {
@@ -159,6 +180,9 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
         flags: {
           ...item.flags, // Preserve other flags
           active: formData.flags.active,
+          vegetarian: formData.flags.vegetarian,
+          //vegan: formData.flags.vegan,
+          //spicy: formData.flags.spicy,
           options: formData.options.length > 0,
           extras: formData.extras.length > 0,
           addons: formData.addons.length > 0
@@ -193,7 +217,10 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
       price: item.price,
       item_description: item.item_description || '',
       flags: {
-        active: item.flags.active
+        active: item.flags.active,
+        vegetarian: item.flags.vegetarian,
+        vegan: item.flags.vegan,
+        spicy: item.flags.spicy
       },
       options: [...(item.options || [])],
       extras: [...(item.extras || [])],
@@ -321,6 +348,30 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
               <p className="text-gray-500 italic mt-1">None</p>
             )}
           </div>
+
+          {/* Flags */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Flags:</label>
+            {item.flags.vegetarian || item.flags.vegan || item.flags.spicy ? (
+              <div>
+                {item.flags.vegetarian 
+                  ? <div className='inline-block px-2 py-1 rounded text-xs bg-green-100 text-green-800'>Vegetarian</div> 
+                  : <div/>
+                }
+                {item.flags.vegan 
+                  ? <div className='inline-block px-2 py-1 rounded text-xs bg-green-100 text-green-800'>Vegan</div> 
+                  : <div/>
+                }
+                {item.flags.spicy 
+                  ? <div className='inline-block px-2 py-1 rounded text-xs bg-red-100 text-red-800'>Spicy</div> 
+                  : <div/>
+                }
+              </div>
+            ) : (
+              <p className="text-gray-500 italic mt-1">None</p>
+            )}
+          </div>
+          
         </div>
       </div>
     );
@@ -591,6 +642,71 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
             </div>
           </div>
         </div>
+
+        {/* Flags */}
+        <div>
+          <h4 className="text-md font-semibold">Flags</h4>
+          <div className="grid grid-cols-2 md:grid-cols-8 items-center">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Vegetarian</label>
+            <label className="flex items-center space-x-2">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  name="vegetarian"
+                  checked={formData.flags.vegetarian}
+                  onChange={handleInputChange}
+                  className="sr-only"
+                />
+                <div className={`w-12 h-8 py-1 rounded-full cursor-pointer transition-colors ${
+                  formData.flags.vegetarian ? 'bg-blue-500' : 'bg-gray-300'
+                }`}>
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform mt-1 ${
+                    formData.flags.vegetarian ? 'translate-x-7' : 'translate-x-1'
+                  }`}></div>
+                </div>
+              </div>
+            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Vegan</label>
+            <label className="flex items-center space-x-2">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  name="vegan"
+                  checked={formData.flags.vegan}
+                  onChange={handleInputChange}
+                  className="sr-only"
+                />
+                <div className={`w-12 h-8 py-1 rounded-full cursor-pointer transition-colors ${
+                  formData.flags.vegan ? 'bg-blue-500' : 'bg-gray-300'
+                }`}>
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform mt-1 ${
+                    formData.flags.vegan ? 'translate-x-7' : 'translate-x-1'
+                  }`}></div>
+                </div>
+              </div>
+            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Spicy</label>
+            <label className="flex items-center space-x-2">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  name="spicy"
+                  checked={formData.flags.spicy}
+                  onChange={handleInputChange}
+                  className="sr-only"
+                />
+                <div className={`w-12 h-8 py-1 rounded-full cursor-pointer transition-colors ${
+                  formData.flags.spicy ? 'bg-blue-500' : 'bg-gray-300'
+                }`}>
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform mt-1 ${
+                    formData.flags.spicy ? 'translate-x-7' : 'translate-x-1'
+                  }`}></div>
+                </div>
+              </div>
+            </label>            
+          </div>
+        </div>
+
       </div>
     </div>
   );

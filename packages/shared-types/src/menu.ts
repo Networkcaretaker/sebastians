@@ -19,6 +19,8 @@ export interface MenuItemAddon {
 export interface MenuItemFlags {
   active: boolean;
   vegetarian: boolean;
+  vegan: boolean;
+  spicy: boolean;
   extras: boolean;
   addons: boolean;
   options: boolean;
