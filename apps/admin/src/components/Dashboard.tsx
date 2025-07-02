@@ -71,6 +71,8 @@ const Dashboard: React.FC = () => {
         flags: {
           active: itemData.flags?.active ?? true,
           vegetarian: itemData.flags?.vegetarian ?? false,
+          vegan: itemData.flags?.vegan ?? false,
+          spicy: itemData.flags?.spicy ?? false,
           extras: Boolean(itemData.extras?.length),
           addons: Boolean(itemData.addons?.length),
           options: Boolean(itemData.options?.length)

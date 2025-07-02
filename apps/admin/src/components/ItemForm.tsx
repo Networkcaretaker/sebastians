@@ -49,6 +49,8 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
     flags: {
       active: initialData?.flags.active ?? true,
       vegetarian: initialData?.flags.vegetarian ?? false,
+      vegan: initialData?.flags?.vegan ?? false,
+      spicy: initialData?.flags?.spicy ?? false,
       extras: initialData?.flags.extras ?? false,
       addons: initialData?.flags.addons ?? false,
       options: initialData?.flags.options ?? false
