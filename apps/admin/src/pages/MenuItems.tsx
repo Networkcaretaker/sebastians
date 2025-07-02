@@ -22,6 +22,8 @@ const MenuItems: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const { currentUser } = useAuth();
+
+  const [isCloning, setIsCloning] = useState(false);
   
   // View options state
   const [viewType, setViewType] = useState<ViewType>(
@@ -84,6 +86,8 @@ const MenuItems: React.FC = () => {
         flags: {
           active: itemData.flags?.active ?? true,
           vegetarian: itemData.flags?.vegetarian ?? false,
+          vegan: itemData.flags?.vegan ?? false,
+          spicy: itemData.flags?.spicy ?? false,
           extras: Boolean(itemData.extras?.length),
           addons: Boolean(itemData.addons?.length),
           options: Boolean(itemData.options?.length)
@@ -136,6 +140,22 @@ const MenuItems: React.FC = () => {
       console.error('Error updating menu item:', error);
       setError(error instanceof Error ? error.message : 'Failed to update menu item');
     }
+  };
+
+  // NEW: Handle clone item
+  const handleCloneItem = (item: MenuItem) => {
+    console.log('Cloning item:', item);
+    
+    // Create a copy of the item with modified name and reset ID
+    const clonedItem: MenuItem = {
+      ...item,
+      id: undefined, // Remove ID so it creates a new item
+      item_name: `${item.item_name} (copy)`, // Add (copy) to the name
+    };
+    
+    setSelectedItem(clonedItem);
+    setIsCloning(true);
+    setIsFormVisible(true);
   };
 
   // Helper function to update a category's items array
@@ -223,6 +243,7 @@ const MenuItems: React.FC = () => {
           onClick={() => {
             setSelectedItem(null);
             setIsFormVisible(true);
+            setIsCloning(false);
           }}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
@@ -310,9 +331,11 @@ const MenuItems: React.FC = () => {
           onEdit={(item) => {
             setSelectedItem(item);
             setIsFormVisible(true);
+            setIsCloning(false);
           }}
           onDelete={handleDeleteItem}
           onToggleStatus={handleToggleStatus}
+          onClone={handleCloneItem}
         />
       ) : (
         <div className={`grid grid-cols-1 ${
@@ -326,6 +349,7 @@ const MenuItems: React.FC = () => {
               onEdit={(item) => {
                 setSelectedItem(item);
                 setIsFormVisible(true);
+                setIsCloning(false);
               }}
               onDelete={handleDeleteItem}
               onToggleStatus={handleToggleStatus}
@@ -347,17 +371,30 @@ const MenuItems: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">
-                {selectedItem ? 'Edit Menu Item' : 'Add New Menu Item'}
+                {/* NEW: Update title based on mode */}
+                {isCloning 
+                  ? 'Clone Menu Item' 
+                  : selectedItem 
+                    ? 'Edit Menu Item' 
+                    : 'Add New Menu Item'
+                }
               </h2>
               <button
-                onClick={() => setIsFormVisible(false)}
+                onClick={() => {
+                  setIsFormVisible(false);
+                  setIsCloning(false); // NEW: Reset cloning state
+                  setSelectedItem(null);
+                }}
                 className="text-gray-500 hover:text-gray-700"
               >
                 ✕
               </button>
             </div>
             <ItemForm
-              onSubmit={selectedItem ? handleUpdateItem : handleAddItem}
+              onSubmit={
+                /* NEW: Always use handleAddItem for cloning, even if selectedItem exists */
+                isCloning || !selectedItem ? handleAddItem : handleUpdateItem
+              }
               initialData={selectedItem || undefined}
             />
           </div>

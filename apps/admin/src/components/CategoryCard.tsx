@@ -95,7 +95,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             to={`/categories/${category.id}`}
             className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
           >
-            View Details
+            View
           </Link>
           <button
             onClick={() => onManageItems(category)}

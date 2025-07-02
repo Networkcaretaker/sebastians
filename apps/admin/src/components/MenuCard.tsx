@@ -91,7 +91,7 @@ const MenuCard: React.FC<MenuCardProps> = ({
             to={`/menus/${menu.id}`}
             className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 text-sm"
           >
-            View Details
+            View
           </Link>
           <button
             onClick={() => onManageCategories(menu)}

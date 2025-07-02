@@ -89,13 +89,13 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                       to={`/categories/${category.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
                     >
-                      View Details
+                      View
                     </Link>
                     <button
                       onClick={() => onManageItems(category)}
                       className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
                     >
-                      Manage Items
+                      Manage
                     </button>
                     <button
                       onClick={() => onEdit(category)}

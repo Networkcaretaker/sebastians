@@ -46,6 +46,8 @@ export const menuService = {
         flags: {
           active: Boolean(itemData.flags?.active),
           vegetarian: Boolean(itemData.flags?.vegetarian),
+          vegan: Boolean(itemData.flags?.vegan),
+          spicy: Boolean(itemData.flags?.spicy),
           extras: Boolean(itemData.extras?.length),
           addons: Boolean(itemData.addons?.length),
           options: Boolean(itemData.options?.length)

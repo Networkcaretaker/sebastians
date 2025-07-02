@@ -134,6 +134,8 @@ export interface GeneratedMenu {
       allergies: string[];
       flags: {
         vegetarian: boolean;
+        vegan: boolean;
+        spicy: boolean;
         active: boolean;
       };
       order: number;

@@ -12,6 +12,8 @@ interface MenuItem {
   isActive: boolean;
   // Fixed: allergies should be an array of strings, not array of arrays
   vegetarian?: boolean;
+  vegan?: boolean;
+  spicy?: boolean;
   allergies: string[];  // Changed from Array<[string]> to string[]
   options?: Array<{ option: string; price: number }>;
   extras?: Array<{ item: string; price: number }>;
@@ -89,6 +91,20 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           <div className="flex text-center mt-2">
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
               🌱 Vegetarian
+            </span>
+          </div>
+        )}
+        {item.vegan && (
+          <div className="flex text-center mt-2">
+            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+              🌱 Vegan
+            </span>
+          </div>
+        )}
+        {item.spicy && (
+          <div className="flex text-center mt-2">
+            <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
+              🌶️ Spicy
             </span>
           </div>
         )}

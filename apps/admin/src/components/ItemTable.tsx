@@ -9,6 +9,7 @@ interface ItemTableProps {
   onEdit: (item: MenuItem) => void;
   onDelete: (itemId: string) => void;
   onToggleStatus: (itemId: string, currentStatus: boolean) => void;
+  onClone: (item: MenuItem) => void;
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({ 
@@ -16,7 +17,8 @@ const ItemTable: React.FC<ItemTableProps> = ({
   categories, 
   onEdit, 
   onDelete, 
-  onToggleStatus 
+  onToggleStatus,
+  onClone
 }) => {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
@@ -87,13 +89,19 @@ const ItemTable: React.FC<ItemTableProps> = ({
                       to={`/menu-items/${item.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
                     >
-                      View Details
+                      View
                     </Link>
                     <button
                       onClick={() => onEdit(item)}
                       className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                       Edit
+                    </button>
+                    <button
+                      onClick={() => onClone(item)}
+                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                    >
+                      Clone
                     </button>
                     <button
                       onClick={() => onDelete(item.id!)}

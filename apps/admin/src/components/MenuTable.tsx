@@ -118,13 +118,13 @@ const MenuTable: React.FC<MenuTableProps> = ({
                       to={`/menus/${menu.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
                     >
-                      View Details
+                      View
                     </Link>
                     <button
                       onClick={() => onManageCategories(menu)}
                       className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
                     >
-                      Manage Categories
+                      Manage
                     </button>
                     <button
                       onClick={() => onEdit(menu)}
