@@ -1,6 +1,7 @@
 // src/components/ItemCard.tsx
 import React from 'react';
 import { MenuItem, MenuCategory } from '../types/menu.types';
+import { Link } from 'react-router-dom';
 
 interface ItemCardProps {
   item: MenuItem;
@@ -8,6 +9,7 @@ interface ItemCardProps {
   onEdit: (item: MenuItem) => void;
   onDelete: (itemId: string) => void;
   onToggleStatus: (itemId: string, currentStatus: boolean) => void;
+  onClone: (item: MenuItem) => void;
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ 
@@ -15,7 +17,8 @@ const ItemCard: React.FC<ItemCardProps> = ({
   categories, 
   onEdit, 
   onDelete, 
-  onToggleStatus 
+  onToggleStatus,
+  onClone 
 }) => {
   // Find the category for this item
   const itemCategory = categories.find(cat => cat.id === item.category);
@@ -95,11 +98,23 @@ const ItemCard: React.FC<ItemCardProps> = ({
         </div>
 
         <div className="flex justify-end space-x-2 pt-4">
+          <Link 
+            to={`/menu-items/${item.id}`}
+            className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
+          >
+            View
+          </Link>
           <button
             onClick={() => onEdit(item)}
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Edit
+          </button>
+          <button
+            onClick={() => onClone(item)}
+            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Clone
           </button>
           <button
             onClick={() => onDelete(item.id!)}

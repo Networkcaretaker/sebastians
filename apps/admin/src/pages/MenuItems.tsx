@@ -353,6 +353,7 @@ const MenuItems: React.FC = () => {
               }}
               onDelete={handleDeleteItem}
               onToggleStatus={handleToggleStatus}
+              onClone={handleCloneItem}
             />
           ))}
         </div>
