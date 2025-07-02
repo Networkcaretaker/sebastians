@@ -5,16 +5,24 @@ import menuItemService from '../services/menuItemService';
 
 // Predefined allergies list
 const PREDEFINED_ALLERGIES: string[] = [
-  'Gluten',
+  'Celery',
+  'Corn',
   'Dairy',
-  'Nuts',
   'Eggs',
-  'Soy',
-  'Shellfish',
   'Fish',
-  'Wheat',
+  'Gluten',
+  'Lupin',
+  'Milk',
+  'Molluscs',
+  'Mustard',
+  'Nuts',
   'Peanuts',
-  'Sesame'
+  'Propolis',
+  'Sesame',
+  'Shellfish',
+  'Soya',
+  'Sulphites',
+  'Wheat'
 ];
 
 interface ItemViewProps {

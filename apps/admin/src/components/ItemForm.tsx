@@ -25,16 +25,24 @@ const PREDEFINED_ADDONS: string[] = [
 ];
 
 const PREDEFINED_ALLERGIES: string[] = [
-  'Gluten',
+  'Celery',
+  'Corn',
   'Dairy',
-  'Nuts',
   'Eggs',
-  'Soy',
-  'Shellfish',
   'Fish',
-  'Wheat',
+  'Gluten',
+  'Lupin',
+  'Milk',
+  'Molluscs',
+  'Mustard',
+  'Nuts',
   'Peanuts',
-  'Sesame'
+  'Propolis',
+  'Sesame',
+  'Shellfish',
+  'Soya',
+  'Sulphites',
+  'Wheat'
 ];
 
 const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
