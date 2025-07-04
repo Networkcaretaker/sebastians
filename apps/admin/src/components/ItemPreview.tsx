@@ -1,98 +1,215 @@
-// src/components/ItemView.tsx
-import React from 'react';
-import { MenuItem } from '../types/menu.types';
+// apps/admin/src/components/ItemPreview.tsx
+import React, { useState, useEffect } from 'react';
+import { MenuItem, MenuItemTranslation } from '../types/menu.types';
+import { translationService } from '../services/translationService';
+
+// Define supported languages
+const SUPPORTED_LANGUAGES = [
+  { code: 'es', name: 'Spanish', flag: '🇪🇸' },
+  { code: 'de', name: 'German', flag: '🇩🇪' },
+  { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
+  { code: 'fr', name: 'French', flag: '🇫🇷' },
+  { code: 'it', name: 'Italian', flag: '🇮🇹' },
+  { code: 'pt', name: 'Portuguese', flag: '🇵🇹' }
+];
 
 interface ItemViewProps {
   item: MenuItem;
 }
 
 const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
-  return (
-    <div>
-      <div className="mb-2 mt-2">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex gap-2">
-            <h3 className="text-xl font-bold">{item.item_name}</h3>
-            <div className="flex gap-1">
-              {item.flags.vegetarian ? (
-                <div className="flex gap-1 mt-1">
-                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                    Vegetarian
-                  </span>
-                </div>
-              ):''}
-              {item.allergies && item.allergies.length > 0 ? (
-                <div className="flex gap-1 mt-1">
-                  {item.allergies.map((allergy, idx) => (
-                    <span key={idx} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-                      {allergy}
-                    </span>
-                  ))}
-                </div>
-              ):''}
-            </div>
-          </div>
-          {item.flags.options ? (
-            <div className="text-green-600 text-lg font-bold"><span className=" text-sm font-medium">from </span>{item.price.toFixed(2)}€</div>
-            ):
-            <div className="text-green-600 text-lg font-bold">{item.price.toFixed(2)}€</div>
-          }
-        </div>
-      </div>
-      
-      <div className="space-y-2">
-        <div className="mt-2">
-          {/*<label className="block text-sm font-medium text-gray-700">Description:</label>*/}
-          <p className="text-gray-600">{item.item_description || ''}</p>
-        </div>
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  const [translations, setTranslations] = useState<Record<string, MenuItemTranslation>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-        {/* Add-ons */}
-        <div>
-          {/* <label className="block text-sm font-medium text-gray-700">Add-ons:</label>*/}
-          {item.addons && item.addons.length > 0 ? (
+  // Load translations when component mounts
+  useEffect(() => {
+    loadTranslations();
+  }, [item.id]);
+
+  const loadTranslations = async () => {
+    if (!item.id) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await translationService.getItemTranslations(item.id);
+      if (response.success && response.translations) {
+        setTranslations(response.translations);
+      } else {
+        setTranslations({});
+      }
+    } catch (error) {
+      console.error('Error loading translations:', error);
+      setTranslations({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get available languages that have translations
+  const availableLanguages = SUPPORTED_LANGUAGES.filter(lang => 
+    translations[lang.code]
+  );
+
+  // Render individual item preview
+  const renderItemPreview = (
+    itemData: MenuItem, 
+    translation?: MenuItemTranslation, 
+    isTranslated: boolean = false
+  ) => {
+    // Use translation data if available, otherwise use original
+    const displayName = translation?.item_name || itemData.item_name;
+    const displayDescription = translation?.item_description || itemData.item_description;
+    const displayOptions = translation?.translated_options || itemData.options?.map(opt => opt.option) || [];
+    const displayExtras = translation?.translated_extras || itemData.extras?.map(extra => extra.item) || [];
+    const displayAddons = translation?.translated_addons || itemData.addons?.map(addon => addon.item) || [];
+
+    return (
+      <div className={`mb-6 ${isTranslated ? 'pt-6' : ''}`}>
+        {isTranslated && (
+          <div className="mb-4">
+            <h4 className="text-sm font-medium text-blue-600 mb-2">
+              {SUPPORTED_LANGUAGES.find(lang => lang.code === selectedLanguage)?.flag} {' '}
+              {SUPPORTED_LANGUAGES.find(lang => lang.code === selectedLanguage)?.name} Translation
+            </h4>
+          </div>
+        )}
+        
+        <div className="mb-2 mt-2">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex gap-2">
+              <h3 className="text-xl font-bold">{displayName}</h3>
+              <div className="flex gap-1">
+                {itemData.flags.vegetarian && (
+                  <div className="flex gap-1 mt-1">
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      Vegetarian
+                    </span>
+                  </div>
+                )}
+                {itemData.allergies && itemData.allergies.length > 0 && (
+                  <div className="flex gap-1 mt-1">
+                    {itemData.allergies.map((allergy, idx) => (
+                      <span key={idx} className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
+                        {allergy}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            {itemData.flags.options ? (
+              <div className="text-green-600 text-lg font-bold">
+                <span className="text-sm font-medium">from </span>
+                {itemData.price.toFixed(2)}€
+              </div>
+            ) : (
+              <div className="text-green-600 text-lg font-bold">
+                {itemData.price.toFixed(2)}€
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <div className="mt-2">
+            <p className="text-gray-600">{displayDescription || ''}</p>
+          </div>
+
+          {/* Add-ons */}
+          {displayAddons.length > 0 && (
             <div className="flex flex-wrap gap-1 my-2">
-              {item.addons.map((addon, idx) => (
+              {displayAddons.map((addon, idx) => (
                 <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                  {addon.item}
+                  {addon}
                 </span>
               ))}
             </div>
-          ):''}
-        </div>
-        
-        {/* Options */}
-        <div>
-          {/*<label className="block text-sm font-medium text-gray-700">Options:</label>*/}
-          {item.options && item.options.length > 0 ? (
+          )}
+          
+          {/* Options */}
+          {itemData.options && itemData.options.length > 0 && (
             <div className="">
-              {item.options.map((option, idx) => (
+              {itemData.options.map((option, idx) => (
                 <div key={idx} className="flex justify-between">
-                  <span className="text-base font-base px-4">{option.option}</span>
-                  <span className="text-green-600 text-base font-medium">{option.price.toFixed(2)}€</span>
+                  <span className="text-base font-base px-4">
+                    {displayOptions[idx] || option.option}
+                  </span>
+                  <span className="text-green-600 text-base font-medium">
+                    {option.price.toFixed(2)}€
+                  </span>
                 </div>
               ))}
             </div>
-          ):''}
-        </div>
-        
-        {/* Extras */}
-        <div>
-          {/* <label className="block text-sm font-medium text-gray-700">Extras:</label>*/}
-          {item.extras && item.extras.length > 0 ? (
+          )}
+          
+          {/* Extras */}
+          {itemData.extras && itemData.extras.length > 0 && (
             <div className="mt-1 space-y-1">
               <label className="text-base font-medium text-gray-700">Extras:</label>
-              {item.extras.map((extra, idx) => (
+              {itemData.extras.map((extra, idx) => (
                 <div key={idx} className="flex justify-between">
-                  <span className="text-base font-base px-4">{extra.item}</span>
-                  <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
+                  <span className="text-base font-base px-4">
+                    {displayExtras[idx] || extra.item}
+                  </span>
+                  <span className="text-green-600 font-medium">
+                    {extra.price.toFixed(2)}€
+                  </span>
                 </div>
               ))}
             </div>
-          ):''}
+          )}
         </div>
-        
-        
       </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">Loading translations...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-b border-gray-300 mb-5">
+      {/* Original Item Preview */}
+      <div>
+        <h4 className="text-sm font-medium text-gray-700 mb-2">
+          🇬🇧 Original (English)
+        </h4>
+        {renderItemPreview(item, undefined, false)}
+      </div>
+      {/* Language Selection Dropdown */}
+      {availableLanguages.length > 0 && (
+        <div className="mb-2 pb-2 ">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium text-gray-700">
+              Show Translation:
+            </h4>
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">None (Original only)</option>
+              {availableLanguages.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.flag} {language.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* Translated Item Preview */}
+      {selectedLanguage && translations[selectedLanguage] && (
+        <div>
+          {renderItemPreview(item, translations[selectedLanguage], true)}
+        </div>
+      )}
     </div>
   );
 };

@@ -13,8 +13,8 @@ import Menus from './pages/Menus';
 import Website from './pages/Website';
 import MenuDetail from './pages/MenuDetail';
 import Settings from './pages/Settings';
-// import TestExport from './pages/TestExport';
-// import TestImport from './pages/TestImport';
+import TestExport from './pages/TestExport';
+import TestImport from './pages/TestImport';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
@@ -44,8 +44,8 @@ function AppRoutes() {
       <Route path="/menus/:menuId" element={<ProtectedRoute element={<MenuDetail />} />} />
       <Route path="/website" element={<ProtectedRoute element={<Website />} />} />
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
-      {/*<Route path="/test-export" element={<ProtectedRoute element={<TestExport />} />} />*/}
-      {/*<Route path="/test-import" element={<ProtectedRoute element={<TestImport />} />} />*/}
+      <Route path="/test-export" element={<ProtectedRoute element={<TestExport />} />} />
+      <Route path="/test-import" element={<ProtectedRoute element={<TestImport />} />} />
     </Routes>
   );
 }

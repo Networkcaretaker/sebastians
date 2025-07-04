@@ -22,6 +22,7 @@ const MenuItems: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const { currentUser } = useAuth();
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   const [isCloning, setIsCloning] = useState(false);
   
@@ -209,21 +210,28 @@ const MenuItems: React.FC = () => {
       }
     }
   };
-
-  // Get unique categories for the filter
-  const uniqueCategories = ['all', ...new Set(menuItems.map(item => {
+  
+  // Get unique categories for the filter - INCLUDING uncategorized (sorted alphabetically)
+  const uniqueCategories = ['all', ...Array.from(new Set(menuItems.map(item => {
     // Find the category name based on ID
     const category = categories.find(cat => cat.id === item.category);
-    return category ? category.cat_name : item.category;
-  }).filter(Boolean))];
-  
-  // Filter items by selected category
+    return category ? category.cat_name : 'Uncategorized';
+  }).filter(Boolean))).sort()];
+
+  // Filter items by selected category - INCLUDING uncategorized
   const filteredItems = currentCategory === 'all'
     ? menuItems
     : menuItems.filter(item => {
         const category = categories.find(cat => cat.id === item.category);
-        return category ? category.cat_name === currentCategory : item.category === currentCategory;
+        const categoryName = category ? category.cat_name : 'Uncategorized';
+        return categoryName === currentCategory;
       });
+  
+  // Get display name for current category
+  const getCurrentCategoryDisplay = () => {
+    if (currentCategory === 'all') return 'All Categories';
+    return currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
+  };
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -253,21 +261,57 @@ const MenuItems: React.FC = () => {
 
       {/* View Controls */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        {/* Category Filter */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {uniqueCategories.map(category => (
-            <button
-              key={category}
-              onClick={() => setCurrentCategory(category)}
-              className={`text-sm px-2 py-1 rounded-full whitespace-nowrap ${
-                currentCategory === category
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700'
+        {/* Category Filter - Dropdown Version */}
+        <div className="relative">
+          <button
+            onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+            className="flex items-center justify-between w-full md:w-64 px-4 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <span className="text-sm font-medium text-gray-700">
+              {getCurrentCategoryDisplay()}
+            </span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isCategoryDropdownOpen ? 'rotate-180' : ''
               }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
-          ))}
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Dropdown Menu */}
+          {isCategoryDropdownOpen && (
+            <div className="absolute z-10 w-full md:w-64 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              {uniqueCategories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => {
+                    setCurrentCategory(category);
+                    setIsCategoryDropdownOpen(false);
+                  }}
+                  className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
+                    currentCategory === category
+                      ? 'bg-blue-50 text-blue-600 font-medium'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+                  {category !== 'all' && (
+                    <span className="ml-2 text-xs text-gray-500">
+                      ({menuItems.filter(item => {
+                        const cat = categories.find(cat => cat.id === item.category);
+                        const catName = cat ? cat.cat_name : 'Uncategorized';
+                        return catName === category;
+                      }).length})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* View Options */}
