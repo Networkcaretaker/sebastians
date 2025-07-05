@@ -2,13 +2,16 @@
 import { db } from '../config/firebase';
 import { 
   collection, 
-  addDoc, 
   getDocs, 
+  query, 
+  orderBy, 
+  limit, 
+  where, 
   doc, 
+  getDoc, 
+  addDoc, 
   updateDoc, 
-  deleteDoc,
-  query,
-  where,
+  deleteDoc, 
   writeBatch
 } from 'firebase/firestore';
 
@@ -144,7 +147,11 @@ export const menuService = {
   getAllMenuItems: async (): Promise<MenuItem[]> => {
     try {
       console.log('Fetching all menu items');
-      const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
+      const q = query(
+        collection(db, COLLECTION_NAME),
+        orderBy('updatedAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
       
       const items = querySnapshot.docs.map(doc => {
         const data = doc.data();

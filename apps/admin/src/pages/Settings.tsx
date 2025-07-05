@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'general' | 'account' | 'usage'>('general');
@@ -53,7 +54,21 @@ const Settings: React.FC = () => {
       {activeTab === 'general' && (
         <div className="bg-white shadow-sm rounded-lg border p-6">
           <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">General Settings</h3>
-          <div className="py-4 border-b"></div>
+          <div className="py-4 border-b">
+            <p className="text-lg font-semibold text-gray-900 pb-2">Import/Export Data</p>
+            <Link 
+              to={`/test-import`}
+              className="px-3 py-1 m-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
+            >
+              Import
+            </Link>
+            <Link 
+              to={`/test-export`}
+              className="px-3 py-1 m-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
+            >
+              Export
+            </Link>
+          </div>
         </div>
       )}
 
