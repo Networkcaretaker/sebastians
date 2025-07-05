@@ -9,16 +9,89 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
 import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
+// Interface for localStorage preferences
+interface MenuItemsPreferences {
+  currentCategory: string;
+  viewType: ViewType;
+  columnCount: ColumnCount;
+}
+
+// localStorage key
+const PREFERENCES_KEY = 'menuItemsPreferences';
+
+// SMART DEFAULTS - based on device type
+const getDefaultPreferences = (): MenuItemsPreferences => ({
+  currentCategory: 'all',
+  viewType: window.innerWidth < 768 ? 'cards' : 'table',
+  columnCount: window.innerWidth < 768 ? 1 : 3
+});
+
+// LOAD PREFERENCES FROM LOCALSTORAGE
+const loadPreferences = (): MenuItemsPreferences => {
+  try {
+    const saved = localStorage.getItem(PREFERENCES_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved) as MenuItemsPreferences;
+      console.log('Loaded preferences from localStorage:', parsed);
+      return parsed;
+    }
+  } catch (error) {
+    console.error('Error loading preferences:', error);
+  }
+  
+  const defaults = getDefaultPreferences();
+  console.log('Using default preferences:', defaults);
+  return defaults;
+};
+
+// SAVE PREFERENCES TO LOCALSTORAGE
+const savePreferences = (prefs: MenuItemsPreferences) => {
+  try {
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
+    console.log('Saved preferences to localStorage:', prefs);
+  } catch (error) {
+    console.error('Error saving preferences:', error);
+  }
+};
+
+// VALIDATE CATEGORY AGAINST AVAILABLE CATEGORIES
+const validateAndSetCategory = (categoryToSet: string, availableCategories: MenuCategory[], menuItems: MenuItem[], setCurrentCategory: (cat: string) => void, viewType: ViewType, columnCount: ColumnCount) => {
+  // Get unique categories (same logic as before)
+  const uniqueCategories = ['all', ...new Set(menuItems.map(item => {
+    const category = availableCategories.find(cat => cat.id === item.category);
+    return category ? category.cat_name : item.category;
+  }).filter(Boolean))];
+
+  // Check if the saved category still exists
+  if (uniqueCategories.includes(categoryToSet)) {
+    setCurrentCategory(categoryToSet);
+  } else {
+    console.log(`Category "${categoryToSet}" no longer exists, falling back to "all"`);
+    setCurrentCategory('all');
+    // Update preferences to reflect the fallback
+    const newPrefs: MenuItemsPreferences = {
+      currentCategory: 'all',
+      viewType,
+      columnCount
+    };
+    savePreferences(newPrefs);
+  }
+};
+
 // View options type
 type ViewType = 'table' | 'cards';
 type ColumnCount = 1 | 2 | 3;
 
 const MenuItems: React.FC = () => {
+  const initialPrefs = loadPreferences();
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [currentCategory, setCurrentCategory] = useState<string>('all');
+  //const [currentCategory, setCurrentCategory] = useState<string>('all');
+  const [currentCategory, setCurrentCategory] = useState<string>(initialPrefs.currentCategory);
+
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const { currentUser } = useAuth();
@@ -27,12 +100,11 @@ const MenuItems: React.FC = () => {
   const [isCloning, setIsCloning] = useState(false);
   
   // View options state
-  const [viewType, setViewType] = useState<ViewType>(
-    window.innerWidth < 768 ? 'cards' : 'table'
-  );
-  const [columnCount, setColumnCount] = useState<ColumnCount>(
-    window.innerWidth < 768 ? 1 : 3
-  );
+  const [viewType, setViewType] = useState<ViewType>(initialPrefs.viewType);
+  const [columnCount, setColumnCount] = useState<ColumnCount>(initialPrefs.columnCount);
+
+  //const [viewType, setViewType] = useState<ViewType>(window.innerWidth < 768 ? 'cards' : 'table');
+  //const [columnCount, setColumnCount] = useState<ColumnCount>(window.innerWidth < 768 ? 1 : 3);
 
   useEffect(() => {
     if (currentUser) {
@@ -45,6 +117,23 @@ const MenuItems: React.FC = () => {
       setError('You must be logged in to view menu items');
     }
   }, [currentUser]);
+
+  // SAVE PREFERENCES WHEN STATE CHANGES
+  useEffect(() => {
+    const preferences: MenuItemsPreferences = {
+      currentCategory,
+      viewType,
+      columnCount
+    };
+    savePreferences(preferences);
+  }, [currentCategory, viewType, columnCount]);
+
+  // VALIDATE CATEGORY WHEN CATEGORIES ARE LOADED
+  useEffect(() => {
+    if (categories.length > 0 && menuItems.length > 0) {
+      validateAndSetCategory(currentCategory, categories, menuItems, setCurrentCategory, viewType, columnCount);
+    }
+  }, [categories, menuItems]);
 
   const fetchMenuItems = async () => {
     setError(null);

@@ -32,7 +32,7 @@ const CategoryPreview: React.FC<CategoryPreviewProps> = ({ category, menuItems }
           {sortedMenuItems.length > 0 ? (
             <div className="">
               {sortedMenuItems.map(item => (
-                <ItemPreview key={item.id} item={item} />
+                <ItemPreview key={item.id} item={item} showTranslationHeader={false} />
               ))}
             </div>
           ) : (

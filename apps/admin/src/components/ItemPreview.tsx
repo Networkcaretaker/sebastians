@@ -15,9 +15,10 @@ const SUPPORTED_LANGUAGES = [
 
 interface ItemViewProps {
   item: MenuItem;
+  showTranslationHeader?: boolean;
 }
 
-const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
+const ItemPreview: React.FC<ItemViewProps> = ({ item, showTranslationHeader = true }) => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [translations, setTranslations] = useState<Record<string, MenuItemTranslation>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -176,31 +177,38 @@ const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
     <div className="border-b border-gray-300 mb-5">
       {/* Original Item Preview */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">
-          🇬🇧 Original (English)
-        </h4>
+        {/* CONDITIONALLY RENDER THE TRANSLATION HEADER */}
+        {showTranslationHeader && (
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            🇬🇧 Original (English)
+          </h4>
+        )}
         {renderItemPreview(item, undefined, false)}
       </div>
-      {/* Language Selection Dropdown */}
-      {availableLanguages.length > 0 && (
-        <div className="mb-2 pb-2 ">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-700">
-              Show Translation:
-            </h4>
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">None (Original only)</option>
-              {availableLanguages.map((language) => (
-                <option key={language.code} value={language.code}>
-                  {language.flag} {language.name}
-                </option>
-              ))}
-            </select>
+      {showTranslationHeader && (
+        <div>
+        {/* Language Selection Dropdown */}
+        {availableLanguages.length > 0 && (
+          <div className="mb-2 pb-2 ">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-gray-700">
+                Show Translation:
+              </h4>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">None (Original only)</option>
+                {availableLanguages.map((language) => (
+                  <option key={language.code} value={language.code}>
+                    {language.flag} {language.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+        )}
         </div>
       )}
 
