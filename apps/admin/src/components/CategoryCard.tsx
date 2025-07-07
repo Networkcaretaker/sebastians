@@ -24,8 +24,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   );
   
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-4">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+      <div className="p-4 flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-xl font-semibold">{category.cat_name}</h3>
         </div>
@@ -33,15 +33,31 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         {category.header && (
           <div className="text-sm text-gray-600 italic mb-2">{category.header}</div>
         )}
-        
-        <p className="text-gray-600 mb-4">{category.cat_description}</p>
-        
-        {category.footer && (
-          <div className="text-sm text-gray-600 italic mb-2">{category.footer}</div>
+
+        {category.cat_description && (
+          <p className="text-gray-600 mb-4">{category.cat_description}</p>
         )}
         
+
+        
         {/* Category Details */}
-        <div className="space-y-4">
+        <div className="space-y-2 flex-grow">
+          {/* Display related menu items */}
+          {categoryItems.length > 0 && (
+            <div className="my-1">
+              <p className="font-medium">Menu Items:</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {categoryItems.map((item) => (
+                  <span
+                    key={item.id}
+                    className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded"
+                  >
+                    {item.item_name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           {category.extras.length > 0 && (
             <div>
               <p className="font-medium">Extras:</p>
@@ -71,26 +87,12 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               </div>
             </div>
           )}
-          
-          {/* Display related menu items */}
-          {categoryItems.length > 0 && (
-            <div className="mt-3">
-              <p className="font-medium">Menu Items:</p>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {categoryItems.map((item) => (
-                  <span
-                    key={item.id}
-                    className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded"
-                  >
-                    {item.item_name}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {category.footer && (
+            <div className="text-sm text-gray-600 italic mb-2">{category.footer}</div>
           )}
         </div>
 
-        <div className="mt-4 flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2 pt-4">
           <Link 
             to={`/categories/${category.id}`}
             className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"

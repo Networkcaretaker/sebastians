@@ -344,7 +344,7 @@ const MenuItems: React.FC = () => {
           }}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
-          Add New Item
+          Create New Item
         </button>
       </div>
 
@@ -405,30 +405,7 @@ const MenuItems: React.FC = () => {
 
         {/* View Options */}
         <div className="flex items-center space-x-4">
-          <div className="flex rounded-md shadow-sm" role="group">
-            <button
-              onClick={() => setViewType('table')}
-              className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
-                viewType === 'table'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Table View
-            </button>
-            <button
-              onClick={() => setViewType('cards')}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
-                viewType === 'cards'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Card View
-            </button>
-          </div>
-          
-          {/* Column Count (only show when card view is active and not on mobile) */}
+                    {/* Column Count (only show when card view is active and not on mobile) */}
           {viewType === 'cards' && (
             <div className="hidden md:flex rounded-md shadow-sm" role="group">
               <button
@@ -439,7 +416,7 @@ const MenuItems: React.FC = () => {
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                2 Columns
+                2 Col
               </button>
               <button
                 onClick={() => setColumnCount(3)}
@@ -449,10 +426,32 @@ const MenuItems: React.FC = () => {
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                3 Columns
+                3 Col
               </button>
             </div>
           )}
+          <div className="flex rounded-md shadow-sm" role="group">
+            <button
+              onClick={() => setViewType('table')}
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
+                viewType === 'table'
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Table
+            </button>
+            <button
+              onClick={() => setViewType('cards')}
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+                viewType === 'cards'
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Cards
+            </button>
+          </div>
         </div>
       </div>
 

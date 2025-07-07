@@ -26,7 +26,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
+              Item
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Category
@@ -37,7 +37,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
           </tr>
@@ -83,8 +83,8 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     {item.flags.active ? 'Active' : 'Inactive'}
                   </button>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex space-x-2">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-2 justify-center">
                     <Link 
                       to={`/menu-items/${item.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"

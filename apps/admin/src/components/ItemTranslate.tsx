@@ -283,7 +283,7 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 pb-4 columns-2">
+      <div className="border-b border-gray-200 pb-4 columns-1 md:columns-2">
         <h3 className="text-lg font-semibold text-gray-900">Item Translations</h3>
         <p className="text-sm text-gray-600 mt-1">
           Translate "{item.item_name}" into different languages

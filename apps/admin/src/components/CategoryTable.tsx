@@ -24,10 +24,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Description
+              Catagory
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Items
@@ -35,7 +32,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Extras/Add-ons
             </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
           </tr>
@@ -50,10 +47,20 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             return (
               <tr key={category.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{category.cat_name}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500 truncate max-w-xs">{category.cat_description}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    <Link 
+                      to={`/categories/${category.id}`}
+                    >
+                      {category.cat_name}
+                    </Link>
+                  </div>
+                  <div className="text-sm text-gray-500 truncate max-w-xs">
+                    <Link 
+                      to={`/categories/${category.id}`}
+                    >
+                      {category.cat_description}
+                    </Link>
+                  </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1">
@@ -84,7 +91,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex space-x-2">
+                  <div className="flex justify-center space-x-2">
                     <Link 
                       to={`/categories/${category.id}`}
                       className="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200"
