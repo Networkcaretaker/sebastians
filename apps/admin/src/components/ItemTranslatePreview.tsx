@@ -15,29 +15,65 @@ const SUPPORTED_LANGUAGES = [
 
 interface ItemViewProps {
   item: MenuItem;
+  showTranslationHeader?: boolean;
 }
 
-const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
+const ItemPreview: React.FC<ItemViewProps> = ({ item, showTranslationHeader = true }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+  const [translations, setTranslations] = useState<Record<string, MenuItemTranslation>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Load translations when component mounts
+  useEffect(() => {
+    loadTranslations();
+  }, [item.id]);
+
+  const loadTranslations = async () => {
+    if (!item.id) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await translationService.getItemTranslations(item.id);
+      if (response.success && response.translations) {
+        setTranslations(response.translations);
+      } else {
+        setTranslations({});
+      }
+    } catch (error) {
+      console.error('Error loading translations:', error);
+      setTranslations({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get available languages that have translations
+  const availableLanguages = SUPPORTED_LANGUAGES.filter(lang => 
+    translations[lang.code]
+  );
+
+  // Render individual item preview
   const renderItemPreview = (
-    itemData: MenuItem
+    itemData: MenuItem, 
+    translation?: MenuItemTranslation, 
+    isTranslated: boolean = false
   ) => {
     // Use translation data if available, otherwise use original
-    const displayName = itemData.item_name;
-    const displayDescription = itemData.item_description;
-    const displayOptions = itemData.options?.map(opt => opt.option) || [];
-    const displayExtras = itemData.extras?.map(extra => extra.item) || [];
-    const displayAddons = itemData.addons?.map(addon => addon.item) || [];
+    const displayName = translation?.item_name || itemData.item_name;
+    const displayDescription = translation?.item_description || itemData.item_description;
+    const displayOptions = translation?.translated_options || itemData.options?.map(opt => opt.option) || [];
+    const displayExtras = translation?.translated_extras || itemData.extras?.map(extra => extra.item) || [];
+    const displayAddons = translation?.translated_addons || itemData.addons?.map(addon => addon.item) || [];
 
     return (
-      <div>  
+      <div>
         <div className="mb-2">
           <div className="flex justify-between items-center mb-2">
             <div className="flex gap-2">
               <h3 className="text-xl font-bold">{displayName}</h3>
               <div className="flex gap-1">
                 {itemData.flags.vegetarian && (
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 mt-1">
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                       Vegetarian
                     </span>
@@ -120,9 +156,50 @@ const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">Loading translations...</div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {renderItemPreview(item)}
+    <div className="border-b border-gray-300 mb-5">
+      {showTranslationHeader && (
+        <div>
+        {/* Language Selection Dropdown */}
+        {availableLanguages.length > 0 && (
+          <div className="mb-2 pb-2 ">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-blue-600 m-2">
+                {SUPPORTED_LANGUAGES.find(lang => lang.code === selectedLanguage)?.flag} {' '}
+                {SUPPORTED_LANGUAGES.find(lang => lang.code === selectedLanguage)?.name} Translation
+              </h4>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">None</option>
+                {availableLanguages.map((language) => (
+                  <option key={language.code} value={language.code}>
+                    {language.flag} {language.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+        </div>
+      )}
+
+      {/* Translated Item Preview */}
+      {selectedLanguage && translations[selectedLanguage] && (
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          {renderItemPreview(item, translations[selectedLanguage], true)}
+        </div>
+      )}
     </div>
   );
 };

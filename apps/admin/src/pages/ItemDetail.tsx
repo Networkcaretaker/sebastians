@@ -6,6 +6,7 @@ import ItemPreview from '../components/ItemPreview';
 import ItemViewFull from '../components/ItemViewFull';
 import menuItemService from '../services/menuItemService';
 import ItemTranslate from '../components/ItemTranslate';
+import ItemTranslatePreview from '../components/ItemTranslatePreview';
 
 type ViewType = 'preview' | 'edit' | 'translate';
 
@@ -146,6 +147,13 @@ const ItemDetail: React.FC = () => {
           </button>
         </div>
       </div>
+      <div>
+        {viewType === 'preview' ? (
+          <h4 className="text-sm font-medium text-gray-700 m-2">
+            🇬🇧 Original (English)
+          </h4>
+        ) : ""}
+      </div>
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         {/* Render the appropriate view component based on viewType */}
         {viewType === 'preview' ? (
@@ -158,6 +166,11 @@ const ItemDetail: React.FC = () => {
           <ItemViewFull item={item} onItemUpdated={handleItemUpdated} />
         )}
       </div>
+
+      {viewType === 'preview' ? (
+          <ItemTranslatePreview item={item} />
+        ) : ""}
+
     </div>
   );
 };

@@ -281,7 +281,7 @@ const CategoryTranslate: React.FC<CategoryTranslateProps> = ({ category, onTrans
   const hasExistingTranslation = !!translations[selectedLanguage];
 
   return (
-    <div className="space-y-6">
+    <div className="bg-white rounded-lg shadow-md p-4 mb-8 space-y-6">
       {/* Header */}
       <div className="border-b border-gray-200 pb-4 columns-1 md:columns-2">
         <h3 className="text-lg font-semibold text-gray-900">Category Translations</h3>
@@ -332,7 +332,6 @@ const CategoryTranslate: React.FC<CategoryTranslateProps> = ({ category, onTrans
         {/* Original Content (Left Side) */}
         <div className="space-y-4">
           <h4 className="text-md font-medium text-gray-900">Original (English)</h4>
-          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
             <div className="px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700">
