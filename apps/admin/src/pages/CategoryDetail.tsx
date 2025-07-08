@@ -11,7 +11,7 @@ import CategorySort from '../components/CategorySort';
 import menuItemService from '../services/menuItemService';
 
 // View options type
-type ViewType = 'preview' | 'edit' | 'order';
+type ViewType = 'preview' | 'edit' | 'order' | 'translate';
 
 const CategoryDetail: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -214,7 +214,7 @@ const CategoryDetail: React.FC = () => {
           </Link>
           
           {/* Category Dropdown Navigation */}
-          <div className="relative">
+          {/*<div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
@@ -244,6 +244,7 @@ const CategoryDetail: React.FC = () => {
               </div>
             )}
           </div>
+          */}
         </div>
         
         {/* View Type Toggle */}
@@ -270,13 +271,23 @@ const CategoryDetail: React.FC = () => {
           </button>
           <button
             onClick={() => setViewType('edit')}
-            className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+            className={`px-4 py-2 text-sm font-medium border ${
               viewType === 'edit'
+                ? 'bg-blue-500 text-white border-blue-500'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            } ${viewType === 'preview' ? 'rounded-none' : viewType === 'order' ? 'rounded-none' : 'rounded-none'}`}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => setViewType('translate')}
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+              viewType === 'translate'
                 ? 'bg-blue-500 text-white border-blue-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Edit
+            Translate
           </button>
         </div>
       </div>
