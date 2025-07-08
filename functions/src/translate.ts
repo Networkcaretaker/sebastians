@@ -184,3 +184,4 @@ export const autoTranslateItem = functions.https.onCall(async (data: any, contex
     throw new functions.https.HttpsError('internal', 'Auto-translation failed');
   }
 });
+

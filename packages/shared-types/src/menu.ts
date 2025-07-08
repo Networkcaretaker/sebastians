@@ -136,3 +136,48 @@ export interface GetTranslationsResponse {
   message: string;
   translations?: Record<string, MenuItemTranslation>;
 }
+
+// Category Translation Interfaces
+export interface CategoryTranslation {
+  id?: string;
+  cat_name: string;
+  cat_description: string;
+  header: string;
+  footer: string;
+  // Simple text translations for existing fields
+  translated_extras?: string[];  // Array of translated "item" text for extras
+  translated_addons?: string[];  // Array of translated "item" text for addons
+  updatedAt?: Date;
+  createdAt?: Date;
+}
+
+export interface CreateCategoryTranslationDTO {
+  cat_name: string;
+  cat_description: string;
+  header: string;
+  footer: string;
+  translated_extras?: string[];
+  translated_addons?: string[];
+}
+
+export interface UpdateCategoryTranslationDTO {
+  cat_name?: string;
+  cat_description?: string;
+  header?: string;
+  footer?: string;
+  translated_extras?: string[];
+  translated_addons?: string[];
+}
+
+// Response types for category translation operations
+export interface CategoryTranslationResponse {
+  success: boolean;
+  message: string;
+  translation?: CategoryTranslation;
+}
+
+export interface GetCategoryTranslationsResponse {
+  success: boolean;
+  message: string;
+  translations?: Record<string, CategoryTranslation>;
+}

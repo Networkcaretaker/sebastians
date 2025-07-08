@@ -27,7 +27,12 @@ import {
   UpdateTranslationDTO,
   TranslationResponse,
   GetTranslationsResponse,
-  Language
+  Language,
+  CategoryTranslation,
+  CreateCategoryTranslationDTO,
+  UpdateCategoryTranslationDTO,
+  CategoryTranslationResponse,
+  GetCategoryTranslationsResponse
 } from '@sebastians/shared-types';
 
 // Re-export shared types for convenience
@@ -58,7 +63,13 @@ export type {
   UpdateTranslationDTO,
   TranslationResponse,
   GetTranslationsResponse,
-  Language
+  Language,
+  // Category Translations
+  CategoryTranslation,
+  CreateCategoryTranslationDTO,
+  UpdateCategoryTranslationDTO,
+  CategoryTranslationResponse,
+  GetCategoryTranslationsResponse
 };
 
 export { MENU_TYPES };

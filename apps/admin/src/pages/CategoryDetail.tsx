@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import CategoryViewFull from '../components/CategoryViewFull';
 import CategoryPreview from '../components/CategoryPreview';
 import CategorySort from '../components/CategorySort';
-import menuItemService from '../services/menuItemService';
+import CategoryTranslate from '../components/CategoryTranslate';
 
 // View options type
 type ViewType = 'preview' | 'edit' | 'order' | 'translate';
@@ -297,6 +297,8 @@ const CategoryDetail: React.FC = () => {
         <CategoryPreview category={category} menuItems={activeMenuItems} />
       ) : viewType === 'order' ? (
         <CategorySort category={category} menuItems={menuItems} onOrderSaved={() => setOrderChanged(true)} />
+      ) : viewType === 'translate' ? (
+        <CategoryTranslate category={category} />
       ) : (
         <CategoryViewFull category={category} menuItems={menuItems} />
       )}
