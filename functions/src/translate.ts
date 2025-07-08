@@ -185,3 +185,171 @@ export const autoTranslateItem = functions.https.onCall(async (data: any, contex
   }
 });
 
+export const autoTranslateCategory = functions.https.onCall(async (data: any, context: any) => {
+  const logger = functions.logger;
+  
+  try {
+    // Check authentication using the Gen 2 structure
+    const authData = data?.auth;
+    if (!authData || !authData.uid) {
+      throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    }
+
+    // Extract data from the correct location (data.data)
+    const categoryId = data?.data?.categoryId;
+    const targetLanguage = data?.data?.targetLanguage;
+
+    if (!categoryId || !targetLanguage) {
+      throw new functions.https.HttpsError('invalid-argument', 'categoryId and targetLanguage required');
+    }
+
+    if (!SUPPORTED_LANGUAGES.includes(targetLanguage)) {
+      throw new functions.https.HttpsError('invalid-argument', `Unsupported language: ${targetLanguage}`);
+    }
+
+    logger.info(`Auto-translating category ${categoryId} to ${targetLanguage} for user ${authData.uid}`);
+
+    // Get API key from environment variable
+    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
+    if (!apiKey) {
+      throw new functions.https.HttpsError('failed-precondition', 'Google Translate API key not configured');
+    }
+
+    const translate = new Translate({
+      key: apiKey
+    });
+
+    const db = admin.firestore();
+    
+    // Fetch the category from Firestore
+    const categoryRef = db.collection('categories').doc(categoryId);
+    const categoryDoc = await categoryRef.get();
+
+    if (!categoryDoc.exists) {
+      throw new functions.https.HttpsError('not-found', `Category ${categoryId} not found`);
+    }
+
+    const category = categoryDoc.data();
+    if (!category) {
+      throw new functions.https.HttpsError('internal', 'Failed to retrieve category data');
+    }
+
+    // Check if translation already exists
+    const translationRef = categoryRef.collection('translations').doc(targetLanguage);
+    const existingTranslation = await translationRef.get();
+
+    if (existingTranslation.exists) {
+      const existingData = existingTranslation.data();
+      logger.info(`Translation already exists for ${categoryId} in ${targetLanguage}`);
+      
+      return {
+        success: true,
+        translation: {
+          cat_name: existingData?.cat_name || '',
+          cat_description: existingData?.cat_description || '',
+          header: existingData?.header || '',
+          footer: existingData?.footer || '',
+          translated_extras: existingData?.translated_extras || [],
+          translated_addons: existingData?.translated_addons || []
+        },
+        message: `Translation already exists for ${targetLanguage}`
+      };
+    }
+
+    // Prepare texts for translation
+    const textsToTranslate: string[] = [];
+    textsToTranslate.push(category.cat_name || '');
+    textsToTranslate.push(category.cat_description || '');
+    textsToTranslate.push(category.header || '');
+    textsToTranslate.push(category.footer || '');
+    
+    // Add extras (only the item text, not the price)
+    if (category.extras && Array.isArray(category.extras)) {
+      category.extras.forEach((extra: any) => {
+        textsToTranslate.push(extra.item || '');
+      });
+    }
+    
+    // Add addons
+    if (category.addons && Array.isArray(category.addons)) {
+      category.addons.forEach((addon: any) => {
+        textsToTranslate.push(addon.item || '');
+      });
+    }
+
+    // Filter out empty texts but remember positions
+    const nonEmptyTexts: string[] = [];
+    const originalIndices: number[] = [];
+    
+    textsToTranslate.forEach((text: string, index: number) => {
+      if (text && text.trim()) {
+        nonEmptyTexts.push(text.trim());
+        originalIndices.push(index);
+      }
+    });
+
+    if (nonEmptyTexts.length === 0) {
+      throw new functions.https.HttpsError('invalid-argument', 'No translatable text found');
+    }
+
+    logger.info(`Translating ${nonEmptyTexts.length} texts from English to ${targetLanguage}`);
+
+    // Call Google Translate API
+    const [translations] = await translate.translate(nonEmptyTexts, {
+      from: 'en',
+      to: targetLanguage,
+    });
+
+    const translatedTexts = Array.isArray(translations) ? translations : [translations];
+
+    // Create result array with empty strings for empty inputs
+    const result = new Array(textsToTranslate.length).fill('');
+    originalIndices.forEach((originalIndex: number, i: number) => {
+      if (translatedTexts[i]) {
+        result[originalIndex] = translatedTexts[i];
+      }
+    });
+
+    // Parse results back to structured format
+    let index = 0;
+    const structuredTranslation = {
+      cat_name: result[index++] || '',
+      cat_description: result[index++] || '',
+      header: result[index++] || '',
+      footer: result[index++] || '',
+      translated_extras: [] as string[],
+      translated_addons: [] as string[]
+    };
+    
+    // Parse extras
+    if (category.extras && Array.isArray(category.extras)) {
+      structuredTranslation.translated_extras = category.extras.map(() => {
+        return result[index++] || '';
+      });
+    }
+    
+    // Parse addons
+    if (category.addons && Array.isArray(category.addons)) {
+      structuredTranslation.translated_addons = category.addons.map(() => {
+        return result[index++] || '';
+      });
+    }
+
+    logger.info(`Successfully translated category ${categoryId} to ${targetLanguage}`);
+
+    return {
+      success: true,
+      translation: structuredTranslation,
+      message: `Successfully auto-translated to ${targetLanguage}`
+    };
+
+  } catch (error: any) {
+    logger.error('Auto-translate category error:', error);
+    
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    throw new functions.https.HttpsError('internal', 'Category auto-translation failed');
+  }
+});

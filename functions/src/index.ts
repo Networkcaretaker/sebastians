@@ -10,6 +10,7 @@ admin.initializeApp();
 const db = admin.firestore();
 
 export { autoTranslateItem } from './translate';
+export { autoTranslateCategory } from './translate';
 
 /**
  * Export Menu Function

@@ -170,8 +170,78 @@ const CategoryTranslate: React.FC<CategoryTranslateProps> = ({ category, onTrans
   };
 
   const handleAutoTranslate = async () => {
-    // Placeholder for auto-translate functionality
-    setMessage({ type: 'error', text: 'Auto-translate functionality will be implemented later' });
+    if (!category.id || !selectedLanguage) return;
+
+    setIsAutoTranslating(true);
+    setMessage(null);
+
+    try {
+      // Initialize Firebase Functions with auth
+      const functions = getFunctions(app);
+
+      // Connect to emulator in development
+      if (process.env.NODE_ENV === 'development') {
+        connectFunctionsEmulator(functions, 'localhost', 5001);
+      }
+      
+      // Make sure we're authenticated
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error('You must be logged in to use auto-translate');
+      }
+
+      // Get fresh auth token
+      const idToken = await currentUser.getIdToken(true);
+      console.log('Using auth token:', idToken.substring(0, 20) + '...');
+
+      const autoTranslateFunction = httpsCallable(functions, 'autoTranslateCategory');
+
+      console.log(`Calling auto-translate for category ${category.id} to ${selectedLanguage}`);
+
+      // Call the cloud function
+      const result = await autoTranslateFunction({ 
+        categoryId: category.id, 
+        targetLanguage: selectedLanguage 
+      });
+
+      console.log('Auto-translate result:', result);
+
+      // Type the result data properly
+      const responseData = result.data as any;
+
+      if (responseData?.success) {
+        const translatedData = responseData.translation;
+        
+        // Update the form with translated content
+        setCurrentTranslation({
+          cat_name: translatedData?.cat_name || '',
+          cat_description: translatedData?.cat_description || '',
+          header: translatedData?.header || '',
+          footer: translatedData?.footer || '',
+          translated_extras: translatedData?.translated_extras || [],
+          translated_addons: translatedData?.translated_addons || []
+        });
+
+        setMessage({ 
+          type: 'success', 
+          text: `Auto-translation completed! You can now review and save the translation.`
+        });
+      } else {
+        setMessage({ 
+          type: 'error', 
+          text: responseData?.message || 'Auto-translation failed' 
+        });
+      }
+
+    } catch (error: any) {
+      console.error('Auto-translate error:', error);
+      setMessage({ 
+        type: 'error', 
+        text: error.message || 'Failed to auto-translate. Please try again.' 
+      });
+    } finally {
+      setIsAutoTranslating(false);
+    }
   };
 
   const updateBasicTranslation = (field: 'cat_name' | 'cat_description' | 'header' | 'footer', value: string) => {
