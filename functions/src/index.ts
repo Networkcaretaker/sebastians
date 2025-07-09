@@ -11,6 +11,7 @@ const db = admin.firestore();
 
 export { autoTranslateItem } from './translate';
 export { autoTranslateCategory } from './translate';
+export { exportMenuJson } from './publish';
 
 /**
  * Export Menu Function

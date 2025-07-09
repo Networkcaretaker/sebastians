@@ -24,7 +24,8 @@ const WEBSITE_CONFIG_DOC_ID = 'default';
 
 // Initialize Firebase Functions
 const functions = getFunctions(app);
-const exportMenuFunction = httpsCallable(functions, 'exportMenu');
+//const exportMenuFunction = httpsCallable(functions, 'exportMenu');
+const exportMenuFunction = httpsCallable(functions, 'exportMenuJson');
 
 /**
  * Get the current website configuration
