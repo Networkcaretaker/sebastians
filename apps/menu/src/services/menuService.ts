@@ -16,6 +16,7 @@ export interface MenuItem {
   extras?: Array<{ item: string; price: number }>;     // Add this
   addons?: Array<{ item: string }>;                    // Add this
   hasOptions?: boolean;  // Add this
+  translations?: Record<string, any>;
 }
 
 export interface MenuCategory {
@@ -28,6 +29,7 @@ export interface MenuCategory {
   extras?: Array<{ item: string; price: number; }>;
   addons?: Array<{ item: string; }>;
   items: MenuItem[];
+  translations?: Record<string, any>;
 }
 
 export interface MenuData {
@@ -193,6 +195,7 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
       cat_order: category.cat_order || category.order || 0,
       extras: category.extras || [],
       addons: category.addons || [],
+      translations: category.translations || {},
       items: (category.items || []).map((item: any) => ({
         id: item.id,
         item_name: item.item_name || item.name,
@@ -204,7 +207,8 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
         extras: item.extras || [],
         allergies: item.allergies || [],
         vegetarian: item.flags.vegetarian || false,
-        isActive: item.flags.active !== false // Default to true if not specified
+        isActive: item.flags.active !== false, // Default to true if not specified
+        translations: item.translations || {}
       }))
     }))
   };

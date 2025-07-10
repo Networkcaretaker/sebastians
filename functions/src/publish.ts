@@ -1,3 +1,6 @@
+// NOTE: Chrome auto-translate can modify language codes in JSON viewed in browser
+// Always verify translations using raw JSON view or VS Code
+
 import {onCall} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
@@ -47,7 +50,9 @@ function formatCategoryTranslations(translations: Record<string, any>) {
         name: trans.cat_name || undefined,
         description: trans.cat_description || undefined,
         header: trans.header || undefined,
-        footer: trans.footer || undefined
+        footer: trans.footer || undefined,
+        //extras: trans.extras || undefined,
+        //addons: trans.addons || undefined
       };
       
       // Remove undefined values

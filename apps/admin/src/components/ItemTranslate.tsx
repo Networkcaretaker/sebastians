@@ -1,4 +1,4 @@
-// Replace: apps/admin/src/components/ItemTranslate.tsx
+// Fixed: apps/admin/src/components/ItemTranslate.tsx
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -41,7 +41,6 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isAutoTranslating, setIsAutoTranslating] = useState(false);
 
-
   // Check if item has a description
   const hasDescription = item.item_description && item.item_description.trim().length > 0;
 
@@ -52,24 +51,33 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
 
   // Update current translation when language selection changes
   useEffect(() => {
+    console.log('Language changed to:', selectedLanguage);
+    console.log('Available translations:', translations);
+    console.log('Item addons:', item.addons);
+    
     if (translations[selectedLanguage]) {
       const translation = translations[selectedLanguage];
+      console.log('Loading existing translation:', translation);
+      
       setCurrentTranslation({
-        item_name: translation.item_name,
-        item_description: translation.item_description,
+        item_name: translation.item_name || '',
+        item_description: translation.item_description || '',
         translated_options: translation.translated_options || [],
         translated_extras: translation.translated_extras || [],
         translated_addons: translation.translated_addons || []
       });
     } else {
       // Reset form for new translation with empty arrays matching original item lengths
-      setCurrentTranslation({
+      const newTranslation = {
         item_name: '',
         item_description: '',
-        translated_options: item.options ? new Array(item.options.length).fill('') : [],
-        translated_extras: item.extras ? new Array(item.extras.length).fill('') : [],
-        translated_addons: item.addons ? new Array(item.addons.length).fill('') : []
-      });
+        translated_options: item.options ? Array.from({ length: item.options.length }, () => '') : [],
+        translated_extras: item.extras ? Array.from({ length: item.extras.length }, () => '') : [],
+        translated_addons: item.addons ? Array.from({ length: item.addons.length }, () => '') : []
+      };
+      
+      console.log('Creating new translation template:', newTranslation);
+      setCurrentTranslation(newTranslation);
     }
   }, [selectedLanguage, translations, item]);
 
@@ -261,12 +269,27 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
   };
 
   const updateAddonTranslation = (index: number, value: string) => {
-    setCurrentTranslation(prev => ({
-      ...prev,
-      translated_addons: prev.translated_addons?.map((addon, i) => 
-        i === index ? value : addon
-      ) || []
-    }));
+    console.log(`Updating addon ${index} with value:`, value);
+    console.log('Current translated_addons before update:', currentTranslation.translated_addons);
+    
+    setCurrentTranslation(prev => {
+      const newTranslatedAddons = [...(prev.translated_addons || [])];
+      
+      // Ensure the array is long enough
+      while (newTranslatedAddons.length <= index) {
+        newTranslatedAddons.push('');
+      }
+      
+      // Update the specific index
+      newTranslatedAddons[index] = value;
+      
+      console.log('New translated_addons after update:', newTranslatedAddons);
+      
+      return {
+        ...prev,
+        translated_addons: newTranslatedAddons
+      };
+    });
   };
 
   if (isLoading) {
@@ -461,7 +484,7 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             <div>
               <h5 className="text-sm font-medium text-gray-700 mb-3">Original Addons</h5>
               {item.addons.map((addon, index) => (
-                <div key={index} className="mb-2 p-2 border border-gray-300 bg-gray-50 rounded text-sm">
+                <div key={`original-addon-${index}`} className="mb-2 p-2 border border-gray-300 bg-gray-50 rounded text-sm">
                   {addon.item}
                 </div>
               ))}
@@ -471,11 +494,14 @@ const ItemTranslate: React.FC<ItemTranslateProps> = ({ item, onTranslationUpdate
             <div>
               <h5 className="text-sm font-medium text-gray-700 mb-3">Translated Addons</h5>
               {item.addons.map((addon, index) => (
-                <div key={index} className="mb-2">
+                <div key={`translated-addon-${index}`} className="mb-2">
                   <input
                     type="text"
                     value={currentTranslation.translated_addons?.[index] || ''}
-                    onChange={(e) => updateAddonTranslation(index, e.target.value)}
+                    onChange={(e) => {
+                      console.log(`Addon input ${index} changed to:`, e.target.value);
+                      updateAddonTranslation(index, e.target.value);
+                    }}
                     placeholder={`Translate "${addon.item}"`}
                     className="w-full px-2 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />

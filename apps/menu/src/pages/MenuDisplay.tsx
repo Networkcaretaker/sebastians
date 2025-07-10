@@ -7,7 +7,10 @@ import { getMenuData, MenuData } from '../services/menuService';
 import { APP_CONFIG } from '../services/config';
 import MenuPreview from '../components/MenuPreview';
 import MenuFooter from '../components/Footer';
-import Allergies from '../components/Allergies'
+import Allergies from '../components/Allergies';
+import LanguageSelector from '../components/LanguageSelector';
+
+//LanguageSelector
 
 const MenuDisplay: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
@@ -78,17 +81,26 @@ const MenuDisplay: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header with back button */}
+      {/* Header with back button and language selector */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4 flex items-center justify-between">
             <img src="/Sebastian_Logo.png" className="w-40" alt="Sebastian's Logo" />
-            <Link
-              to="/"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              ←
-            </Link>
+            
+            {/* Right side with language selector and back button */}
+            <div className="flex items-center gap-3">
+              <LanguageSelector 
+                variant="dropdown" 
+                showFlags={true}
+                className="hidden sm:block"
+              />
+              <Link
+                to="/"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
+              >
+                ←
+              </Link>
+            </div>
           </div>
         </div>
       </header>
