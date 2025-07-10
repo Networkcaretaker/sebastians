@@ -51,8 +51,8 @@ function formatCategoryTranslations(translations: Record<string, any>) {
         description: trans.cat_description || undefined,
         header: trans.header || undefined,
         footer: trans.footer || undefined,
-        //extras: trans.extras || undefined,
-        //addons: trans.addons || undefined
+        extras: trans.translated_extras || undefined,
+        addons: trans.translated_addons || undefined
       };
       
       // Remove undefined values

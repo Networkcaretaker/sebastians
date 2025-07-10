@@ -261,13 +261,25 @@ const CategoryTranslate: React.FC<CategoryTranslateProps> = ({ category, onTrans
   };
 
   const updateAddonTranslation = (index: number, value: string) => {
-    setCurrentTranslation(prev => ({
-      ...prev,
-      translated_addons: prev.translated_addons?.map((addon, i) => 
-        i === index ? value : addon
-      ) || []
-    }));
-  };
+    setCurrentTranslation(prev => {
+      // Ensure we have an array that's at least as long as needed
+      const currentAddons = prev.translated_addons || [];
+      const newAddons = [...currentAddons];
+      
+      // Extend array if needed
+      while (newAddons.length <= index) {
+        newAddons.push('');
+      }
+      
+      // Set the value at the specific index
+      newAddons[index] = value;
+      
+      return {
+        ...prev,
+        translated_addons: newAddons
+      };
+    });
+  };  
 
   if (isLoading) {
     return (

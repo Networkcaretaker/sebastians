@@ -4,12 +4,12 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 // Language configuration based on your JSON structure
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'de', name: 'German', flag: '🇩🇪' },
   { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-  { code: 'fr', name: 'French', flag: '🇫🇷' },
-  { code: 'it', name: 'Italian', flag: '🇮🇹' },
-  { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
-  { code: 'pt', name: 'Portuguese', flag: '🇵🇹' }
+  { code: 'de', name: 'German', flag: '🇩🇪' },
+  //{ code: 'fr', name: 'French', flag: '🇫🇷' },
+  //{ code: 'it', name: 'Italian', flag: '🇮🇹' },
+  //{ code: 'nl', name: 'Dutch', flag: '🇳🇱' },
+  //{ code: 'pt', name: 'Portuguese', flag: '🇵🇹' }
 ];
 
 export const DEFAULT_LANGUAGE = 'en';

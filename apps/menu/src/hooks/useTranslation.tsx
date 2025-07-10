@@ -150,9 +150,9 @@ export const useTranslation = () => {
     
     if (category.translations && 
         category.translations[currentLanguage] && 
-        category.translations[currentLanguage].translated_extras && 
-        category.translations[currentLanguage].translated_extras[extraIndex]) {
-        return category.translations[currentLanguage].translated_extras[extraIndex];
+        category.translations[currentLanguage].extras && 
+        category.translations[currentLanguage].extras[extraIndex]) {
+        return category.translations[currentLanguage].extras[extraIndex];
     }
     
     return originalText;
@@ -165,9 +165,9 @@ export const useTranslation = () => {
     
     if (category.translations && 
         category.translations[currentLanguage] && 
-        category.translations[currentLanguage].translated_addons && 
-        category.translations[currentLanguage].translated_addons[addonIndex]) {
-        return category.translations[currentLanguage].translated_addons[addonIndex];
+        category.translations[currentLanguage].addons && 
+        category.translations[currentLanguage].addons[addonIndex]) {
+        return category.translations[currentLanguage].addons[addonIndex];
     }
     
     return originalText;
