@@ -28,7 +28,7 @@ interface ItemPreviewProps {
 }
 
 const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
-  const { getItemName, getItemDescription, getOptionText, currentLanguage, getExtraText, getAddonText } = useTranslation();
+  const { getItemName, getItemDescription, getOptionText, getExtraText, getAddonText } = useTranslation();
 
   // Temporary debugging for addons and extras
   console.log('Item:', item.item_name);
