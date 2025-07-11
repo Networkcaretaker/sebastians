@@ -28,7 +28,7 @@ interface ItemPreviewProps {
 }
 
 const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
-  const { getItemName, getItemDescription, getOptionText, getExtraText, getAddonText } = useTranslation();
+  const { getItemName, getItemDescription, getOptionText, getExtraText, getAddonText, t } = useTranslation();
 
   // Temporary debugging for addons and extras
   console.log('Item:', item.item_name);
@@ -49,7 +49,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           </div>
           {item.hasOptions || (item.options && item.options.length > 0) ? (
             <div className="text-green-600 text-base font-bold">
-              <span className="text-xs font-medium">from </span>{item.item_price.toFixed(2)}€
+              <span className="text-xs font-medium">{t('from')}</span>{item.item_price.toFixed(2)}€
             </div>
           ) : (
             <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)}€</div>
@@ -76,7 +76,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Options */}
         {item.options && item.options.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-xs font-medium text-gray-700">Options:</h4>
+            <h4 className="text-xs font-medium text-gray-700">{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{getOptionText(item, idx, option.option)}</span>
@@ -89,7 +89,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Extras */}
         {item.extras && item.extras.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-xs font-medium text-gray-700">Extras:</h4>
+            <h4 className="text-xs font-medium text-gray-700">{t('extras')}</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{getExtraText(item, idx, extra.item)}</span>
@@ -104,21 +104,21 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {item.vegetarian && (
           <div className="flex text-center mt-2">
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-              🌱 Vegetarian
+              {t('vegetarian')}
             </span>
           </div>
         )}
         {item.vegan && (
           <div className="flex text-center mt-2">
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-              🌱 Vegan
+              {t('vegan')}
             </span>
           </div>
         )}
         {item.spicy && (
           <div className="flex text-center mt-2">
             <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-              🌶️ Spicy
+              {t('spicy')}
             </span>
           </div>
         )}
@@ -126,7 +126,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Allergies Section - Updated with Icons */}
         {item.allergies && item.allergies.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <h4 className="text-xs font-medium text-red-700">Allergens:</h4>
+            <h4 className="text-xs font-medium text-red-700">{t('allergens')}</h4>
             <div className="flex flex-wrap gap-1">
               {item.allergies.map((allergy, idx) => (
                 <span 
