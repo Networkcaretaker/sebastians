@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPublishedMenus } from '../services/menuService';
 import MenuFooter from '../components/Footer';
+import LanguageSelector from '../components/LanguageSelector';
 
 interface PublishedMenu {
   id: string;
@@ -56,6 +57,14 @@ const Home: React.FC = () => {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Welcome to our restaurant! Browse our delicious menu offerings below.
             </p>
+            <div className="justify-center flex pt-6">
+              <LanguageSelector 
+                variant="buttons" 
+                showFlags={true}
+                className=""
+              />
+            </div>
+            
           </div>
         </div>
       </header>

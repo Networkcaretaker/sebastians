@@ -92,7 +92,7 @@ const MenuDisplay: React.FC = () => {
               <LanguageSelector 
                 variant="dropdown" 
                 showFlags={true}
-                className="hidden sm:block"
+                className=""
               />
               <Link
                 to="/"
