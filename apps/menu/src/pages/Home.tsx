@@ -54,7 +54,7 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <div className="flex justify-center p-4">
-               <img src="/Sebastian_Logo.png"></img>
+               <img src="/Sebastian_Logo.png" className="pb-2 min-w-72"></img>
             </div>
             <p className="text-xl text-gray-800 max-w-2xl mx-auto">
               {t('welcomeMessage')}
