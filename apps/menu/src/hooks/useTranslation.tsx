@@ -13,7 +13,25 @@ const UI_TRANSLATIONS = {
     // Notice flags
     vegetarian: '🌱 Vegetarian',
     vegan: '🌱 Vegan',
-    spicy: '🌶️ Spicy'
+    spicy: '🌶️ Spicy',
+    
+    // Allergies page UI text
+    allergiesTitle: 'Allergy Information',
+    allergiesDescription: 'Menu items containing these allergens are marked with the corresponding icons',
+    allergiesFooter: 'Please inform your server of any allergies or dietary requirements',
+    
+    // Footer UI text
+    thankYouMessage: 'Thank you for dining with us!',
+    followFacebook: 'Follow us on Facebook',
+    
+    // Home page UI text
+    welcomeMessage: 'Welcome to our restaurant! Browse our delicious menu offerings below.',
+    loadingMenus: 'Loading menus...',
+    errorLoadingMenus: 'Error Loading Menus',
+    noMenusAvailable: 'No Menus Available',
+    menuUpdatingMessage: "We're currently updating our menu offerings. Please check back soon for our latest delicious options!",
+    ourMenus: 'Our Menus',
+    viewMenu: 'View Menu'
   },
   es: {
     // Labels
@@ -25,7 +43,25 @@ const UI_TRANSLATIONS = {
     // Notice flags
     vegetarian: '🌱 Vegetariano',
     vegan: '🌱 Vegano',
-    spicy: '🌶️ Picante'
+    spicy: '🌶️ Picante',
+    
+    // Allergies page UI text
+    allergiesTitle: 'Información sobre Alergias',
+    allergiesDescription: 'Los elementos del menú que contienen estos alérgenos están marcados con los iconos correspondientes',
+    allergiesFooter: 'Informe a su camarero sobre cualquier alergia o requisito dietético',
+    
+    // Footer UI text
+    thankYouMessage: '¡Gracias por cenar con nosotros!',
+    followFacebook: 'Síguenos en Facebook',
+    
+    // Home page UI text
+    welcomeMessage: '¡Bienvenido a nuestro restaurante! Explore nuestras deliciosas ofertas de menú a continuación.',
+    loadingMenus: 'Cargando menús...',
+    errorLoadingMenus: 'Error al Cargar los Menús',
+    noMenusAvailable: 'No Hay Menús Disponibles',
+    menuUpdatingMessage: 'Actualmente estamos actualizando nuestras ofertas de menú. ¡Vuelve pronto para conocer nuestras últimas opciones deliciosas!',
+    ourMenus: 'Nuestros Menús',
+    viewMenu: 'Ver Menú'
   },
   de: {
     // Labels
@@ -37,9 +73,109 @@ const UI_TRANSLATIONS = {
     // Notice flags
     vegetarian: '🌱 Vegetarisch',
     vegan: '🌱 Vegan',
-    spicy: '🌶️ Scharf'
+    spicy: '🌶️ Scharf',
+    
+    // Allergies page UI text
+    allergiesTitle: 'Allergie-Informationen',
+    allergiesDescription: 'Menüpunkte, die diese Allergene enthalten, sind mit den entsprechenden Symbolen gekennzeichnet',
+    allergiesFooter: 'Bitte informieren Sie Ihren Kellner über Allergien oder Ernährungsanforderungen',
+    
+    // Footer UI text
+    thankYouMessage: 'Vielen Dank, dass Sie bei uns speisen!',
+    followFacebook: 'Folgen Sie uns auf Facebook',
+    
+    // Home page UI text
+    welcomeMessage: 'Willkommen in unserem Restaurant! Stöbern Sie unten in unseren köstlichen Menüangeboten.',
+    loadingMenus: 'Menüs werden geladen...',
+    errorLoadingMenus: 'Fehler beim Laden der Menüs',
+    noMenusAvailable: 'Keine Menüs Verfügbar',
+    menuUpdatingMessage: 'Wir aktualisieren derzeit unsere Menüangebote. Schauen Sie bald wieder vorbei für unsere neuesten köstlichen Optionen!',
+    ourMenus: 'Unsere Menüs',
+    viewMenu: 'Menü Anzeigen'
   }
   // Add more languages as needed
+};
+
+// Allergy name translations
+const ALLERGY_TRANSLATIONS = {
+  en: {
+    'celery': 'Celery',
+    'corn': 'Corn',
+    'crustaceans': 'Crustaceans',
+    'eggs': 'Eggs',
+    'fish': 'Fish',
+    'gluten': 'Gluten',
+    'lupin': 'Lupin',
+    'milk': 'Milk',
+    'dairy': 'Dairy',
+    'mollusc': 'Mollusc',
+    'molluscs': 'Molluscs',
+    'mustard': 'Mustard',
+    'nuts': 'Nuts',
+    'tree nuts': 'Tree Nuts',
+    'peanuts': 'Peanuts',
+    'propolis': 'Propolis',
+    'sesame': 'Sesame',
+    'seseme': 'Sesame',
+    'soya': 'Soya',
+    'soy': 'Soy',
+    'sulphites': 'Sulphites',
+    'sulfites': 'Sulfites',
+    'wheat': 'Wheat',
+    'shellfish': 'Shellfish'
+  },
+  es: {
+    'celery': 'Apio',
+    'corn': 'Maíz',
+    'crustaceans': 'Crustáceos',
+    'eggs': 'Huevos',
+    'fish': 'Pescado',
+    'gluten': 'Gluten',
+    'lupin': 'Altramuz',
+    'milk': 'Leche',
+    'dairy': 'Lácteos',
+    'mollusc': 'Molusco',
+    'molluscs': 'Moluscos',
+    'mustard': 'Mostaza',
+    'nuts': 'Frutos Secos',
+    'tree nuts': 'Frutos Secos del Árbol',
+    'peanuts': 'Cacahuetes',
+    'propolis': 'Propóleo',
+    'sesame': 'Sésamo',
+    'seseme': 'Sésamo',
+    'soya': 'Soja',
+    'soy': 'Soja',
+    'sulphites': 'Sulfitos',
+    'sulfites': 'Sulfitos',
+    'wheat': 'Trigo',
+    'shellfish': 'Mariscos'
+  },
+  de: {
+    'celery': 'Sellerie',
+    'corn': 'Mais',
+    'crustaceans': 'Krebstiere',
+    'eggs': 'Eier',
+    'fish': 'Fisch',
+    'gluten': 'Gluten',
+    'lupin': 'Lupine',
+    'milk': 'Milch',
+    'dairy': 'Milchprodukte',
+    'mollusc': 'Weichtier',
+    'molluscs': 'Weichtiere',
+    'mustard': 'Senf',
+    'nuts': 'Nüsse',
+    'tree nuts': 'Baumnüsse',
+    'peanuts': 'Erdnüsse',
+    'propolis': 'Propolis',
+    'sesame': 'Sesam',
+    'seseme': 'Sesam',
+    'soya': 'Soja',
+    'soy': 'Soja',
+    'sulphites': 'Sulfite',
+    'sulfites': 'Sulfite',
+    'wheat': 'Weizen',
+    'shellfish': 'Schalentiere'
+  }
 };
 
 export const useTranslation = () => {
@@ -53,6 +189,17 @@ export const useTranslation = () => {
     return translations?.[key as keyof typeof translations] || 
            fallbackTranslations?.[key as keyof typeof fallbackTranslations] || 
            key;
+  };
+
+  // Function to get translated allergy name
+  const getAllergyName = (allergyKey: string): string => {
+    const normalizedKey = allergyKey.toLowerCase().trim();
+    const translations = ALLERGY_TRANSLATIONS[currentLanguage as keyof typeof ALLERGY_TRANSLATIONS];
+    const fallbackTranslations = ALLERGY_TRANSLATIONS[defaultLanguage as keyof typeof ALLERGY_TRANSLATIONS] || ALLERGY_TRANSLATIONS.en;
+    
+    return translations?.[normalizedKey as keyof typeof translations] || 
+           fallbackTranslations?.[normalizedKey as keyof typeof fallbackTranslations] || 
+           allergyKey; // Return original if no translation found
   };
 
   // Simple function to get translated item name
@@ -221,7 +368,8 @@ export const useTranslation = () => {
 
   return {
     currentLanguage,
-    t, // New UI text translation function
+    t, // UI text translation function
+    getAllergyName, // New allergy name translation function
     getItemName,
     getItemDescription,
     getCategoryName,

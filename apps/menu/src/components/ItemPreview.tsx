@@ -126,12 +126,12 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Allergies Section - Updated with Icons */}
         {item.allergies && item.allergies.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <h4 className="text-xs font-medium text-red-700">{t('allergens')}</h4>
+            <h4 className="text-xs font-medium text-amber-600">{t('allergens')}</h4>
             <div className="flex flex-wrap gap-1">
               {item.allergies.map((allergy, idx) => (
                 <span 
                   key={idx} 
-                  className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-medium"
+                  className="inline-flex items-center gap-1 text-xs bg-amber-400 text-red-800 px-1 py-1 rounded font-medium"
                 >
                   <AllergyIcon 
                     allergy={allergy} 

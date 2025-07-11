@@ -80,9 +80,9 @@ const MenuDisplay: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Header with back button and language selector */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-amber-400 shadow-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-4 flex items-center justify-between">
             <img src="/Sebastian_Logo.png" className="w-40" alt="Sebastian's Logo" />

@@ -1,6 +1,7 @@
 // apps/menu/src/components/AllergyIcon.tsx
 import React from 'react';
 import { getAllergyIcon } from '../utils/allergyIcons';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface AllergyIconProps {
   allergy: string;
@@ -15,7 +16,9 @@ const AllergyIcon: React.FC<AllergyIconProps> = ({
   showText = false,
   size = 'md'
 }) => {
+  const { getAllergyName, t } = useTranslation();
   const iconUrl = getAllergyIcon(allergy);
+  const translatedName = getAllergyName(allergy);
   
   // Size mapping for consistent sizing
   const sizeClasses = {
@@ -29,10 +32,10 @@ const AllergyIcon: React.FC<AllergyIconProps> = ({
     return (
       <span 
         className={`inline-flex items-center ${className}`}
-        title={`Contains ${allergy}`}
-        aria-label={`Contains ${allergy}`}
+        title={`${t('allergens')} ${translatedName}`}
+        aria-label={`${t('allergens')} ${translatedName}`}
       >
-        {allergy}
+        {translatedName}
       </span>
     );
   }
@@ -40,17 +43,17 @@ const AllergyIcon: React.FC<AllergyIconProps> = ({
   return (
     <span 
       className={`inline-flex items-center gap-1 ${className}`}
-      title={`Contains ${allergy}`}
-      aria-label={`Contains ${allergy}`}
+      title={`${t('allergens')} ${translatedName}`}
+      aria-label={`${t('allergens')} ${translatedName}`}
     >
       <img 
         src={iconUrl}
-        alt={allergy}
+        alt={translatedName}
         className={`${sizeClasses[size]}`}
         aria-hidden="true"
       />
       {showText && (
-        <span className="text-xs">{allergy}</span>
+        <span className="text-xs">{translatedName}</span>
       )}
     </span>
   );

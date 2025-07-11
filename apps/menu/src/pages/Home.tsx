@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getPublishedMenus } from '../services/menuService';
 import MenuFooter from '../components/Footer';
 import LanguageSelector from '../components/LanguageSelector';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface PublishedMenu {
   id: string;
@@ -14,6 +15,7 @@ interface PublishedMenu {
 }
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
   const [menus, setMenus] = useState<PublishedMenu[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,23 +41,23 @@ const Home: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading menus...</p>
+          <p className="text-gray-600">{t('loadingMenus')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       {/* Enhanced Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-amber-400 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <div className="flex justify-center p-4">
                <img src="/Sebastian_Logo.png"></img>
             </div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Welcome to our restaurant! Browse our delicious menu offerings below.
+            <p className="text-xl text-gray-800 max-w-2xl mx-auto">
+              {t('welcomeMessage')}
             </p>
             <div className="justify-center flex pt-6">
               <LanguageSelector 
@@ -76,7 +78,7 @@ const Home: React.FC = () => {
             <div className="flex items-center">
               <div className="text-red-500 text-2xl mr-3">⚠️</div>
               <div>
-                <h3 className="text-lg font-medium text-red-800">Error Loading Menus</h3>
+                <h3 className="text-lg font-medium text-red-800">{t('errorLoadingMenus')}</h3>
                 <p className="text-red-700">{error}</p>
               </div>
             </div>
@@ -86,16 +88,16 @@ const Home: React.FC = () => {
         {menus.length === 0 && !error ? (
           <div className="text-center py-16">
             <div className="text-gray-400 text-6xl mb-6">🍽️</div>
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">No Menus Available</h2>
+            <h2 className="text-3xl font-semibold text-gray-900 mb-4">{t('noMenusAvailable')}</h2>
             <p className="text-lg text-gray-600 max-w-md mx-auto">
-              We're currently updating our menu offerings. Please check back soon for our latest delicious options!
+              {t('menuUpdatingMessage')}
             </p>
           </div>
         ) : (
           <div>
             {/* Section Header */}
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Menus</h2>
+              <h2 className="text-3xl font-bold text-gray-200 mb-4">{t('ourMenus')}</h2>
               <div className="w-24 h-1 bg-blue-500 mx-auto"></div>
             </div>
 
@@ -120,7 +122,7 @@ const Home: React.FC = () => {
                         to={`/menu/${menu.id}`}
                         className="bg-blue-500 hover:bg-blue-600 text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
                       >
-                        View Menu
+                        {t('viewMenu')}
                       </Link>
                     </div>
                   </div>

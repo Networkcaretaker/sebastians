@@ -1,8 +1,11 @@
 // apps/menu/src/components/Allergies.tsx
 import React from 'react';
 import { getAvailableAllergies, getAllergyIcon } from '../utils/allergyIcons';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Allergies: React.FC = () => {
+  const { t, getAllergyName } = useTranslation();
+  
   // Get all available allergies from our icon mapping
   const availableAllergies = getAvailableAllergies();
   
@@ -29,17 +32,19 @@ const Allergies: React.FC = () => {
     return true;
   });
 
-  // Sort alphabetically for consistent display
-  const sortedAllergies = uniqueAllergies.sort();
+  // Sort alphabetically based on translated names for consistent display
+  const sortedAllergies = uniqueAllergies.sort((a, b) => 
+    getAllergyName(a).localeCompare(getAllergyName(b))
+  );
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-md border p-6 mt-6">
         {/* Header */}
         <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Allergy Information</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('allergiesTitle')}</h2>
             <p className="text-gray-600 text-sm">
-            Menu items containing these allergens are marked with the corresponding icons
+              {t('allergiesDescription')}
             </p>
         </div>
 
@@ -47,6 +52,7 @@ const Allergies: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {sortedAllergies.map((allergy) => {
             const iconUrl = getAllergyIcon(allergy);
+            const translatedName = getAllergyName(allergy);
             
             if (!iconUrl) return null;
 
@@ -59,15 +65,15 @@ const Allergies: React.FC = () => {
                 <div className="mb-3">
                     <img 
                     src={iconUrl}
-                    alt={allergy}
+                    alt={translatedName}
                     className="w-12 h-12 mx-auto"
-                    title={allergy}
+                    title={translatedName}
                     />
                 </div>
                 
-                {/* Allergy Name */}
+                {/* Translated Allergy Name */}
                 <span className="text-sm font-medium text-gray-700 capitalize">
-                    {allergy}
+                    {translatedName}
                 </span>
                 </div>
             );
@@ -77,7 +83,7 @@ const Allergies: React.FC = () => {
         {/* Footer Note */}
         <div className="text-center mt-6 pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-            Please inform your server of any allergies or dietary requirements
+              {t('allergiesFooter')}
             </p>
         </div>
         </div>
