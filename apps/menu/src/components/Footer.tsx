@@ -22,7 +22,7 @@ const MenuFooter: React.FC = () => {
                     href={APP_CONFIG.facebookURL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200`}
+                    className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-800 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200`}
                     >
                     {/* Facebook Icon SVG */}
                     <svg 
@@ -38,7 +38,7 @@ const MenuFooter: React.FC = () => {
                     <span className="text-xs">{t('followFacebook')}</span>
                 </a>
             </div>
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-sm text-white">
                 <p>&copy; 2025 {APP_CONFIG.restaurantName}. All rights reserved.</p>
             </div>
             </div>

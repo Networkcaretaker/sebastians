@@ -63,7 +63,7 @@ const Home: React.FC = () => {
               <LanguageSelector 
                 variant="buttons" 
                 showFlags={true}
-                className=""
+                className="font-bold"
               />
             </div>
             
@@ -97,8 +97,8 @@ const Home: React.FC = () => {
           <div>
             {/* Section Header */}
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-200 mb-4">{t('ourMenus')}</h2>
-              <div className="w-24 h-1 bg-blue-500 mx-auto"></div>
+              <h2 className="text-3xl font-light text-white mb-4">{t('ourMenus')}</h2>
+              <div className="w-24 h-1 bg-gradient-to-tr from-amber-400 to-amber-600 mx-auto"></div>
             </div>
 
             {/* Menu Grid */}
@@ -109,23 +109,34 @@ const Home: React.FC = () => {
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   {/* Card Header */}
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
-                    <h3 className="text-xl text-center font-bold text-white">
+                  <div className="bg-amber-400 px-6 py-4">
+                    <h3 className="text-xl text-center font-bold text-black">
                       {menu.name}
                     </h3>
                   </div>
 
                   {/* Card Body */}
                   <div className="p-6">
+                    <div>
+                      <img src="/breakfast.svg"></img>"
+                    </div>
                     <div className="flex items-center">
                       <Link
                         to={`/menu/${menu.id}`}
-                        className="bg-blue-500 hover:bg-blue-600 text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
+                        className="bg-blue-800 hover:bg-blue-600 text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
                       >
                         {t('viewMenu')}
                       </Link>
                     </div>
                   </div>
+
+                  {/* Card Footer */}
+                  <div className="bg-amber-400 px-6 py-4">
+                    <h3 className="text-lg text-center font-light text-black">
+                      {menu.description}
+                    </h3>
+                  </div>
+
                 </div>
               ))}
             </div>

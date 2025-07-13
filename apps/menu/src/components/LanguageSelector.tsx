@@ -125,8 +125,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             onClick={() => handleLanguageChange(language.code)}
             className={`px-3 py-1 text-sm rounded-full border transition-colors duration-200 ${
               currentLanguage === language.code
-                ? 'bg-blue-500 text-white border-blue-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-blue-800 text-white border-blue-800'
+                : 'bg-white text-gray-700 border-blue-600 hover:bg-blue-600 hover:text-gray-100'
             }`}
           >
             {showFlags && <span className="mr-1">{language.flag}</span>}
