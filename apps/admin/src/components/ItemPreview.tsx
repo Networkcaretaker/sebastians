@@ -54,14 +54,14 @@ const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
                 )}
               </div>
             </div>
-            {itemData.flags.options ? (
+            {itemData.flags.options && item.price > 0 ? (
               <div className="text-green-600 text-lg font-bold">
                 <span className="text-sm font-medium">from </span>
                 {itemData.price.toFixed(2)}€
               </div>
             ) : (
               <div className="text-green-600 text-lg font-bold">
-                {itemData.price.toFixed(2)}€
+                {item.price > 0 ? <div>{itemData.price.toFixed(2)}€</div> : <div />}
               </div>
             )}
           </div>
@@ -88,10 +88,10 @@ const ItemPreview: React.FC<ItemViewProps> = ({ item }) => {
             <div className="">
               {itemData.options.map((option, idx) => (
                 <div key={idx} className="flex justify-between">
-                  <span className="text-base font-base px-4">
+                  <span className="text-base font-semibold">
                     {displayOptions[idx] || option.option}
                   </span>
-                  <span className="text-green-600 text-base font-medium">
+                  <span className="text-green-600 text-base font-semibold">
                     {option.price.toFixed(2)}€
                   </span>
                 </div>

@@ -65,11 +65,26 @@ const ItemTable: React.FC<ItemTableProps> = ({
                   </Link>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                {item.flags.options ? (
-                  <div className="text-green-600 text-sm font-medium"><span className=" text-xs font-thin">from </span>{item.price.toFixed(2)}€</div>
-                  ):
-                  <div className="text-sm font-medium text-green-600">{item.price.toFixed(2)}€</div>
+
+                {item.price > 0 
+                  ? <div>
+                      {item.flags.options 
+                      ? (
+                          <div className="text-green-600 text-sm font-medium"><span className=" text-xs font-thin">from </span>{item.price.toFixed(2)}€</div>
+                        )
+                      :
+                          <div className="text-sm font-medium text-green-600">{item.price.toFixed(2)}€</div>
+                        }
+                    </div>
+                  : <div className="text-xs text-gray-600">
+                      {item.options.map((opt, idx) => (
+                        <div key={idx}>
+                          {opt.option}: <span className="text-green-600 font-semibold">{opt.price.toFixed(2)}€</span>
+                        </div>
+                      ))}
+                    </div>
                 }
+
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button

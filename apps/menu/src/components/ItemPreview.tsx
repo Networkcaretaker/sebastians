@@ -47,13 +47,36 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           <div className="flex gap-2">
             <h3 className="text-base font-bold">{getItemName(item)}</h3>
           </div>
-          {item.hasOptions || (item.options && item.options.length > 0) ? (
-            <div className="text-green-600 text-base font-bold">
-              <span className="text-xs font-medium">{t('from')}</span>{item.item_price.toFixed(2)}€
-            </div>
-          ) : (
-            <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)}€</div>
-          )}
+
+          {item.item_price > 0 
+            ? <div>
+                {item.hasOptions || (item.options && item.options.length > 0) ? (
+                <div className="text-green-600 text-base font-bold">
+                  <span className="text-xs font-medium">{t('from')}</span>{item.item_price.toFixed(2)}€
+                </div>
+              ) : (
+                <div>
+                  <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)}€</div>
+                </div>
+              )}
+            </div> 
+            : <div>
+                <div className="text-green-600 text-base font-bold">
+                  {item.options && item.options.length > 0 && (
+                    <div>
+                      {item.options.map((option, idx) => (
+                        <div key={idx} className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600 text-xs font-thin px-2">{getOptionText(item, idx, option.option)}</span>
+                          <span className="text-green-600 font-bold">
+                             {option.price.toFixed(2)}€
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>}
+
         </div>
       </div>
       
@@ -74,8 +97,8 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         )}
         
         {/* Options */}
-        {item.options && item.options.length > 0 && (
-          <div className="mt-2 space-y-1">
+        {item.options && item.options.length > 0 && item.item_price > 0 && (
+          <div className="mt-2 space-y-1"> 
             <h4 className="text-xs font-medium text-gray-700">{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">

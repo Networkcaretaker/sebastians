@@ -41,9 +41,27 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </button>
           </div>
         </div>
+
+        {item.price > 0 
+          ? <div>
+              {item.flags.options 
+              ? (
+                  <div className="text-green-600 text-sm font-medium"><span className=" text-xs font-thin">from </span>{item.price.toFixed(2)}€</div>
+                )
+              :
+                  <div className="text-sm font-medium text-green-600">{item.price.toFixed(2)}€</div>
+                }
+            </div>
+          : <div className="text-sm text-gray-600">
+              {item.options.map((opt, idx) => (
+                <div key={idx}>
+                  {opt.option}: <span className="text-green-600 font-semibold">{opt.price.toFixed(2)}€</span>
+                </div>
+              ))}
+            </div>
+        }
         
-        <p className="text-gray-600 mb-2">{item.item_description}</p>
-        <p className="text-green-600 font-semibold mb-2">{item.price.toFixed(2)}€</p>
+        <p className="text-gray-600 my-2">{item.item_description}</p>
         
         {/* Show category if available */}
         {itemCategory && (
@@ -54,9 +72,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
         
         {/* Item Details */}
         <div className="space-y-2 flex-grow">
-          {item.options.length > 0 && (
+
+          {item.options.length > 0 && item.price > 0 && (
             <div>
-              <p className="font-medium">Options:</p>
+              <p className="font-medium text-xs mb-2">Options:</p>
               <div className="text-sm text-gray-600">
                 {item.options.map((opt, idx) => (
                   <div key={idx}>
@@ -69,7 +88,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
           {item.extras.length > 0 && (
             <div>
-              <p className="font-medium">Extras:</p>
+              <p className="font-medium text-xs mb-2">Extras:</p>
               <div className="text-sm text-gray-600">
                 {item.extras.map((extra, idx) => (
                   <div key={idx}>
@@ -80,9 +99,23 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </div>
           )}
 
+                    {/* Add-ons */}
+          {item.addons.length > 0 && (
+            <div>
+              <p className="font-medium text-xs mb-2">Addons:</p>
+              <div className="flex flex-wrap gap-1">
+                {item.addons.map((addon, idx) => (
+                  <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    {addon.item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {item.allergies.length > 0 && (
             <div>
-              <p className="font-medium">Allergies:</p>
+              <p className="font-medium text-xs mb-2">Allergies:</p>
               <div className="flex flex-wrap gap-1">
                 {item.allergies.map((allergy, idx) => (
                   <span

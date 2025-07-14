@@ -118,7 +118,7 @@ const Home: React.FC = () => {
                   {/* Card Body */}
                   <div className="p-6">
                     <div>
-                      <img src="/breakfast.svg"></img>"
+                      {/* <img src="/breakfast.svg"></img> */}
                     </div>
                     <div className="flex items-center">
                       <Link
