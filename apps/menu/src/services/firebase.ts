@@ -1,6 +1,7 @@
 // Firebase configuration for menu app
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from 'firebase/analytics';
 
 // Declare global variables defined by Vite
 declare const __VITE_FIREBASE_API_KEY__: string;
@@ -33,6 +34,9 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
+
+// Firestore Analytics
+export const analytics = getAnalytics(app); 
 
 console.log('✅ Firebase initialized for menu app');
 

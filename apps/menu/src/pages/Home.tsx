@@ -5,6 +5,7 @@ import { getPublishedMenus } from '../services/menuService';
 import MenuFooter from '../components/Footer';
 import LanguageSelector from '../components/LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
+import { usePageTracking } from '../hooks/usePageTracking';
 
 interface PublishedMenu {
   id: string;
@@ -19,6 +20,8 @@ const Home: React.FC = () => {
   const [menus, setMenus] = useState<PublishedMenu[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  usePageTracking('HomePage');
 
   useEffect(() => {
     const fetchMenus = async () => {
