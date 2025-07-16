@@ -17,10 +17,11 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import SortableItem from './SortableItem';
-import menuService from '../services/menuItemService';
+import menuItemService from '../services/menuItemService';
 // ADD THIS IMPORT for Firestore operations
 import { db } from '../config/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
+import menuService from '../services/menuService';
 
 interface CategorySortProps {
   category: MenuCategory;
@@ -68,7 +69,8 @@ const CategorySort: React.FC<CategorySortProps> = ({ category, menuItems, onOrde
         menu_order: index
       }));
       
-      await menuService.updateMenuOrder(updatedOrder);
+      await menuItemService.updateMenuOrder(updatedOrder);
+      await menuService.updateMenusContainingCategory(category.id!);
       
       // 2. UPDATE THE CATEGORY'S ITEMS ARRAY TO MATCH THE NEW ORDER
       if (category.id) {
