@@ -5,6 +5,8 @@ import { MenuCategory, MenuItem, MenuItemExtra, MenuItemAddon } from '../types/m
 import ItemViewFull from './ItemViewFull';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import menuService from '../services/menuService';
+
 
 interface CategoryViewFullProps {
   category: MenuCategory;
@@ -114,6 +116,7 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({
 
       const categoryRef = doc(db, 'categories', category.id);
       await updateDoc(categoryRef, updateData);
+      await menuService.updateMenusContainingCategory(category.id!);
       
       setIsEditing(false);
       

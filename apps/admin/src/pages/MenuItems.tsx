@@ -4,6 +4,7 @@ import ItemForm from '../components/ItemForm';
 import ItemCard from '../components/ItemCard';
 import ItemTable from '../components/ItemTable';
 import menuItemService from '../services/menuItemService';
+import menuService from '../services/menuService';
 import { MenuItem, CreateMenuItemDTO, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
@@ -210,6 +211,7 @@ const MenuItems: React.FC = () => {
       
       // Update the menu item first
       await menuItemService.updateMenuItem(selectedItem.id, itemData);
+      await menuService.updateMenusContainingItem(selectedItem.id);
       
       // Handle category changes if needed
       if (previousCategory !== newCategory) {
@@ -273,6 +275,7 @@ const MenuItems: React.FC = () => {
   const handleToggleStatus = async (itemId: string, currentStatus: boolean) => {
     try {
       await menuItemService.toggleItemStatus(itemId, !currentStatus);
+      await menuService.updateMenusContainingItem(itemId);
       fetchMenuItems();
     } catch (error) {
       console.error('Error toggling item status:', error);

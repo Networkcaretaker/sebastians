@@ -11,6 +11,7 @@ import {
   deleteDoc
 } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import menuService from '../services/menuService';
 
 const COLLECTION_NAME = 'categories';
 
@@ -403,6 +404,11 @@ const Categories: React.FC = () => {
       };
       
       const categoryCollection = collection(db, COLLECTION_NAME);
+      const dataWithTimestamp = {
+        ...dataToAdd,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
       await addDoc(categoryCollection, dataToAdd);
       setIsFormVisible(false);
       fetchCategories();
@@ -428,10 +434,13 @@ const Categories: React.FC = () => {
         addons: categoryData.addons,
         header: categoryData.header,
         footer: categoryData.footer,
-        items: categoryData.items || []
+        items: categoryData.items || [],
+        updatedAt: new Date()
       };
       
       await updateDoc(categoryRef, updateData);
+      await menuService.updateMenusContainingCategory(selectedCategory.id);
+      
       setIsFormVisible(false);
       setSelectedCategory(null);
       fetchCategories();
@@ -456,6 +465,8 @@ const Categories: React.FC = () => {
             });
           }
         }
+
+        await menuService.updateMenusContainingCategory(categoryId);
         
         // Delete the category
         await deleteDoc(doc(db, COLLECTION_NAME, categoryId));
@@ -478,8 +489,11 @@ const Categories: React.FC = () => {
       const categoryRef = doc(db, COLLECTION_NAME, selectedCategory.id);
       
       await updateDoc(categoryRef, {
-        items: itemIds
+        items: itemIds,
+        updatedAt: new Date()
       });
+      await menuService.updateMenusContainingCategory(selectedCategory.id);
+      
       
       // Also update menu items to have this category
       for (const item of menuItems) {

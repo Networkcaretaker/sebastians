@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { MenuItem, MenuItemOption, MenuItemExtra } from '../types/menu.types';
 import menuItemService from '../services/menuItemService';
+import menuService from '../services/menuService';
 
 // Predefined allergies list
 const PREDEFINED_ALLERGIES: string[] = [
@@ -202,6 +203,8 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
       };
 
       await menuItemService.updateMenuItem(item.id!, updateData);
+      await menuService.updateMenusContainingItem(item.id!);
+
       
       setIsEditing(false);
       

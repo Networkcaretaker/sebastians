@@ -233,7 +233,91 @@ export const menuService = {
       console.error('Error updating menu categories:', error);
       throw error;
     }
-  }
+  },
+
+  // Helper function to update timestamps on menus containing a specific category
+  updateMenusContainingCategory: async (categoryId: string): Promise<void> => {
+    try {
+      console.log(`Updating menus containing category: ${categoryId}`);
+      
+      // Query menus that contain this category ID
+      const q = query(
+        collection(db, 'menus'),
+        where('categories', 'array-contains', categoryId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        console.log(`No menus found containing category: ${categoryId}`);
+        return;
+      }
+      
+      // Update all affected menus with new timestamp
+      const batch = writeBatch(db);
+      const updateTime = new Date();
+      
+      querySnapshot.docs.forEach(doc => {
+        batch.update(doc.ref, { updatedAt: updateTime });
+      });
+      
+      await batch.commit();
+      console.log(`Updated ${querySnapshot.docs.length} menus containing category: ${categoryId}`);
+    } catch (error) {
+      console.error('Error updating menus containing category:', error);
+      throw error;
+    }
+  },
+
+  // Helper function to update timestamps on menus containing a specific menu item
+  updateMenusContainingItem: async (itemId: string): Promise<void> => {
+    try {
+      console.log(`Updating menus containing item: ${itemId}`);
+      
+      // First find which category contains this item
+      const categoriesQuery = query(
+        collection(db, 'categories'),
+        where('items', 'array-contains', itemId)
+      );
+      
+      const categoriesSnapshot = await getDocs(categoriesQuery);
+      
+      if (categoriesSnapshot.empty) {
+        console.log(`No categories found containing item: ${itemId}`);
+        return;
+      }
+      
+      // Get all category IDs that contain this item
+      const categoryIds = categoriesSnapshot.docs.map(doc => doc.id);
+      
+      // Find menus that contain any of these categories
+      const menusQuery = query(
+        collection(db, 'menus'),
+        where('categories', 'array-contains-any', categoryIds)
+      );
+      
+      const menusSnapshot = await getDocs(menusQuery);
+      
+      if (menusSnapshot.empty) {
+        console.log(`No menus found containing categories with item: ${itemId}`);
+        return;
+      }
+      
+      // Update all affected menus with new timestamp
+      const batch = writeBatch(db);
+      const updateTime = new Date();
+      
+      menusSnapshot.docs.forEach(doc => {
+        batch.update(doc.ref, { updatedAt: updateTime });
+      });
+      
+      await batch.commit();
+      console.log(`Updated ${menusSnapshot.docs.length} menus containing item: ${itemId}`);
+    } catch (error) {
+      console.error('Error updating menus containing item:', error);
+      throw error;
+    }
+  },
 };
 
 export default menuService;

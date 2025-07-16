@@ -1,373 +1,350 @@
 // src/components/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
-import ItemForm from './ItemForm';
-import menuItemService from '../services/menuItemService';
-import { MenuItem, CreateMenuItemDTO, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../config/firebase';
-import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
+// apps/admin/src/components/Dashboard.tsx
+import { Link } from 'react-router-dom';
+import { 
+  collection, 
+  getDocs, 
+  query, 
+  where, 
+  orderBy, 
+  limit 
+} from 'firebase/firestore';
+import { db } from '../config/firebase';
+import { MenuItem, MenuCategory, Menu } from '../types/menu.types';
+import { getMenusWithPublishStatus } from '../services/websiteService';
+import { MenuWithPublishStatus } from '@sebastians/shared-types';
 
 const Dashboard: React.FC = () => {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [currentCategory, setCurrentCategory] = useState<string>('all');
-  const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const { currentUser } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalItems: 0,
+    activeItems: 0,
+    totalCategories: 0,
+    totalMenus: 0,
+    publishedMenus: 0,
+    menusNeedingUpdate: 0
+  });
+  const [recentItems, setRecentItems] = useState<MenuItem[]>([]);
+  const [recentCategories, setRecentCategories] = useState<MenuCategory[]>([]);
+  const [menusWithStatus, setMenusWithStatus] = useState<MenuWithPublishStatus[]>([]);
 
   useEffect(() => {
     if (currentUser) {
-      console.log('Dashboard: User is authenticated, fetching data');
-      fetchMenuItems();
-      fetchCategories();
-    } else {
-      console.log('Dashboard: No authenticated user');
-      setLoading(false);
-      setError('You must be logged in to view menu items');
+      loadDashboardData();
     }
   }, [currentUser]);
 
-  const fetchMenuItems = async () => {
-    setError(null);
+  const loadDashboardData = async () => {
     try {
-      console.log('Fetching menu items...');
-      const items = await menuItemService.getAllMenuItems();
-      console.log('Successfully fetched items:', items);
-      setMenuItems(items);
+      setLoading(true);
+
+      // Load menu items
+      const itemsSnapshot = await getDocs(collection(db, 'menu_items'));
+      const items = itemsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as MenuItem[];
+
+      // Load categories
+      const categoriesSnapshot = await getDocs(collection(db, 'categories'));
+      const categories = categoriesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as MenuCategory[];
+
+      // Load menus with publish status
+      const menus = await getMenusWithPublishStatus();
+
+      // Load recent items (last 5)
+      const recentItemsQuery = query(
+        collection(db, 'menu_items'),
+        orderBy('updatedAt', 'desc'),
+        limit(5)
+      );
+      const recentItemsSnapshot = await getDocs(recentItemsQuery);
+      const recentItemsData = recentItemsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as MenuItem[];
+
+      // Load recent categories (last 3)
+      const recentCategoriesQuery = query(
+        collection(db, 'categories'),
+        orderBy('updatedAt', 'desc'),
+        limit(3)
+      );
+      const recentCategoriesSnapshot = await getDocs(recentCategoriesQuery);
+      const recentCategoriesData = recentCategoriesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as MenuCategory[];
+
+      // Calculate stats
+      const activeItems = items.filter(item => item.flags?.active).length;
+      const publishedMenus = menus.filter(menu => menu.publishStatus === 'published').length;
+      const menusNeedingUpdate = menus.filter(menu => 
+        menu.publishStatus === 'published' && 
+        menu.updatedAt && 
+        menu.lastPublished && 
+        menu.updatedAt > menu.lastPublished
+      ).length;
+
+      setStats({
+        totalItems: items.length,
+        activeItems,
+        totalCategories: categories.length,
+        totalMenus: menus.length,
+        publishedMenus,
+        menusNeedingUpdate
+      });
+
+      setRecentItems(recentItemsData);
+      setRecentCategories(recentCategoriesData);
+      setMenusWithStatus(menus);
+
     } catch (error) {
-      console.error('Error fetching menu items:', error);
-      setError(error instanceof Error ? error.message : 'An unknown error occurred');
+      console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      console.log('Fetching categories...');
-      const querySnapshot = await getDocs(collection(db, 'categories'));
-      const categoriesData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as MenuCategory[];
-      
-      console.log('Successfully fetched categories:', categoriesData);
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
-
-  const handleAddItem = async (itemData: CreateMenuItemDTO) => {
-    setError(null);
-    try {
-      console.log('Adding menu item with data:', itemData);
-      // Make sure the flags are properly initialized
-      const sanitizedData = {
-        ...itemData,
-        flags: {
-          active: itemData.flags?.active ?? true,
-          vegetarian: itemData.flags?.vegetarian ?? false,
-          vegan: itemData.flags?.vegan ?? false,
-          spicy: itemData.flags?.spicy ?? false,
-          extras: Boolean(itemData.extras?.length),
-          addons: Boolean(itemData.addons?.length),
-          options: Boolean(itemData.options?.length)
-        }
-      };
-      
-      // Add the menu item
-      const newItem = await menuItemService.addMenuItem(sanitizedData);
-      
-      // If category is selected, update the category's items array
-      if (itemData.category) {
-        await updateCategoryItems(itemData.category, newItem.id!, true);
-      }
-      
-      setIsFormVisible(false);
-      fetchMenuItems();
-    } catch (error) {
-      console.error('Error adding menu item:', error);
-      setError(error instanceof Error ? error.message : 'Failed to add menu item');
-    }
-  };
-
-  const handleUpdateItem = async (itemData: CreateMenuItemDTO) => {
-    if (!selectedItem?.id) return;
-    
-    try {
-      // Get the previous category if there was one
-      const previousCategory = selectedItem.category;
-      const newCategory = itemData.category;
-      
-      // Update the menu item first
-      await menuItemService.updateMenuItem(selectedItem.id, itemData);
-      
-      // Handle category changes if needed
-      if (previousCategory !== newCategory) {
-        // Remove from previous category if it exists
-        if (previousCategory) {
-          await updateCategoryItems(previousCategory, selectedItem.id, false);
-        }
-        
-        // Add to new category if selected
-        if (newCategory) {
-          await updateCategoryItems(newCategory, selectedItem.id, true);
-        }
-      }
-      
-      setIsFormVisible(false);
-      fetchMenuItems();
-    } catch (error) {
-      console.error('Error updating menu item:', error);
-      setError(error instanceof Error ? error.message : 'Failed to update menu item');
-    }
-  };
-
-  // Helper function to update a category's items array
-  const updateCategoryItems = async (categoryId: string, itemId: string, isAdding: boolean) => {
-    try {
-      const categoryRef = doc(db, 'categories', categoryId);
-      
-      if (isAdding) {
-        // Add item to category's items array
-        await updateDoc(categoryRef, {
-          items: arrayUnion(itemId)
-        });
-      } else {
-        // Remove item from category's items array
-        await updateDoc(categoryRef, {
-          items: arrayRemove(itemId)
-        });
-      }
-    } catch (error) {
-      console.error('Error updating category items:', error);
-      throw error;
-    }
-  };
-
-  const handleToggleStatus = async (itemId: string, currentStatus: boolean) => {
-    try {
-      await menuItemService.toggleItemStatus(itemId, !currentStatus);
-      fetchMenuItems();
-    } catch (error) {
-      console.error('Error toggling item status:', error);
-    }
-  };
-
-  const handleDeleteItem = async (itemId: string) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        // Find the item to get its category
-        const item = menuItems.find(item => item.id === itemId);
-        
-        // Delete the menu item
-        await menuItemService.deleteMenuItem(itemId);
-        
-        // If item was in a category, remove it from the category's items array
-        if (item && item.category) {
-          await updateCategoryItems(item.category, itemId, false);
-        }
-        
-        fetchMenuItems();
-      } catch (error) {
-        console.error('Error deleting menu item:', error);
-      }
-    }
-  };
-
-  // Get unique categories for the filter
-  const uniqueCategories = ['all', ...new Set(menuItems.map(item => {
-    // Find the category name based on ID
-    const category = categories.find(cat => cat.id === item.category);
-    return category ? category.cat_name : item.category;
-  }))];
-  
-  // Filter items by selected category
-  const filteredItems = currentCategory === 'all'
-    ? menuItems
-    : menuItems.filter(item => {
-        const category = categories.find(cat => cat.id === item.category);
-        return category ? category.cat_name === currentCategory : item.category === currentCategory;
-      });
-
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Menu Dashboard</h1>
-        {error && (
-          <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-            <p className="font-bold">Error</p>
-            <p>{error}</p>
-          </div>
-        )}
-        <button
-          onClick={() => {
-            setSelectedItem(null);
-            setIsFormVisible(true);
-          }}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-        >
-          Add New Item
-        </button>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Restaurant Dashboard</h1>
+        <p className="text-gray-600 mt-2">
+          Welcome back! Here's an overview of your restaurant management system.
+        </p>
       </div>
 
-      {/* Category Filter */}
-      <div className="mb-6">
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {uniqueCategories.map(category => (
-            <button
-              key={category}
-              onClick={() => setCurrentCategory(category)}
-              className={`px-4 py-2 rounded-full whitespace-nowrap ${
-                currentCategory === category
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700'
-              }`}
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
+      {/* Key Performance Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Total Menu Items */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <div className="w-6 h-6 bg-blue-500 rounded"></div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Items</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalItems}</p>
+              <p className="text-sm text-green-600">{stats.activeItems} active</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Categories */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="w-6 h-6 bg-purple-500 rounded"></div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Categories</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalCategories}</p>
+              <p className="text-sm text-gray-500">organized</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Published Menus */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <div className="w-6 h-6 bg-green-500 rounded"></div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Published Menus</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.publishedMenus}</p>
+              <p className="text-sm text-gray-500">of {stats.totalMenus} total</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Updates Needed */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <div className="w-6 h-6 bg-orange-500 rounded"></div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Need Updates</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.menusNeedingUpdate}</p>
+              <p className="text-sm text-orange-600">menus changed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            to="/menu-items?action=create"
+            className="flex items-center justify-center px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            <span className="font-medium">+ Add New Item</span>
+          </Link>
+          <Link
+            to="/categories?action=create"
+            className="flex items-center justify-center px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            <span className="font-medium">+ Add Category</span>
+          </Link>
+          <Link
+            to="/website"
+            className="flex items-center justify-center px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          >
+            <span className="font-medium">Manage Publishing</span>
+          </Link>
+          <button className="flex items-center justify-center px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+            <span className="font-medium">Export Data</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Content Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Recent Items */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">Recent Items</h2>
+            <Link to="/menu-items" className="text-blue-600 hover:text-blue-800 text-sm">
+              View all →
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {recentItems.map(item => (
+              <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium text-gray-900">{item.item_name}</p>
+                  <p className="text-sm text-gray-600">€{item.price?.toFixed(2)}</p>
+                </div>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  item.flags?.active 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {item.flags?.active ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            ))}
+            {recentItems.length === 0 && (
+              <p className="text-gray-500 text-center py-4">No recent items</p>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Categories */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">Recent Categories</h2>
+            <Link to="/categories" className="text-blue-600 hover:text-blue-800 text-sm">
+              View all →
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {recentCategories.map(category => (
+              <div key={category.id} className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-gray-900">{category.cat_name}</p>
+                <p className="text-sm text-gray-600">
+                  {category.items?.length || 0} items
+                </p>
+              </div>
+            ))}
+            {recentCategories.length === 0 && (
+              <p className="text-gray-500 text-center py-4">No recent categories</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Publishing Status */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Menu Publishing Status</h2>
+        <div className="space-y-3">
+          {menusWithStatus.map(menu => (
+            <div key={menu.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-medium text-gray-900">{menu.menu_name}</p>
+                <p className="text-sm text-gray-600">{menu.menu_description}</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className={`px-3 py-1 text-sm rounded-full ${
+                  menu.publishStatus === 'published' 
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {menu.publishStatus === 'published' ? 'Published' : 'Draft'}
+                </span>
+                {menu.publishStatus === 'published' && 
+                 menu.updatedAt && 
+                 menu.lastPublished && 
+                 menu.updatedAt > menu.lastPublished && (
+                  <span className="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded-full">
+                    Update Available
+                  </span>
+                )}
+              </div>
+            </div>
           ))}
+          {menusWithStatus.length === 0 && (
+            <p className="text-gray-500 text-center py-4">No menus created yet</p>
+          )}
         </div>
       </div>
 
-      {/* Menu Items Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.map((item) => {
-          // Find the category for this item
-          const itemCategory = categories.find(cat => cat.id === item.category);
-          
-          return (
-            <div
-              key={item.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-semibold">{item.item_name}</h3>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleToggleStatus(item.id!, item.flags.active)}
-                      className={`px-2 py-1 rounded text-sm ${
-                        item.flags.active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {item.flags.active ? 'Active' : 'Inactive'}
-                    </button>
-                  </div>
-                </div>
-                
-                <p className="text-gray-600 mb-2">{item.item_description}</p>
-                <p className="text-green-600 font-semibold mb-2">{item.price}€</p>
-                
-                {/* Show category if available */}
-                {itemCategory && (
-                  <p className="text-blue-600 text-sm mb-2">
-                    Category: {itemCategory.cat_name}
-                  </p>
-                )}
-                
-                {/* Item Details */}
-                <div className="space-y-2">
-
-
-                {item.options.length > 0 && (
-                  <div>
-                    <p className="font-medium">Options:</p>
-                    <div className="text-sm text-gray-600">
-                      {item.options.map((opt, idx) => (
-                        <div key={idx}>
-                          {opt.option}: {opt.price.toFixed(2)}€
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {item.extras.length > 0 && (
-                  <div>
-                    <p className="font-medium">Extras:</p>
-                    <div className="text-sm text-gray-600">
-                      {item.extras.map((extra, idx) => (
-                        <div key={idx}>
-                          {extra.item}: {extra.price.toFixed(2)}€
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {item.allergies.length > 0 && (
-                  <div>
-                    <p className="font-medium">Allergies:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {item.allergies.map((allergy, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded"
-                        >
-                          {allergy}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-4 flex justify-end space-x-2">
-                  <button
-                    onClick={() => {
-                      setSelectedItem(item);
-                      setIsFormVisible(true);
-                    }}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteItem(item.id!)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Form Modal */}
-      {isFormVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">
-                {selectedItem ? 'Edit Menu Item' : 'Add New Menu Item'}
-              </h2>
-              <button
-                onClick={() => setIsFormVisible(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            <ItemForm
-              onSubmit={selectedItem ? handleUpdateItem : handleAddItem}
-              initialData={selectedItem || undefined}
-            />
+      {/* Content Health Check - PLACEHOLDER SECTION */}
+      <div className="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Content Health Check</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="font-medium text-yellow-800">Items Missing Images</h3>
+            <p className="text-2xl font-bold text-yellow-900">--</p>
+            <p className="text-sm text-yellow-600">Placeholder for future feature</p>
+          </div>
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-medium text-blue-800">SEO Optimization</h3>
+            <p className="text-2xl font-bold text-blue-900">--%</p>
+            <p className="text-sm text-blue-600">Placeholder for SEO scoring</p>
+          </div>
+          <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+            <h3 className="font-medium text-purple-800">Translation Ready</h3>
+            <p className="text-2xl font-bold text-purple-900">--%</p>
+            <p className="text-sm text-purple-600">Placeholder for translations</p>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Analytics Placeholder */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Analytics Overview</h2>
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Coming Soon</h3>
+          <p className="text-gray-600 mb-4">
+            Track menu performance, popular items, and customer engagement.
+          </p>
+          <button className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed">
+            Enable Analytics (Placeholder)
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
