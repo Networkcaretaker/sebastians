@@ -53,6 +53,13 @@ export interface MenuCategory {
   footer: string;
 }
 
+export interface MenuImage {
+  smallUrl: string;
+  largeUrl: string;
+  aspectRatio: '1:1' | '16:9';
+  uploadedAt: Date | { seconds: number; nanoseconds: number };
+}
+
 // Menu management interfaces
 export interface Menu {
   id?: string;
@@ -61,6 +68,7 @@ export interface Menu {
   menu_type: 'web' | 'printable';
   categories: string[]; // array of category IDs in order
   isActive: boolean;
+  image?: MenuImage;
   createdAt?: Date;
   updatedAt?: Date;
   menu_order: number;

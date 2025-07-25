@@ -2,6 +2,7 @@
 import { initializeFirebaseApp } from '@sebastians/firebase-config';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getFunctions } from 'firebase/functions';
 
 // Declare global variables defined by Vite
 declare const __VITE_FIREBASE_API_KEY__: string;
@@ -44,6 +45,7 @@ const app = initializeFirebaseApp(firebaseConfig);
 // Initialize services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const functions = getFunctions(app, 'us-central1');
 
 console.log('✅ Firebase initialized for admin app');
 

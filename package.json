@@ -13,7 +13,7 @@
     "dev:all": "concurrently \"npm run dev:admin\" \"npm run dev:menu\"",
     "build:packages": "npm run build --workspace=packages/shared-types && npm run build --workspace=packages/firebase-config",
     "build:admin": "npm run build:packages && npm run build --workspace=apps/admin",
-    "build:menu": "npm run build:packages && npm run build --workspace=apps/menu", 
+    "build:menu": "npm run build:packages && npm run build --workspace=apps/menu",
     "build:all": "npm run build:packages && npm run build:admin && npm run build:menu",
     "deploy:menu": "firebase deploy --only hosting:menu",
     "deploy:admin": "firebase deploy --only hosting:admin",
@@ -26,11 +26,15 @@
     "type-check": "npm run type-check --workspaces"
   },
   "devDependencies": {
+    "@types/sharp": "^0.32.0",
     "concurrently": "^8.2.2",
     "typescript": "^5.7.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "sharp": "^0.34.3"
   }
 }
