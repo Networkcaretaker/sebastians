@@ -42,8 +42,6 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
                 )}
               </div>
               
-              
-
               {/* Menu Items */}
               {activeItems.length > 0 ? (
                 <div className="space-y-4">

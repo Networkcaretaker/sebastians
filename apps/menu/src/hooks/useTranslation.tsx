@@ -191,6 +191,38 @@ export const useTranslation = () => {
     return originalText;
   };
 
+  // Simple function to get translated item name
+  const getMenuName = (menu: any): string => {
+    if (currentLanguage === defaultLanguage || currentLanguage === 'en') {
+      return menu.name;
+    }
+    
+    // Check if menu has translations
+    if (menu.translations && menu.translations[currentLanguage] && menu.translations[currentLanguage].name) {
+      return menu.translations[currentLanguage].name;
+    }
+    
+    // Fall back to original
+    return menu.name;
+  };
+
+  // Simple function to get translated item description
+  const getMenuDescription = (menu: any): string => {
+    if (currentLanguage === defaultLanguage || currentLanguage === 'en') {
+      return menu.description || '';
+    }
+
+    console.log("MENU", menu)
+    
+    // Check if menu has translations
+    if (menu.translations && menu.translations[currentLanguage] && menu.translations[currentLanguage].description) {
+      return menu.translations[currentLanguage].description;
+    }
+    
+    // Fall back to original
+    return menu.description || '';
+  };
+
   return {
     currentLanguage,
     t, // UI text translation function
@@ -205,6 +237,8 @@ export const useTranslation = () => {
     getExtraText,
     getAddonText,
     getCategoryExtraText,
-    getCategoryAddonText
+    getCategoryAddonText,
+    getMenuName,
+    getMenuDescription
   };
 };

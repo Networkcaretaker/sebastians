@@ -50,6 +50,7 @@ export interface PublishedMenu {
   url: string;
   lastUpdated: string;
   slug?: string;
+  translations?: Record<string, any>;
 }
 
 /**
@@ -91,8 +92,38 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
       return [];
     }
 
+    // First, get all the basic menu data
+    const basicMenus = publishedMenus
+      .filter((menu: any) => menu.isActive !== false)
+      .map((menu: any) => ({
+        id: menu.menuId,
+        name: menu.name,
+        description: menu.description || '',
+        url: menu.publishedUrl,
+        lastUpdated: menu.publishedAt || new Date().toISOString(),
+        slug: menu.menuId,
+        translations: {}
+      }));
+    const transformedMenus = await Promise.all(
+      basicMenus.map(async (menu) => {
+        const translationData = await getMenuTranslations(menu.url);
+        
+        if (translationData) {
+          return {
+            ...menu,
+            name: translationData.name, // Use name from JSON (might be more up-to-date)
+            description: translationData.description, // Use description from JSON
+            translations: translationData.translations
+          };
+        }
+        
+        // Fallback to Firestore data if JSON fetch fails
+        return menu;
+      })
+    );
+
     // Transform the Firestore data to match our interface
-    const transformedMenus = publishedMenus
+    /*const transformedMenus = publishedMenus
       .filter((menu: any) => menu.isActive !== false) // Only active menus
       .map((menu: any) => {
         console.log('🔍 Processing menu from Firestore:', menu);
@@ -105,9 +136,10 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
           description: menu.description || '',
           url: menu.publishedUrl,
           lastUpdated: menu.publishedAt || new Date().toISOString(),
-          slug: menu.menuId
+          slug: menu.menuId,
+          translations: menu.translations || {}
         };
-      });
+      });*/
 
     console.log('🔄 Transformed published menus:', transformedMenus);
     return transformedMenus;
@@ -177,6 +209,47 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
 };
 
 /**
+ * Fetches only the menu name, description and translations from a JSON file
+ * Lightweight version for homepage use
+ */
+export const getMenuTranslations = async (menuUrl: string): Promise<{
+  name: string;
+  description: string;
+  translations: Record<string, any>;
+} | null> => {
+  try {
+    console.log('🔍 Fetching menu translations from:', menuUrl);
+    
+    const response = await fetch(menuUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      mode: 'cors',
+      cache: 'no-cache'
+    });
+
+    if (!response.ok) {
+      console.error(`❌ Failed to fetch menu translations:`, response.status, response.statusText);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    // Extract only what we need for the homepage
+    return {
+      name: data.menu?.name || 'Untitled Menu',
+      description: data.menu?.description || '',
+      translations: data.menu?.translations || {}
+    };
+
+  } catch (error) {
+    console.error(`💥 Error fetching menu translations:`, error);
+    return null;
+  }
+};
+
+/**
  * Helper function to transform menu data
  */
 const transformMenuData = (data: any, menuId: string, url: string): MenuData => {
@@ -187,6 +260,7 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
     menu_type: data.menu.type || 'web',
     lastUpdated: data.lastUpdated || data.updatedAt || new Date().toISOString(),
     publishedUrl: url,
+    translations: data.menu.translations || {},
     categories: (data.categories || []).map((category: any) => ({
       id: category.id,
       cat_name: category.cat_name || category.name,

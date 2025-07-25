@@ -13,10 +13,11 @@ interface PublishedMenu {
   description: string;
   lastUpdated: string;
   url: string;
+  translations?: Record<string, any>;
 }
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, getMenuName, getMenuDescription } = useTranslation();
   const [menus, setMenus] = useState<PublishedMenu[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +115,7 @@ const Home: React.FC = () => {
                   {/* Card Header */}
                   <div className="bg-amber-400 px-6 py-4">
                     <h3 className="text-xl text-center font-bold text-black">
-                      {menu.name}
+                      {getMenuName(menu)}
                     </h3>
                   </div>
 
@@ -136,7 +137,7 @@ const Home: React.FC = () => {
                   {/* Card Footer */}
                   <div className="bg-amber-400 px-6 py-4">
                     <h3 className="text-lg text-center font-light text-black">
-                      {menu.description}
+                      {getMenuDescription(menu)}
                     </h3>
                   </div>
 
