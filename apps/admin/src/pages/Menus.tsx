@@ -180,29 +180,6 @@ const Menus: React.FC = () => {
       {/* View Controls */}
       <div className="mb-6 flex flex-wrap items-center justify-end gap-4">
         <div className="flex items-center space-x-4">
-          <div className="flex rounded-md shadow-sm" role="group">
-            <button
-              onClick={() => setViewType('table')}
-              className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
-                viewType === 'table'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Table View
-            </button>
-            <button
-              onClick={() => setViewType('cards')}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
-                viewType === 'cards'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Card View
-            </button>
-          </div>
-          
           {/* Column Count (only show when card view is active) */}
           {viewType === 'cards' && (
             <div className="flex rounded-md shadow-sm" role="group">
@@ -214,7 +191,7 @@ const Menus: React.FC = () => {
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                2 Columns
+                2 Col
               </button>
               <button
                 onClick={() => setColumnCount(3)}
@@ -224,10 +201,34 @@ const Menus: React.FC = () => {
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                3 Columns
+                3 Col
               </button>
             </div>
           )}
+          <div className="flex rounded-md shadow-sm" role="group">
+            <button
+              onClick={() => setViewType('table')}
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
+                viewType === 'table'
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Table
+            </button>
+            <button
+              onClick={() => setViewType('cards')}
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+                viewType === 'cards'
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Cards
+            </button>
+          </div>
+          
+          
         </div>
       </div>
 

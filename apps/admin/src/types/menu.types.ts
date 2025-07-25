@@ -32,7 +32,7 @@ import {
   CreateCategoryTranslationDTO,
   UpdateCategoryTranslationDTO,
   CategoryTranslationResponse,
-  GetCategoryTranslationsResponse
+  GetCategoryTranslationsResponse,
 } from '@sebastians/shared-types';
 
 // Re-export shared types for convenience
@@ -101,4 +101,36 @@ export interface UpdateOptionsResponse {
 export interface UpdateAllergiesResponse {
   id: string;
   allergies: string[];
+}
+
+// Menu Translation Interfaces
+export interface MenuTranslation {
+  id?: string;
+  menu_name: string;
+  menu_description: string;
+  updatedAt?: Date;
+  createdAt?: Date;
+}
+
+export interface CreateMenuTranslationDTO {
+  menu_name: string;
+  menu_description: string;
+}
+
+export interface UpdateMenuTranslationDTO {
+  menu_name?: string;
+  menu_description?: string;
+}
+
+// Response types for menu translation operations
+export interface MenuTranslationResponse {
+  success: boolean;
+  message: string;
+  translation?: MenuTranslation;
+}
+
+export interface GetMenuTranslationsResponse {
+  success: boolean;
+  message: string;
+  translations?: Record<string, MenuTranslation>;
 }

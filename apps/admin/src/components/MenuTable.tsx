@@ -61,8 +61,20 @@ const MenuTable: React.FC<MenuTableProps> = ({
               <tr key={menu.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <div className="text-sm font-medium text-gray-900">{menu.menu_name}</div>
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{menu.menu_description}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      <Link 
+                        to={`/menus/${menu.id}`}
+                      >
+                        {menu.menu_name}
+                      </Link>
+                    </div>
+                    <div className="text-sm text-gray-500 truncate max-w-xs">
+                       <Link 
+                        to={`/menus/${menu.id}`}
+                      >
+                        {menu.menu_description}
+                      </Link>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

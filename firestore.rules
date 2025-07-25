@@ -22,6 +22,10 @@ service cloud.firestore {
     match /menus/{document} {
       // Allow read/write if the user is authenticated
       allow read, write: if request.auth != null;
+      // Translations subcollection - allow authenticated users to read/write
+      match /translations/{languageCode} {
+        allow read, write: if request.auth != null;
+      }
     }
     
     // Website configuration - allow public read access only to the default document

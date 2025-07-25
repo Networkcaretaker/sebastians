@@ -6,9 +6,11 @@ import { db } from '../config/firebase';
 import { Menu, MenuCategory } from '../types/menu.types';
 import { useAuth } from '../context/AuthContext';
 import MenuPreview from '../components/MenuPreview';
+import MenuViewFull from '../components/MenuViewFull';
+import MenuTranslate from '../components/MenuTranslate';
 
 // View options type
-type ViewType = 'details' | 'preview';
+type ViewType = 'details' | 'preview' | 'edit' | 'sort' | 'translate';
 
 // Export response interface
 interface ExportResponse {
@@ -155,7 +157,7 @@ const MenuDetail: React.FC = () => {
               onClick={() => setViewType('details')}
               className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
                 viewType === 'details'
-                  ? 'bg-blue-500 text-white border-blue-500'
+                  ? 'bg-blue-600 text-white border-blue-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -163,32 +165,47 @@ const MenuDetail: React.FC = () => {
             </button>
             <button
               onClick={() => setViewType('preview')}
-              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+              disabled={menu.menu_type !== 'web' || menuCategories.length === 0}
+              className={`px-4 py-2 text-sm font-medium border ${
                 viewType === 'preview'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
               }`}
             >
               Preview
             </button>
-          </div>
-
-          {/* Action Buttons */}
-          <button
-            onClick={() => navigate('/menus')}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Edit Menu
-          </button>
-          
-          {menu.menu_type === 'web' && menuCategories.length > 0 && (
             <button
-              onClick={() => setViewType('preview')}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              onClick={() => setViewType('edit')}
+              className={`px-4 py-2 text-sm font-medium border ${
+                viewType === 'edit'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
             >
-              {viewType === 'preview' ? 'Currently Previewing' : 'Preview Menu'}
+              Edit
             </button>
-          )}
+            {/*<button
+              onClick={() => setViewType('sort')}
+              className={`px-4 py-2 text-sm font-medium border ${
+                viewType === 'sort'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Sort
+            </button>
+            */}
+            <button
+              onClick={() => setViewType('translate')}
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
+                viewType === 'translate'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Translate
+            </button>
+          </div>
         </div>
       </div>
 
@@ -214,6 +231,28 @@ const MenuDetail: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+      ) : viewType === 'edit' ? (
+        // Menu Edit View
+        <div>
+          <MenuViewFull 
+            menu={menu} 
+            onMenuUpdated={() => {
+              // Refresh the menu data after update
+              window.location.reload();
+            }} 
+          />
+        </div>
+      ) : viewType === 'translate' ? (
+        // Menu Translate View
+        <div>
+          <MenuTranslate 
+            menu={menu} 
+            onTranslationUpdated={() => {
+              // Optional: Add any refresh logic here if needed
+              console.log('Translation updated');
+            }} 
+          />
         </div>
       ) : (
         // Menu Details View (Original Content)

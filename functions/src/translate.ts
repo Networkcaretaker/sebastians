@@ -353,3 +353,134 @@ export const autoTranslateCategory = functions.https.onCall(async (data: any, co
     throw new functions.https.HttpsError('internal', 'Category auto-translation failed');
   }
 });
+
+export const autoTranslateMenu = functions.https.onCall(async (data: any, context: any) => {
+  const logger = functions.logger;
+  
+  try {
+    // Check authentication using the Gen 2 structure
+    const authData = data?.auth;
+    if (!authData || !authData.uid) {
+      throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+    }
+
+    // Extract data from the correct location (data.data)
+    const menuId = data?.data?.menuId;
+    const targetLanguage = data?.data?.targetLanguage;
+
+    if (!menuId || !targetLanguage) {
+      throw new functions.https.HttpsError('invalid-argument', 'menuId and targetLanguage required');
+    }
+
+    if (!SUPPORTED_LANGUAGES.includes(targetLanguage)) {
+      throw new functions.https.HttpsError('invalid-argument', `Unsupported language: ${targetLanguage}`);
+    }
+
+    logger.info(`Auto-translating menu ${menuId} to ${targetLanguage} for user ${authData.uid}`);
+
+    // Get API key from environment variable
+    const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
+    if (!apiKey) {
+      throw new functions.https.HttpsError('failed-precondition', 'Google Translate API key not configured');
+    }
+
+    const translate = new Translate({
+      key: apiKey
+    });
+
+    const db = admin.firestore();
+    
+    // Fetch the menu from Firestore
+    const menuRef = db.collection('menus').doc(menuId);
+    const menuDoc = await menuRef.get();
+
+    if (!menuDoc.exists) {
+      throw new functions.https.HttpsError('not-found', `Menu ${menuId} not found`);
+    }
+
+    const menu = menuDoc.data();
+    if (!menu) {
+      throw new functions.https.HttpsError('internal', 'Failed to retrieve menu data');
+    }
+
+    // Check if translation already exists
+    const translationRef = menuRef.collection('translations').doc(targetLanguage);
+    const existingTranslation = await translationRef.get();
+
+    if (existingTranslation.exists) {
+      const existingData = existingTranslation.data();
+      logger.info(`Translation already exists for ${menuId} in ${targetLanguage}`);
+      
+      return {
+        success: true,
+        translation: {
+          menu_name: existingData?.menu_name || '',
+          menu_description: existingData?.menu_description || ''
+        },
+        message: `Translation already exists for ${targetLanguage}`
+      };
+    }
+
+    // Prepare texts for translation
+    const textsToTranslate: string[] = [];
+    textsToTranslate.push(menu.menu_name || '');
+    textsToTranslate.push(menu.menu_description || '');
+
+    // Filter out empty texts but remember positions
+    const nonEmptyTexts: string[] = [];
+    const originalIndices: number[] = [];
+    
+    textsToTranslate.forEach((text: string, index: number) => {
+      if (text && text.trim()) {
+        nonEmptyTexts.push(text.trim());
+        originalIndices.push(index);
+      }
+    });
+
+    if (nonEmptyTexts.length === 0) {
+      throw new functions.https.HttpsError('invalid-argument', 'No translatable text found');
+    }
+
+    logger.info(`Translating ${nonEmptyTexts.length} texts from English to ${targetLanguage}`);
+
+    // Call Google Translate API
+    const [translations] = await translate.translate(nonEmptyTexts, {
+      from: 'en',
+      to: targetLanguage,
+    });
+
+    const translatedTexts = Array.isArray(translations) ? translations : [translations];
+
+    // Create result array with empty strings for empty inputs
+    const result = new Array(textsToTranslate.length).fill('');
+    originalIndices.forEach((originalIndex: number, i: number) => {
+      if (translatedTexts[i]) {
+        result[originalIndex] = translatedTexts[i];
+      }
+    });
+
+    // Parse results back to structured format
+    let index = 0;
+    const structuredTranslation = {
+      menu_name: result[index++] || '',
+      menu_description: result[index++] || ''
+    };
+
+    logger.info(`Successfully translated menu ${menuId} to ${targetLanguage}`);
+
+    return {
+      success: true,
+      translation: structuredTranslation,
+      message: `Successfully auto-translated to ${targetLanguage}`
+    };
+
+  } catch (error: any) {
+    logger.error('Auto-translate menu error:', error);
+    
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    throw new functions.https.HttpsError('internal', 'Menu auto-translation failed');
+  }
+});
