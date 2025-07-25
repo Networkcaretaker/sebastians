@@ -110,6 +110,37 @@ function formatItemTranslations(translations: Record<string, any>) {
 }
 
 /**
+ * Helper function to format menu translations
+ */
+function formatMenuTranslations(translations: Record<string, any>) {
+  const formatted: Record<string, any> = {};
+  
+  Object.keys(translations).forEach(lang => {
+    const trans = translations[lang];
+    if (trans) {
+      formatted[lang] = {
+        name: trans.menu_name || undefined,
+        description: trans.menu_description || undefined
+      };
+      
+      // Remove undefined values
+      Object.keys(formatted[lang]).forEach(key => {
+        if (formatted[lang][key] === undefined) {
+          delete formatted[lang][key];
+        }
+      });
+      
+      // If no translations exist for this language, remove it
+      if (Object.keys(formatted[lang]).length === 0) {
+        delete formatted[lang];
+      }
+    }
+  });
+  
+  return formatted;
+}
+
+/**
  * Export Menu Function with Translations
  * Takes a menuId and returns complete menu data as JSON including all translations
  */
@@ -173,8 +204,15 @@ export const exportMenuJson = onCall(async (request: any) => {
 
     const menuData: any = menuDoc.data();
     
+    // Fetch menu translations
+    const menuTranslations = await fetchTranslations('menus', menuId);
+    const formattedMenuTranslations = formatMenuTranslations(menuTranslations);
+    
     // Track all languages found in translations
     const availableLanguages = new Set<string>(['en']); // Always include English as default
+    
+    // Add found languages to our set
+    Object.keys(formattedMenuTranslations).forEach(lang => availableLanguages.add(lang));
     
     // Get categories with translations
     const categoryPromises = menuData.categories.map((categoryId: string) => 
@@ -256,14 +294,22 @@ export const exportMenuJson = onCall(async (request: any) => {
       }
     }
 
+    // Build the menu object
+    const menu: any = {
+      id: menuId,
+      name: menuData.menu_name,
+      description: menuData.menu_description,
+      type: menuData.menu_type
+    };
+    
+    // Add menu translations if they exist
+    if (Object.keys(formattedMenuTranslations).length > 0) {
+      menu.translations = formattedMenuTranslations;
+    }
+
     // Build the complete menu JSON with language metadata
     const completeMenu = {
-      menu: {
-        id: menuId,
-        name: menuData.menu_name,
-        description: menuData.menu_description,
-        type: menuData.menu_type
-      },
+      menu: menu,
       languages: Array.from(availableLanguages).sort(), // Convert Set to sorted array
       defaultLanguage: 'en',
       categories: categories,

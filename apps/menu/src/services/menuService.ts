@@ -40,6 +40,7 @@ export interface MenuData {
   categories: MenuCategory[];
   lastUpdated: string;
   publishedUrl?: string;
+  translations?: Record<string, any>;
 }
 
 export interface PublishedMenu {
