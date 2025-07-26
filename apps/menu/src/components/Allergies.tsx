@@ -38,12 +38,12 @@ const Allergies: React.FC = () => {
   );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md border p-6 mt-6">
+    <div className="p-4 max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-md mt-2">
         {/* Header */}
-        <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('allergiesTitle')}</h2>
-            <p className="text-gray-600 text-sm">
+        <div className="text-center mb-6 bg-amber-400 rounded-t-lg p-4">
+            <h2 className="text-2xl font-bold text-white mb-2">{t('allergiesTitle')}</h2>
+            <p className="text-gray-900 text-sm">
               {t('allergiesDescription')}
             </p>
         </div>
@@ -81,8 +81,8 @@ const Allergies: React.FC = () => {
         </div>
 
         {/* Footer Note */}
-        <div className="text-center mt-6 pt-4 border-t border-gray-200">
-            <p className="text-sm text-gray-500">
+        <div className="text-center bg-amber-400 mt-6 rounded-b-lg p-4">
+            <p className="text-sm text-gray-900">
               {t('allergiesFooter')}
             </p>
         </div>

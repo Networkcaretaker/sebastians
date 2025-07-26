@@ -2,6 +2,7 @@
 import React from 'react';
 import { APP_CONFIG } from '../services/config';
 import { useTranslation } from '../hooks/useTranslation';
+import LanguageSelector from '../components/LanguageSelector';
 
 const MenuFooter: React.FC = () => {
   const { t } = useTranslation();
@@ -17,7 +18,7 @@ const MenuFooter: React.FC = () => {
             <div className="text-center">
                 <p className="text-gray-900 mb-6">{t('thankYouMessage')}</p>
             </div>
-            <div className="flex justify-center pb-8">
+            <div className="flex justify-center pb-2">
                 <a 
                     href={APP_CONFIG.facebookURL}
                     target="_blank"
@@ -37,6 +38,13 @@ const MenuFooter: React.FC = () => {
                     
                     <span className="text-xs">{t('followFacebook')}</span>
                 </a>
+            </div>
+            <div className="flex mx-auto justify-center p-4">
+              <LanguageSelector 
+                variant="dropdown" 
+                showFlags={true}
+                className=""
+              />
             </div>
             <div className="text-center text-sm text-white">
                 <p>&copy; 2025 {APP_CONFIG.restaurantName}. All rights reserved.</p>

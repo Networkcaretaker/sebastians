@@ -8,7 +8,7 @@ import { APP_CONFIG } from '../services/config';
 import MenuPreview from '../components/MenuPreview';
 import MenuFooter from '../components/Footer';
 import Allergies from '../components/Allergies';
-import LanguageSelector from '../components/LanguageSelector';
+import MenuNavigation from '../components/MenuNavigation';
 
 //LanguageSelector
 
@@ -52,10 +52,10 @@ const MenuDisplay: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex bg-black items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading menu...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto"></div>
+          <p className="mt-4 text-white">Loading menu...</p>
         </div>
       </div>
     );
@@ -83,23 +83,17 @@ const MenuDisplay: React.FC = () => {
     <div className="min-h-screen bg-black">
       {/* Header with back button and language selector */}
       <header className="bg-amber-400 shadow-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-4 lg:px-4">
           <div className="py-4 flex items-center justify-between">
-            <img src="/Sebastian_Logo.png" className="w-40" alt="Sebastian's Logo" />
+            <Link
+              to="/"
+            >
+              <img src="/Sebastian_Logo.png" className="w-40 pt-2" alt="Sebastian's Logo" />
+            </Link>
             
             {/* Right side with language selector and back button */}
             <div className="flex items-center gap-3">
-              <LanguageSelector 
-                variant="dropdown" 
-                showFlags={true}
-                className=""
-              />
-              <Link
-                to="/"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
-              >
-                ←
-              </Link>
+              <MenuNavigation className="" />
             </div>
           </div>
         </div>
