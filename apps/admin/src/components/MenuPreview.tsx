@@ -129,12 +129,28 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menu }) => {
     <div className="space-y-8">
       {/* Menu Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="text-center border-b pb-4 mb-4">
+        <div className="text-center pb-4">
           <h1 className="text-3xl font-bold mb-2">{menu.menu_name}</h1>
           {menu.menu_description && (
             <p className="text-lg text-gray-600 italic">{menu.menu_description}</p>
           )}
         </div>
+
+        {/* Menu Image */}
+        {menu.image && (
+          <div className="pb-4">
+            <img 
+              src={menu.image.largeUrl} 
+              alt="Menu large" 
+              className="mx-auto border rounded shadow-sm max-w-full"
+              style={{ 
+                width: menu.image.aspectRatio === '1:1' ? '300px' : 'full',
+                height: '300px',
+                objectFit: 'cover'
+              }}
+            />
+          </div>
+        )}
         
         <div className="text-center text-sm text-gray-500">
           <p>Menu Preview • {categories.length} Categories</p>

@@ -294,13 +294,32 @@ export const exportMenuJson = onCall(async (request: any) => {
       }
     }
 
+    // Add this debugging section
+    logger.info(`Menu data keys: ${Object.keys(menuData)}`);
+    logger.info(`Image field exists: ${menuData.hasOwnProperty('image')}`);
+    logger.info(`Image field value: ${JSON.stringify(menuData.image)}`);
+    logger.info(`Image field type: ${typeof menuData.image}`);
+
     // Build the menu object
     const menu: any = {
       id: menuId,
       name: menuData.menu_name,
       description: menuData.menu_description,
       type: menuData.menu_type
+      //image: menuData.image || {} // Added this line
     };
+    // Handle image field more carefully
+    if (menuData.image && typeof menuData.image === 'object') {
+      // Convert Firestore timestamps if needed
+      const imageData = { ...menuData.image };
+      
+      // Remove uploadedAt field if it exists
+      delete imageData.uploadedAt;
+      
+      menu.image = imageData;
+    } else {
+      menu.image = {};
+    }
     
     // Add menu translations if they exist
     if (Object.keys(formattedMenuTranslations).length > 0) {

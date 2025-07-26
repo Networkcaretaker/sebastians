@@ -34,6 +34,7 @@ export const menuService = {
         menu_name: menuData.menu_name,
         menu_description: menuData.menu_description,
         menu_type: menuData.menu_type,
+        // image: menuData.image || {},
         categories: menuData.categories || [],
         isActive: Boolean(menuData.isActive),
         menu_order: menuData.menu_order || 0,

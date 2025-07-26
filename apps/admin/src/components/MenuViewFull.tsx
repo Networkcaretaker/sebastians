@@ -245,6 +245,23 @@ const MenuViewFull: React.FC<MenuViewFullProps> = ({
               <label className="block text-sm font-medium text-gray-700">Description:</label>
               <p className="mt-1">{menu.menu_description || 'None'}</p>
             </div>
+
+            {/* Menu Image */}
+            {menu.image && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Image:</label>
+                <img 
+                  src={menu.image.largeUrl} 
+                  alt="Menu large" 
+                  className="mx-auto border rounded shadow-sm max-w-full"
+                  style={{ 
+                    width: menu.image.aspectRatio === '1:1' ? '300px' : 'full',
+                    height: '300px',
+                    objectFit: 'cover'
+                  }}
+                />
+              </div>
+            )}
             
             <div>
               <label className="block text-sm font-medium text-gray-700">Menu Type:</label>

@@ -120,10 +120,22 @@ const Home: React.FC = () => {
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-6">
-                    <div>
-                      {/* <img src="/breakfast.svg"></img> */}
-                    </div>
+                  <div className="p-2 space-y-2">
+
+                    {/* <img src="/breakfast.svg"></img> */}
+                    <Link
+                      to={`/menu/${menu.id}`}
+                    >
+                    <img src={`https://storage.googleapis.com/sebastian-cafe.firebasestorage.app/images/menus/large/${menu.id}.webp`} alt=""></img>
+                    </Link>
+                    <h3 className="text-lg text-center font-light text-black">
+                      {getMenuDescription(menu)}
+                    </h3>
+
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="bg-amber-400 px-6 py-4">
                     <div className="flex items-center">
                       <Link
                         to={`/menu/${menu.id}`}
@@ -132,13 +144,7 @@ const Home: React.FC = () => {
                         {t('viewMenu')}
                       </Link>
                     </div>
-                  </div>
-
-                  {/* Card Footer */}
-                  <div className="bg-amber-400 px-6 py-4">
-                    <h3 className="text-lg text-center font-light text-black">
-                      {getMenuDescription(menu)}
-                    </h3>
+                    
                   </div>
 
                 </div>
