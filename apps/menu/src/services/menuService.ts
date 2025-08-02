@@ -31,6 +31,7 @@ export interface MenuCategory {
   addons?: Array<{ item: string; }>;
   items: MenuItem[];
   translations?: Record<string, any>;
+  image: MenuImage;
 }
 
 export interface MenuData {
@@ -276,6 +277,7 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
       extras: category.extras || [],
       addons: category.addons || [],
       translations: category.translations || {},
+      image: category.image || {},
       items: (category.items || []).map((item: any) => ({
         id: item.id,
         item_name: item.item_name || item.name,

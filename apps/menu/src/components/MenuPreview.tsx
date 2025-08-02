@@ -8,6 +8,8 @@ interface MenuPreviewProps {
   menuData: MenuData;
 }
 
+const SHOW_IMAGE = true
+
 const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
   const { getCategoryName, getCategoryHeader, getCategoryFooter, getCategoryDescription, getCategoryExtraText, getCategoryAddonText } = useTranslation();
   return (
@@ -24,7 +26,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
               {/* Category Header */}
               <div className=" bg-amber-400 rounded-t-lg p-4">
                 <div className=" flex justify-center items-center">
-                  <h2 className="text-2xl font-bold uppercase">{getCategoryName(category)}</h2>
+                  <h2 className="text-3xl font-light uppercase">{getCategoryName(category)}</h2>
                 </div>
                 <div className="flex justify-center items-center">
                   {category.cat_header && (
@@ -37,11 +39,17 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
 
               <div className="p-4">
                 <div className="border-b pb-4">
-                  <img 
-                    src= {menuData.image.largeUrl}
-                    alt=""
-                    className="w-full h-60 object-cover"
-                  />
+                  {category.image.largeUrl && SHOW_IMAGE && (
+                    <div>
+                      <img 
+                        src= {category.image.largeUrl}
+                        //src= {menuData.image.largeUrl}
+                        alt=""
+                        className="w-full h-60 object-cover"
+                      />
+                    </div>
+                  )}
+                  
                   {category.cat_description && (
                     <div className="pt-2">
                       <p className="text-center">{getCategoryDescription(category)}</p>
@@ -71,7 +79,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
                     {category.extras.map((extra, idx) => (
                       <div key={idx} className="flex justify-between">
                         <span className="text-gray-600 text-sm">{getCategoryExtraText(category, idx, extra.item)}</span>
-                        <span className="text-green-600 text-sm font-bold">{extra.price.toFixed(2)}€</span>
+                        <span className="text-green-600 text-sm font-bold">+ {extra.price.toFixed(2)} €</span>
                       </div>
                     ))}
                   </div>

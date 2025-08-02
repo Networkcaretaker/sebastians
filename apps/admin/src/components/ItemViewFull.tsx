@@ -190,8 +190,8 @@ const ItemViewFull: React.FC<ItemViewProps> = ({ item, onItemUpdated }) => {
           ...item.flags, // Preserve other flags
           active: formData.flags.active,
           vegetarian: formData.flags.vegetarian,
-          vegan: formData.flags.vegan,
-          spicy: formData.flags.spicy,
+          // vegan: formData.flags.vegan,
+          // spicy: formData.flags.spicy,
           options: formData.options.length > 0,
           extras: formData.extras.length > 0,
           addons: formData.addons.length > 0

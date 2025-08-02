@@ -52,11 +52,11 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             ? <div>
                 {item.hasOptions || (item.options && item.options.length > 0) ? (
                 <div className="text-green-600 text-base font-bold">
-                  <span className="text-xs font-medium px-2">{t('from')}</span>{item.item_price.toFixed(2)}€
+                  <span className="text-xs font-medium px-1">{t('from')}</span>{item.item_price.toFixed(2)} €
                 </div>
               ) : (
                 <div>
-                  <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)}€</div>
+                  <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)} €</div>
                 </div>
               )}
             </div> 
@@ -68,7 +68,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
                         <div key={idx} className="flex justify-between items-center text-sm">
                           <span className="text-green-600 text-xs font-medium px-2">{getOptionText(item, idx, option.option)}</span>
                           <span className="text-green-600 font-bold">
-                             {option.price.toFixed(2)}€
+                             {option.price.toFixed(2)} €
                           </span>
                         </div>
                       ))}
@@ -102,8 +102,8 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             <h4 className="text-xs font-medium text-amber-400">{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span className="text-gray-600 px-4">{getOptionText(item, idx, option.option)}</span>
-                <span className="text-green-600 font-bold">{option.price.toFixed(2)}€</span>
+                <span className="text-gray-600">{getOptionText(item, idx, option.option)}</span>
+                <span className="text-green-600 font-bold">{option.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
@@ -115,8 +115,8 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             <h4 className="text-xs font-medium text-amber-400">{t('extras')}</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span className="text-gray-600 px-4">{getExtraText(item, idx, extra.item)}</span>
-                <span className="text-green-600 font-bold">{extra.price.toFixed(2)}€</span>
+                <span className="text-gray-600">{getExtraText(item, idx, extra.item)}</span>
+                <span className="text-green-600 font-bold">+ {extra.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
