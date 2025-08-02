@@ -48,9 +48,10 @@ export interface MenuCategory {
   cat_description: string;
   extras: MenuItemExtra[];
   addons: MenuItemAddon[];
-  items: string[]; // array of item IDs
+  items: string[];
   header: string;
   footer: string;
+  image?: MenuImage;
 }
 
 export interface MenuImage {

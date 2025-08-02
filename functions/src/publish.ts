@@ -284,6 +284,17 @@ export const exportMenuJson = onCall(async (request: any) => {
           addons: categoryData.addons,
           extras: categoryData.extras
         };
+
+        // Handle category image field more carefully (same pattern as menu image)
+        if (categoryData.image && typeof categoryData.image === 'object') {
+          const imageData = { ...categoryData.image };
+          // Remove uploadedAt field
+          delete imageData.uploadedAt;
+          
+          category.image = imageData;
+        } else {
+          category.image = {};
+        }
         
         // Add translations if they exist
         if (Object.keys(formattedCategoryTranslations).length > 0) {
@@ -294,7 +305,7 @@ export const exportMenuJson = onCall(async (request: any) => {
       }
     }
 
-    // Add this debugging section
+    // debugging section
     logger.info(`Menu data keys: ${Object.keys(menuData)}`);
     logger.info(`Image field exists: ${menuData.hasOwnProperty('image')}`);
     logger.info(`Image field value: ${JSON.stringify(menuData.image)}`);
@@ -310,10 +321,8 @@ export const exportMenuJson = onCall(async (request: any) => {
     };
     // Handle image field more carefully
     if (menuData.image && typeof menuData.image === 'object') {
-      // Convert Firestore timestamps if needed
       const imageData = { ...menuData.image };
-      
-      // Remove uploadedAt field if it exists
+      // Remove uploadedAt field
       delete imageData.uploadedAt;
       
       menu.image = imageData;

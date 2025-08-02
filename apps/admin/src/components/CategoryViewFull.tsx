@@ -22,6 +22,12 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<'1:1' | '16:9'>('1:1');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   // Form state for editing
   const [formData, setFormData] = useState({
@@ -156,6 +162,116 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({
     setIsEditing(true);
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setImageUploadError('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        setImageUploadError('Image size must be less than 10MB');
+        return;
+      }
+      
+      setSelectedImage(file);
+      setImageUploadError(null);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedImage || !category.id) {
+      setImageUploadError('Please select an image and ensure category is saved');
+      return;
+    }
+    
+    setIsImageUploading(true);
+    setImageUploadError(null);
+    
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const base64Data = e.target?.result as string;
+          
+          console.log('Calling processCategoryImage function via HTTP...');
+          
+          // Make HTTP POST request to the function
+          const response = await fetch('https://us-central1-sebastian-cafe.cloudfunctions.net/processCategoryImage', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              categoryId: category.id,
+              imageData: base64Data,
+              aspectRatio: selectedAspectRatio
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const result = await response.json();
+          console.log('Image upload result:', result);
+          
+          // Handle the result
+          if (result && result.success) {
+            console.log('Image uploaded successfully:', result);
+            
+            // Clear form
+            setSelectedImage(null);
+            setImagePreview(null);
+            setIsImageUploading(false);
+            setImageUploadError(null);
+            
+            // Refresh category data
+            if (onCategoryUpdated) {
+              onCategoryUpdated();
+            }
+          } else {
+            throw new Error(result?.message || 'Function returned failure');
+          }
+          
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          setImageUploadError(error instanceof Error ? error.message : 'Failed to upload image');
+          setIsImageUploading(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        setImageUploadError('Failed to read image file');
+        setIsImageUploading(false);
+      };
+      
+      reader.readAsDataURL(selectedImage);
+      
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setImageUploadError('Failed to process image file');
+      setIsImageUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    setImageUploadError(null);
+  };
+
   if (!isEditing) {
     // Display mode (original view)
     return (
@@ -182,6 +298,23 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({
               <label className="block text-sm font-medium text-gray-700">Description:</label>
               <p className="mt-1">{category.cat_description || 'None'}</p>
             </div>
+
+            {/* Category Image */}
+            {category.image && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Image:</label>
+                <img 
+                  src={category.image.largeUrl} 
+                  alt="Category large" 
+                  className="mx-auto border rounded shadow-sm max-w-full"
+                  style={{ 
+                    width: category.image.aspectRatio === '1:1' ? '300px' : 'full',
+                    height: '300px',
+                    objectFit: 'cover'
+                  }}
+                />
+              </div>
+            )}
             
             <div>
               <label className="block text-sm font-medium text-gray-700">Header Text:</label>
@@ -300,6 +433,203 @@ const CategoryViewFull: React.FC<CategoryViewFullProps> = ({
               rows={3}
               className="w-full p-2 border rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
+          </div>
+
+          {/* Category Image Section */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 className="text-2xl font-semibold mb-4">Category Image</h2>
+            
+            {/* Current Image Display */}
+            {category.image && (
+              <div className="mb-6">
+                <h3 className="text-lg font-medium mb-3">Current Image</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Small Image */}
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-2">Small (for thumbnails)</p>
+                    <img 
+                      src={category.image.smallUrl} 
+                      alt="Category small" 
+                      className="mx-auto border rounded shadow-sm"
+                      style={{ 
+                        width: category.image.aspectRatio === '1:1' ? '100px' : '178px',
+                        height: '100px',
+                        objectFit: 'cover'
+                      }}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {category.image.aspectRatio === '1:1' ? '100x100px' : '178x100px'}
+                    </p>
+                  </div>
+                  
+                  {/* Large Image */}
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-2">Large (for display)</p>
+                    <img 
+                      src={category.image.largeUrl} 
+                      alt="Category large" 
+                      className="mx-auto border rounded shadow-sm max-w-full"
+                      style={{ 
+                        width: category.image.aspectRatio === '1:1' ? '200px' : '356px',
+                        height: '200px',
+                        objectFit: 'cover'
+                      }}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {category.image.aspectRatio === '1:1' ? '500x500px' : '889x500px'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="mt-3 text-sm text-gray-600">
+                  <p><strong>Aspect Ratio:</strong> {category.image.aspectRatio}</p>
+                  <p><strong>Uploaded:</strong> {
+                    category.image.uploadedAt 
+                      ? category.image.uploadedAt instanceof Date 
+                        ? category.image.uploadedAt.toLocaleDateString()
+                        : new Date(category.image.uploadedAt.seconds * 1000).toLocaleDateString()
+                      : 'Unknown'
+                  }</p>
+                </div>
+              </div>
+            )}
+            
+            {/* Upload New Image Section */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-medium mb-4">
+                {category.image ? 'Replace Image' : 'Upload Image'}
+              </h3>
+              
+              {imageUploadError && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {imageUploadError}
+                </div>
+              )}
+              
+              {/* Aspect Ratio Selection */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Image Aspect Ratio:
+                </label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="aspectRatio"
+                      value="1:1"
+                      checked={selectedAspectRatio === '1:1'}
+                      onChange={(e) => setSelectedAspectRatio(e.target.value as '1:1' | '16:9')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">1:1 (Square)</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="aspectRatio"
+                      value="16:9"
+                      checked={selectedAspectRatio === '16:9'}
+                      onChange={(e) => setSelectedAspectRatio(e.target.value as '1:1' | '16:9')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">16:9 (Landscape)</span>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedAspectRatio === '1:1' 
+                    ? 'Creates: 100x100px (small) and 500x500px (large)'
+                    : 'Creates: 178x100px (small) and 889x500px (large)'
+                  }
+                </p>
+              </div>
+              
+              {/* File Input */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Choose Image File:
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  disabled={isImageUploading}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Accepted formats: JPG, PNG, WebP, GIF. Max size: 10MB
+                </p>
+              </div>
+              
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Preview:
+                  </label>
+                  <div className="relative inline-block">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="max-w-xs max-h-48 border rounded shadow-sm"
+                    />
+                    <button
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      disabled={isImageUploading}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Upload Button */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleImageUpload}
+                  disabled={!selectedImage || isImageUploading}
+                  className={`px-4 py-2 rounded font-medium ${
+                    !selectedImage || isImageUploading
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  }`}
+                >
+                  {isImageUploading ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
+                    `Upload ${selectedAspectRatio} Image`
+                  )}
+                </button>
+                
+                {selectedImage && (
+                  <button
+                    onClick={handleRemoveImage}
+                    disabled={isImageUploading}
+                    className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+              
+              {/* Info Panel */}
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">Image Processing Info:</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Images are automatically cropped to exact aspect ratios</li>
+                  <li>• Converted to WebP format for optimal performance</li>
+                  <li>• Two sizes generated: small (thumbnails) and large (display)</li>
+                  <li>• Files saved to Firebase Storage with public URLs</li>
+                  <li>• Maximum compression while maintaining quality</li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* Header Text */}
