@@ -1,7 +1,7 @@
 // Website and publishing related types
 
 import { ContactInfo } from './restaurant';
-import { Menu } from './menu';
+import { Menu, MenuImage } from './menu';
 
 // Publication status for menus
 export type PublishStatus = 'draft' | 'published' | 'unpublished';
@@ -25,6 +25,7 @@ export interface PublishedMenu {
   publishedAt: Date;
   publishedUrl?: string;
   lastPublished?: Date;
+  image?: MenuImage;
 }
 
 export interface PublishMenuRequest {

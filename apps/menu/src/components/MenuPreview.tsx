@@ -20,76 +20,85 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
           const activeItems = category.items.filter(item => item.isActive);
           
           return (
-            <div key={category.id} className="bg-white rounded-lg shadow-md p-4">
+            <div key={category.id} className="bg-white rounded-lg shadow-md">
               {/* Category Header */}
-              <div className="flex justify-center items-center">
-                <h2 className="text-2xl font-bold mb-2">{getCategoryName(category)}</h2>
-              </div>
-              <div className="border-b">
-                <div className="flex justify-center items-center pb-2">
+              <div className=" bg-amber-400 rounded-t-lg p-4">
+                <div className=" flex justify-center items-center">
+                  <h2 className="text-2xl font-bold uppercase">{getCategoryName(category)}</h2>
+                </div>
+                <div className="flex justify-center items-center">
                   {category.cat_header && (
                     <h2 className="text-base text-center font-medium">
                       <i>{getCategoryHeader(category)}</i>
                     </h2>
                   )}
                 </div>
+              </div>
+
+              <div className="p-4">
+                <div className="border-b pb-4">
+                  <img 
+                    src= {menuData.image.largeUrl}
+                    alt=""
+                    className="w-full h-60 object-cover"
+                  />
+                  {category.cat_description && (
+                    <div className="pt-2">
+                      <p className="text-center">{getCategoryDescription(category)}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Menu Items */}
+                {activeItems.length > 0 ? (
+                  <div className="">
+                    {activeItems
+                      .sort((a, b) => a.item_order - b.item_order)
+                      .map((item) => (
+                        <ItemPreview key={item.id} item={item} />
+                      ))}
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 p-4 rounded text-center">
+                    <p className="text-gray-500">No active items in this category.</p>
+                  </div>
+                )}
                 
-                {category.cat_description && (
-                  <div className="mb-4">
-                    <p className="text-center">{getCategoryDescription(category)}</p>
+                {/* Category Extras */}
+                {category.extras && category.extras.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-base font-bold pb-2">{category.cat_name} Extras</h3>
+                    {category.extras.map((extra, idx) => (
+                      <div key={idx} className="flex justify-between">
+                        <span className="text-gray-600 text-sm">{getCategoryExtraText(category, idx, extra.item)}</span>
+                        <span className="text-green-600 text-sm font-bold">{extra.price.toFixed(2)}€</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Category Add-ons */}
+                {category.addons && category.addons.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-base font-bold pb-2">{category.cat_name} Add-ons</h3>
+                    <div className="flex flex-wrap">
+                      {category.addons.map((addon, idx) => (
+                        <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 m-1 rounded text-xs">
+                          {getCategoryAddonText(category, idx, addon.item)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {category.cat_footer && (
+                  <div className="flex justify-center items-center border-t pt-3 mt-6">
+                    <h2 className="text-base text-center font-light">
+                      <i>{getCategoryFooter(category)}</i>
+                    </h2>
                   </div>
                 )}
               </div>
-              
-              {/* Menu Items */}
-              {activeItems.length > 0 ? (
-                <div className="space-y-4">
-                  {activeItems
-                    .sort((a, b) => a.item_order - b.item_order)
-                    .map((item) => (
-                      <ItemPreview key={item.id} item={item} />
-                    ))}
-                </div>
-              ) : (
-                <div className="bg-gray-50 p-4 rounded text-center">
-                  <p className="text-gray-500">No active items in this category.</p>
-                </div>
-              )}
-              
-              {/* Category Extras */}
-              {category.extras && category.extras.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-base font-bold pb-2">{category.cat_name} Extras</h3>
-                  {category.extras.map((extra, idx) => (
-                    <div key={idx} className="flex justify-between">
-                      <span className="text-gray-600 text-sm">{getCategoryExtraText(category, idx, extra.item)}</span>
-                      <span className="text-green-600 text-sm font-bold">{extra.price.toFixed(2)}€</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Category Add-ons */}
-              {category.addons && category.addons.length > 0 && (
-                <div className="mt-4">
-                  <h3 className="text-base font-bold pb-2">{category.cat_name} Add-ons</h3>
-                  <div className="flex flex-wrap">
-                    {category.addons.map((addon, idx) => (
-                      <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 m-1 rounded text-xs">
-                        {getCategoryAddonText(category, idx, addon.item)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {category.cat_footer && (
-                <div className="flex justify-center items-center border-t pt-3 mt-6">
-                  <h2 className="text-base text-center font-light">
-                    <i>{getCategoryFooter(category)}</i>
-                  </h2>
-                </div>
-              )}
             </div>
           );
         })}

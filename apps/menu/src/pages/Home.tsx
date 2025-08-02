@@ -14,6 +14,7 @@ interface PublishedMenu {
   lastUpdated: string;
   url: string;
   translations?: Record<string, any>;
+  image?: string;
 }
 
 const Home: React.FC = () => {
@@ -126,7 +127,8 @@ const Home: React.FC = () => {
                     <Link
                       to={`/menu/${menu.id}`}
                     >
-                    <img src={`https://storage.googleapis.com/sebastian-cafe.firebasestorage.app/images/menus/large/${menu.id}.webp`} alt=""></img>
+                    {/*<img src= {`https://storage.googleapis.com/sebastian-cafe.firebasestorage.app/images/menus/large/${menu.id}.webp`} alt=""></img>*/}
+                    <img src= {`${menu.image}`} alt=""></img>
                     </Link>
                     <h3 className="text-lg text-center font-light text-black">
                       {getMenuDescription(menu)}

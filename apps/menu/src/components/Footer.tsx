@@ -41,7 +41,7 @@ const MenuFooter: React.FC = () => {
             </div>
             <div className="flex mx-auto justify-center p-4">
               <LanguageSelector 
-                variant="dropdown" 
+                variant="buttons" 
                 showFlags={true}
                 className=""
               />

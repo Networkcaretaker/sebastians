@@ -296,7 +296,8 @@ const addPublishedMenuToConfig = async (menuId: string, url: string): Promise<vo
           isActive: menu.isActive !== false,
           order: menu.order || 0,
           publishedAt: menu.publishedAt,
-          publishedUrl: menu.publishedUrl
+          publishedUrl: menu.publishedUrl,
+          image: menu.image || ''
         };
         
         if (menu.lastPublished !== undefined) {
@@ -314,7 +315,8 @@ const addPublishedMenuToConfig = async (menuId: string, url: string): Promise<vo
       isActive: menuData.isActive !== false,
       order: menuData.menu_order || 0,
       publishedAt: new Date(),
-      publishedUrl: url
+      publishedUrl: url,
+      image: menuData.image?.largeUrl || ''
     };
     
     const updatedMenus = [...cleanedExistingMenus, newMenuEntry];

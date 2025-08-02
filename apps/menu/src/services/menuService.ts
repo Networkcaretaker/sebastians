@@ -2,6 +2,7 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { FIREBASE_CONFIG, APP_CONFIG, MOCK_PUBLISHED_MENUS } from './config';
+import { MenuImage } from '@sebastians/shared-types';
 
 export interface MenuItem {
   id: string;
@@ -41,6 +42,7 @@ export interface MenuData {
   lastUpdated: string;
   publishedUrl?: string;
   translations?: Record<string, any>;
+  image: MenuImage;
 }
 
 export interface PublishedMenu {
@@ -51,6 +53,7 @@ export interface PublishedMenu {
   lastUpdated: string;
   slug?: string;
   translations?: Record<string, any>;
+  image?: string;
 }
 
 /**
@@ -102,7 +105,8 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
         url: menu.publishedUrl,
         lastUpdated: menu.publishedAt || new Date().toISOString(),
         slug: menu.menuId,
-        translations: {}
+        translations: {},
+        image: menu.image
       }));
     const transformedMenus = await Promise.all(
       basicMenus.map(async (menu) => {
@@ -261,6 +265,7 @@ const transformMenuData = (data: any, menuId: string, url: string): MenuData => 
     lastUpdated: data.lastUpdated || data.updatedAt || new Date().toISOString(),
     publishedUrl: url,
     translations: data.menu.translations || {},
+    image: data.menu.image || {},
     categories: (data.categories || []).map((category: any) => ({
       id: category.id,
       cat_name: category.cat_name || category.name,

@@ -41,9 +41,9 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
   }
   
   return (
-    <div>
-      <div className="mb-2 mt-2">
-        <div className="flex justify-between items-center mb-2">
+    <div className="border-b py-4">
+      <div className="">
+        <div className="flex justify-between items-start">
           <div className="flex gap-2">
             <h3 className="text-base font-bold">{getItemName(item)}</h3>
           </div>
@@ -52,7 +52,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             ? <div>
                 {item.hasOptions || (item.options && item.options.length > 0) ? (
                 <div className="text-green-600 text-base font-bold">
-                  <span className="text-xs font-medium">{t('from')}</span>{item.item_price.toFixed(2)}€
+                  <span className="text-xs font-medium px-2">{t('from')}</span>{item.item_price.toFixed(2)}€
                 </div>
               ) : (
                 <div>
@@ -66,7 +66,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
                     <div>
                       {item.options.map((option, idx) => (
                         <div key={idx} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-600 text-xs font-thin px-2">{getOptionText(item, idx, option.option)}</span>
+                          <span className="text-green-600 text-xs font-medium px-2">{getOptionText(item, idx, option.option)}</span>
                           <span className="text-green-600 font-bold">
                              {option.price.toFixed(2)}€
                           </span>
@@ -80,8 +80,8 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         </div>
       </div>
       
-      <div className="space-y-2 pb-4 border-b">
-        <div className="mt-2">
+      <div className="space-y-2">
+        <div className="">
           <p className="text-gray-600 text-sm">{getItemDescription(item)}</p>
         </div>
 
@@ -99,7 +99,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Options */}
         {item.options && item.options.length > 0 && item.item_price > 0 && (
           <div className="mt-2 space-y-1"> 
-            <h4 className="text-xs font-medium text-gray-700">{t('options')}</h4>
+            <h4 className="text-xs font-medium text-amber-400">{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{getOptionText(item, idx, option.option)}</span>
@@ -112,7 +112,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Extras */}
         {item.extras && item.extras.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-xs font-medium text-gray-700">{t('extras')}</h4>
+            <h4 className="text-xs font-medium text-amber-400">{t('extras')}</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600 px-4">{getExtraText(item, idx, extra.item)}</span>
@@ -149,12 +149,12 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Allergies Section - Updated with Icons */}
         {item.allergies && item.allergies.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <h4 className="text-xs font-medium text-amber-600">{t('allergens')}</h4>
+            <h4 className="text-xs font-medium text-amber-400">{t('allergens')}</h4>
             <div className="flex flex-wrap gap-1">
               {item.allergies.map((allergy, idx) => (
                 <span 
                   key={idx} 
-                  className="inline-flex items-center gap-1 text-xs bg-amber-400 text-red-800 px-1 py-1 rounded font-medium"
+                  className="inline-flex items-center gap-1 text-xs bg-amber-400 px-1 py-1 rounded font-medium"
                 >
                   <AllergyIcon 
                     allergy={allergy} 
