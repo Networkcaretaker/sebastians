@@ -1,6 +1,7 @@
 // apps/menu/src/components/LanguageSelector.tsx
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { THEME_CONFIG } from '../services/config';
 
 interface LanguageSelectorProps {
   className?: string;
@@ -123,10 +124,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           <button
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
-            className={`px-3 py-1 text-sm rounded-full border transition-colors duration-200 ${
+            className={`px-3 py-1 text-sm rounded-full transition-colors duration-200 ${
               currentLanguage === language.code
-                ? 'bg-blue-800 text-white border-blue-800'
-                : 'bg-white text-gray-700 border-blue-600 hover:bg-blue-600 hover:text-gray-100'
+                ? `${THEME_CONFIG.button.color} text-white `
+                : `bg-white text-gray-700  ${THEME_CONFIG.button.hover} hover:text-gray-100`
             }`}
           >
             {showFlags && <span className="mr-1">{language.flag}</span>}

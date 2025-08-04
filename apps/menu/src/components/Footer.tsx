@@ -3,6 +3,7 @@ import React from 'react';
 import { APP_CONFIG } from '../services/config';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageSelector from '../components/LanguageSelector';
+import { THEME_CONFIG } from '../services/config';
 
 const MenuFooter: React.FC = () => {
   const { t } = useTranslation();
@@ -10,10 +11,10 @@ const MenuFooter: React.FC = () => {
   return (
     <div className="max-w-full mx-auto space-y-8">
         {/* Menu Footer */}
-        <footer className="bg-amber-400 mt-2 ">
+        <footer className={`${THEME_CONFIG.themeColor} mt-2`}>
             <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="items-center flex justify-center">
-                <img src="/Sebastian_Logo.png" className="w-36 py-4" alt="Sebastian's Logo" />
+                <img src={`${THEME_CONFIG.logo.dark}`} className="w-36 py-4" alt={`${APP_CONFIG.restaurantName}`} />
             </div>
             <div className="text-center">
                 <p className="text-gray-900 mb-6">{t('thankYouMessage')}</p>
@@ -43,7 +44,7 @@ const MenuFooter: React.FC = () => {
               <LanguageSelector 
                 variant="buttons" 
                 showFlags={true}
-                className=""
+                className=''
               />
             </div>
             <div className="text-center text-sm text-white">

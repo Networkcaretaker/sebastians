@@ -21,6 +21,20 @@ export const FIREBASE_CONFIG = {
   }
 };
 
+// Theme configuration
+export const THEME_CONFIG = {
+  themeColor: "bg-amber-400",
+  background: "bg-black",
+  button: {
+    color: "bg-blue-800",
+    hover: "hover:bg-blue-600"
+  },
+  logo: {
+    light: "/Sebastian_Logo.png",
+    dark: "/Sebastian_Logo.png"
+  }
+}
+
 // App configuration
 export const APP_CONFIG = {
   // App title and branding

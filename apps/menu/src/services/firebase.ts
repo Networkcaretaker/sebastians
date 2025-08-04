@@ -3,6 +3,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
 
+const DEBUG = process.env.NODE_ENV === 'development';
+
 // Declare global variables defined by Vite
 declare const __VITE_FIREBASE_API_KEY__: string;
 declare const __VITE_FIREBASE_AUTH_DOMAIN__: string;
@@ -21,13 +23,15 @@ const firebaseConfig = {
   appId: __VITE_FIREBASE_APP_ID__
 };
 
-console.log('🔧 Firebase config:', {
-  projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain,
-  // Don't log sensitive keys, just confirm they exist
-  hasApiKey: !!firebaseConfig.apiKey,
-  hasAppId: !!firebaseConfig.appId
-});
+if (DEBUG) {
+  console.log('🔧 Firebase config:', {
+    projectId: firebaseConfig.projectId,
+    authDomain: firebaseConfig.authDomain,
+    // Don't log sensitive keys, just confirm they exist
+    hasApiKey: !!firebaseConfig.apiKey,
+    hasAppId: !!firebaseConfig.appId
+  });
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

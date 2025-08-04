@@ -6,6 +6,7 @@ import MenuFooter from '../components/Footer';
 import LanguageSelector from '../components/LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { usePageTracking } from '../hooks/usePageTracking';
+import { APP_CONFIG, THEME_CONFIG } from '../services/config';
 
 interface PublishedMenu {
   id: string;
@@ -53,13 +54,13 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className={`min-h-screen ${THEME_CONFIG.background}`}>
       {/* Enhanced Header */}
-      <header className="bg-amber-400 shadow-sm">
+      <header className={`${THEME_CONFIG.themeColor} shadow-sm`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <div className="flex justify-center p-4">
-               <img src="/Sebastian_Logo.png" className="pb-2 min-w-72"></img>
+               <img src={`${THEME_CONFIG.logo.dark}`} alt={`${APP_CONFIG.restaurantName}`} className="pb-2 min-w-72"></img>
             </div>
             <p className="text-xl text-gray-800 max-w-2xl mx-auto">
               {t('welcomeMessage')}
@@ -114,7 +115,7 @@ const Home: React.FC = () => {
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   {/* Card Header */}
-                  <div className="bg-amber-400 px-6 py-4">
+                  <div className={`${THEME_CONFIG.themeColor} px-6 py-4`}>
                     <h3 className="text-xl text-center font-bold text-black">
                       {getMenuName(menu)}
                     </h3>
@@ -122,13 +123,10 @@ const Home: React.FC = () => {
 
                   {/* Card Body */}
                   <div className="p-2 space-y-2">
-
-                    {/* <img src="/breakfast.svg"></img> */}
                     <Link
                       to={`/menu/${menu.id}`}
                     >
-                    {/*<img src= {`https://storage.googleapis.com/sebastian-cafe.firebasestorage.app/images/menus/large/${menu.id}.webp`} alt=""></img>*/}
-                    <img src= {`${menu.image}`} alt=""></img>
+                      <img src={`${menu.image}`} alt={`${menu.name}`}></img>
                     </Link>
                     <h3 className="text-lg text-center font-light text-black">
                       {getMenuDescription(menu)}
@@ -137,11 +135,11 @@ const Home: React.FC = () => {
                   </div>
 
                   {/* Card Footer */}
-                  <div className="bg-amber-400 px-6 py-4">
+                  <div className={`${THEME_CONFIG.themeColor} px-6 py-4`}>
                     <div className="flex items-center">
                       <Link
                         to={`/menu/${menu.id}`}
-                        className="bg-blue-800 hover:bg-blue-600 text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
+                        className={`${THEME_CONFIG.button.color} ${THEME_CONFIG.button.hover} text-white w-full text-center py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg`}
                       >
                         {t('viewMenu')}
                       </Link>
