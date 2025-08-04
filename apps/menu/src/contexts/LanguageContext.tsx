@@ -1,5 +1,6 @@
 // apps/menu/src/contexts/LanguageContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+const DEBUG = false;
 
 // Language configuration based on your JSON structure
 export const SUPPORTED_LANGUAGES = [
@@ -58,7 +59,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     localStorage.setItem('menu-language', languageCode);
     
     // Optional: Log language change for debugging
-    console.log(`Language changed to: ${languageCode}`);
+    if (DEBUG) {
+      console.log(`Language changed to: ${languageCode}`);
+    };
   };
 
   // Helper function to get language name

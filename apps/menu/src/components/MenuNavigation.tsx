@@ -61,7 +61,7 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
     return (
       <Link
         to="/"
-        className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg ${className}`}
+        className={`bg-white hover:bg-grey-100 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg ${className}`}
       >
         ← Home
       </Link>
@@ -73,7 +73,7 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
       {/* Current Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-grey-100 sm:py-2 text-grey-700 px-4 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+        className="bg-white hover:bg-grey-100 sm:py-2 text-gray-800 px-4 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
@@ -98,15 +98,15 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
-          <div className="font-medium text-sm pt-4 pb-2 px-4">
+          <div>
             <Link
                 to="/"
             >
-                ⬅️ Home
+              <div className="font-medium text-gray-800 hover:bg-gray-50 text-sm pt-4 pb-4 px-4">⬅️ Home</div>
             </Link>
           </div>  
           {/* Menu List */}
-          <div className="py-2">
+          <div className="">
             {menus.map((menu) => (
               <Link
                 key={menu.id}
@@ -134,7 +134,7 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
                 </div>
               </Link>
             ))}
-            <div className="flex mx-auto text-xs justify-center pt-4 pb-2 border-t">
+            <div className="flex mx-auto text-xs justify-center pt-4 pb-4 border-t">
               <LanguageSelector 
                 variant="buttons" 
                 showFlags={true}
