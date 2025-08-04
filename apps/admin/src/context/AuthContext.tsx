@@ -9,6 +9,8 @@ import {
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
+const DEBUG = false;
+
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
@@ -36,14 +38,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentUser(user);
       setLoading(false);
       // Log authentication state changes for debugging
-      console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-      if (user) {
-        console.log('User UID:', user.uid);
-        // Log the token for debugging purposes
-        user.getIdToken().then(token => {
-          console.log('Auth token available', token.substring(0, 10) + '...');
-        });
-      }
+      if (DEBUG) {
+        console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+        if (user) {
+          console.log('User UID:', user.uid);
+          // Log the token for debugging purposes
+          user.getIdToken().then(token => {
+            console.log('Auth token available', token.substring(0, 10) + '...');
+          });
+        }
+      };
     });
 
     return unsubscribe;

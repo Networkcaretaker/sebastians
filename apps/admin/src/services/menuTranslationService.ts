@@ -27,12 +27,9 @@ export const menuTranslationService = {
   
   // Get all translations for a menu
   getMenuTranslations: async (menuId: string): Promise<GetMenuTranslationsResponse> => {
-    try {
-      console.log('Fetching translations for menu:', menuId);
-      
+    try {      
       const translationsRef = collection(db, MENUS_COLLECTION, menuId, TRANSLATIONS_SUBCOLLECTION);
       const querySnapshot = await getDocs(translationsRef);
-      
       const translations: Record<string, MenuTranslation> = {};
       
       querySnapshot.forEach((doc) => {

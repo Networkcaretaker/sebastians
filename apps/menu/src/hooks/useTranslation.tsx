@@ -211,8 +211,6 @@ export const useTranslation = () => {
     if (currentLanguage === defaultLanguage || currentLanguage === 'en') {
       return menu.description || '';
     }
-
-    console.log("MENU", menu)
     
     // Check if menu has translations
     if (menu.translations && menu.translations[currentLanguage] && menu.translations[currentLanguage].description) {

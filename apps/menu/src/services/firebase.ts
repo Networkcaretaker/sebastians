@@ -3,7 +3,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
 
-const DEBUG = process.env.NODE_ENV === 'development';
+//const DEBUG = process.env.NODE_ENV === 'development';
+const DEBUG = false;
 
 // Declare global variables defined by Vite
 declare const __VITE_FIREBASE_API_KEY__: string;
@@ -42,6 +43,8 @@ export const db = getFirestore(app);
 // Firestore Analytics
 export const analytics = getAnalytics(app); 
 
-console.log('✅ Firebase initialized for menu app');
+if (DEBUG) {
+  console.log('✅ Firebase initialized for menu app');
+};
 
 export default app;

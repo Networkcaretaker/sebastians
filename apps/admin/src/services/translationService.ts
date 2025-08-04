@@ -22,17 +22,15 @@ import {
 
 const MENU_ITEMS_COLLECTION = 'menu_items';
 const TRANSLATIONS_SUBCOLLECTION = 'translations';
+const DEBUG = false;
 
 export const translationService = {
   
   // Get all translations for a menu item
   getItemTranslations: async (itemId: string): Promise<GetTranslationsResponse> => {
-    try {
-      console.log('Fetching translations for item:', itemId);
-      
+    try {      
       const translationsRef = collection(db, MENU_ITEMS_COLLECTION, itemId, TRANSLATIONS_SUBCOLLECTION);
-      const querySnapshot = await getDocs(translationsRef);
-      
+      const querySnapshot = await getDocs(translationsRef);     
       const translations: Record<string, MenuItemTranslation> = {};
       
       querySnapshot.forEach((doc) => {
@@ -49,7 +47,9 @@ export const translationService = {
         };
       });
       
-      console.log('Found translations:', Object.keys(translations));
+      if (DEBUG) {
+        console.log('Found translations:', Object.keys(translations));
+      };
       
       return {
         success: true,
@@ -68,7 +68,9 @@ export const translationService = {
   // Get a specific translation
   getTranslation: async (itemId: string, languageCode: string): Promise<TranslationResponse> => {
     try {
-      console.log('Fetching translation:', itemId, languageCode);
+      if (DEBUG) {
+        console.log('Fetching translation:', itemId, languageCode);
+      };
       
       const translationRef = doc(db, MENU_ITEMS_COLLECTION, itemId, TRANSLATIONS_SUBCOLLECTION, languageCode);
       const translationDoc = await getDoc(translationRef);
@@ -113,7 +115,9 @@ export const translationService = {
     translationData: CreateTranslationDTO
   ): Promise<TranslationResponse> => {
     try {
-      console.log('Saving translation:', itemId, languageCode, translationData);
+      if (DEBUG) {
+        console.log('Saving translation:', itemId, languageCode, translationData);
+      };
       
       const batch = writeBatch(db);
       
@@ -154,9 +158,7 @@ export const translationService = {
       });
       
       await batch.commit();
-      
-      console.log('Translation saved successfully');
-      
+            
       const savedTranslation: MenuItemTranslation = {
         id: languageCode,
         ...translationDoc
@@ -179,7 +181,9 @@ export const translationService = {
   // Delete a translation
   deleteTranslation: async (itemId: string, languageCode: string): Promise<TranslationResponse> => {
     try {
-      console.log('Deleting translation:', itemId, languageCode);
+      if (DEBUG) {
+        console.log('Deleting translation:', itemId, languageCode);
+      };
       
       const batch = writeBatch(db);
       
@@ -198,9 +202,7 @@ export const translationService = {
       });
       
       await batch.commit();
-      
-      console.log('Translation deleted successfully');
-      
+            
       return {
         success: true,
         message: 'Translation deleted successfully'

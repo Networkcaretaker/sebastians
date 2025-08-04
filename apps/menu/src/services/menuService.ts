@@ -4,6 +4,9 @@ import { db } from './firebase';
 import { FIREBASE_CONFIG, APP_CONFIG, MOCK_PUBLISHED_MENUS } from './config';
 import { MenuImage } from '@sebastians/shared-types';
 
+// const DEBUG = process.env.NODE_ENV === 'development';
+const DEBUG = false;
+
 export interface MenuItem {
   id: string;
   item_name: string;
@@ -62,8 +65,10 @@ export interface PublishedMenu {
  */
 export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
   try {
-    console.log('🔍 Fetching published menus from Firestore websiteConfig...');
-    
+    if (DEBUG) {
+      console.log('🔍 Fetching published menus from Firestore websiteConfig...');
+    };
+
     // Fetch the websiteConfig document from Firestore
     const websiteConfigRef = doc(db, 'websiteConfig', 'default');
     const websiteConfigSnap = await getDoc(websiteConfigRef);
@@ -80,10 +85,14 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
     }
     
     const websiteConfig = websiteConfigSnap.data();
-    console.log('✅ Fetched websiteConfig:', websiteConfig);
+    if (DEBUG) {
+      console.log('✅ Fetched websiteConfig:', websiteConfig);
+    };
     
     const publishedMenus = websiteConfig.publishedMenus || [];
-    console.log('📋 Published menus array:', publishedMenus);
+    if (DEBUG) {
+      console.log('📋 Published menus array:', publishedMenus);
+    };
     
     if (!Array.isArray(publishedMenus) || publishedMenus.length === 0) {
       console.warn('⚠️ No published menus found in websiteConfig');
@@ -146,7 +155,9 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
         };
       });*/
 
-    console.log('🔄 Transformed published menus:', transformedMenus);
+    if (DEBUG) {
+      console.log('🔄 Transformed published menus:', transformedMenus);
+    };
     return transformedMenus;
 
   } catch (error) {
@@ -168,7 +179,9 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
  */
 export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
   try {
-    console.log('🔍 Getting menu data for ID:', menuId);
+    if (DEBUG) {
+      console.log('🔍 Getting menu data for ID:', menuId);
+    };
     
     // Get the published URL from Firestore to ensure we have the correct URL
     const publishedMenus = await getPublishedMenus();
@@ -178,15 +191,21 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
     
     if (targetMenu && targetMenu.url) {
       menuUrl = targetMenu.url;
-      console.log('✅ Using published URL from Firestore:', menuUrl);
+      if (DEBUG) {
+        console.log('✅ Using published URL from Firestore:', menuUrl);
+      };
     } else {
       // Fallback: construct URL
       menuUrl = FIREBASE_CONFIG.getMenuFileUrl(`menu-${menuId}.json`);
-      console.log('⚠️ Constructing URL as fallback:', menuUrl);
+      if (DEBUG) {
+        console.log('⚠️ Constructing URL as fallback:', menuUrl);
+      };
     }
     
-    console.log('🔍 Fetching menu data from:', menuUrl);
-    
+    if (DEBUG) {
+      console.log('🔍 Fetching menu data from:', menuUrl);
+    };
+
     const response = await fetch(menuUrl, {
       method: 'GET',
       headers: {
@@ -196,7 +215,9 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
       cache: 'no-cache'
     });
 
-    console.log('📡 Menu response status:', response.status);
+    if (DEBUG) {
+      console.log('📡 Menu response status:', response.status);
+    };
 
     if (!response.ok) {
       console.error(`❌ Failed to fetch menu ${menuId}:`, response.status, response.statusText);
@@ -204,7 +225,9 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
     }
 
     const data = await response.json();
-    console.log('✅ Successfully fetched menu data:', data);
+    if (DEBUG) {
+      console.log('✅ Successfully fetched menu data:', data);
+    };
     return transformMenuData(data, menuId, menuUrl);
 
   } catch (error) {
@@ -223,7 +246,9 @@ export const getMenuTranslations = async (menuUrl: string): Promise<{
   translations: Record<string, any>;
 } | null> => {
   try {
-    console.log('🔍 Fetching menu translations from:', menuUrl);
+    if (DEBUG) {
+      console.log('🔍 Fetching menu translations from:', menuUrl);
+    };
     
     const response = await fetch(menuUrl, {
       method: 'GET',

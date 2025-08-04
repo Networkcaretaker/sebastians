@@ -3,6 +3,9 @@ import React from 'react';
 import AllergyIcon from './AllergyIcon';
 import { useTranslation } from '../hooks/useTranslation';
 
+//const DEBUG = process.env.NODE_ENV === 'development';
+const DEBUG = false;
+
 // Corrected interface to match your actual data structure
 interface MenuItem {
   id: string;
@@ -31,14 +34,16 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
   const { getItemName, getItemDescription, getOptionText, getExtraText, getAddonText, t } = useTranslation();
 
   // Temporary debugging for addons and extras
-  console.log('Item:', item.item_name);
-  console.log('Item translations:', item.translations);
-  if (item.addons && item.addons.length > 0) {
-    console.log('Item addons:', item.addons);
-  }
-  if (item.extras && item.extras.length > 0) {
-    console.log('Item extras:', item.extras);
-  }
+  if (DEBUG) {
+    console.log('Item:', item.item_name);
+    console.log('Item translations:', item.translations);
+    if (item.addons && item.addons.length > 0) {
+      console.log('Item addons:', item.addons);
+    }
+    if (item.extras && item.extras.length > 0) {
+      console.log('Item extras:', item.extras);
+    }
+  };
   
   return (
     <div className="border-b py-4">
