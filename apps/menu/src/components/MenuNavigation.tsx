@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getPublishedMenus, PublishedMenu } from '../services/menuService';
 import { useTranslation } from '../hooks/useTranslation';
+import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
 import LanguageSelector from '../components/LanguageSelector';
 
 interface MenuNavigationProps {
@@ -10,8 +11,9 @@ interface MenuNavigationProps {
 }
 
 const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
-  const { getMenuName, getMenuDescription } = useTranslation();
+  const { t, getMenuName, getMenuDescription } = useTranslation();
   const { menuId } = useParams<{ menuId: string }>();
+  const { allergiesVisible, toggleAllergiesVisibility } = useAllergyVisibility();
   const [menus, setMenus] = useState<PublishedMenu[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +58,11 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
     setIsOpen(false);
   };
 
+  // Handle allergy toggle
+  const handleAllergyToggle = () => {
+    toggleAllergiesVisibility();
+  };
+
   if (loading || menus.length <= 1) {
     // If only one menu or loading, show a simple back to home button
     return (
@@ -97,14 +104,18 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
+        <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
           <div>
-            <Link
-                to="/"
-            >
-              <div className="font-medium text-gray-800 hover:bg-gray-50 text-sm pt-4 pb-4 px-4">⬅️ Home</div>
+            <Link to="/">
+              <div className="font-medium text-gray-800 hover:bg-gray-50 text-sm pt-4 pb-4 px-4">
+                ⬅️ Home
+              </div>
             </Link>
-          </div>  
+          </div>
+
+          {/* Category List */}
+          {/* TODO */}
+        
           {/* Menu List */}
           <div className="">
             {menus.map((menu) => (
@@ -134,6 +145,35 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
                 </div>
               </Link>
             ))}
+            
+            {/* Allergies Toggle Section */}
+            <div className="flex mx-auto font-medium text-sm justify-between items-center pt-4 pb-4 border-t">
+              <span className="px-4">{t('allergens')}</span>
+              <button
+                onClick={handleAllergyToggle}
+                className={`mx-4 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  allergiesVisible ? 'bg-blue-600' : 'bg-gray-300'
+                }`}
+                role="switch"
+                aria-checked={allergiesVisible}
+                aria-label="Toggle allergy visibility"
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    allergiesVisible ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+            
+            {/* Alternative Text Display (optional - can be removed if you prefer just the toggle) */}
+            {/*
+              <div className="text-xs text-gray-500 text-center pb-2">
+                {allergiesVisible ? '🔍 Allergies shown' : '🚫 Allergies hidden'}
+              </div>
+             */}
+            
+            {/* Language Selector */}
             <div className="flex mx-auto text-xs justify-center pt-4 pb-4 border-t">
               <LanguageSelector 
                 variant="buttons" 

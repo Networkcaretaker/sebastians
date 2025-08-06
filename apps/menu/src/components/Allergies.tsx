@@ -2,6 +2,7 @@
 import React from 'react';
 import { getAvailableAllergies, getAllergyIcon } from '../utils/allergyIcons';
 import { useTranslation } from '../hooks/useTranslation';
+import { THEME_CONFIG } from '../services/config';
 
 const Allergies: React.FC = () => {
   const { t, getAllergyName } = useTranslation();
@@ -41,7 +42,7 @@ const Allergies: React.FC = () => {
     <div className="p-4 max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-md mt-2">
         {/* Header */}
-        <div className="text-center mb-6 bg-amber-400 rounded-t-lg p-4">
+        <div className={`text-center mb-6 ${THEME_CONFIG.themeColor} rounded-t-lg p-4`}>
             <h2 className="text-2xl font-bold text-white mb-2">{t('allergiesTitle')}</h2>
             <p className="text-gray-900 text-sm">
               {t('allergiesDescription')}
@@ -81,7 +82,7 @@ const Allergies: React.FC = () => {
         </div>
 
         {/* Footer Note */}
-        <div className="text-center bg-amber-400 mt-6 rounded-b-lg p-4">
+        <div className={`text-center ${THEME_CONFIG.themeColor} mt-6 rounded-b-lg p-4`}>
             <p className="text-sm text-gray-900">
               {t('allergiesFooter')}
             </p>

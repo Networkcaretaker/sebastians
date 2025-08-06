@@ -32,7 +32,9 @@ export const THEME_CONFIG = {
   logo: {
     light: "/Sebastian_Logo.png",
     dark: "/Sebastian_Logo.png"
-  }
+  },
+  themeText: "text-amber-400",
+  priceText: "text-green-600"
 }
 
 // App configuration

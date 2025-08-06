@@ -2,6 +2,8 @@
 import React from 'react';
 import AllergyIcon from './AllergyIcon';
 import { useTranslation } from '../hooks/useTranslation';
+import { THEME_CONFIG } from '../services/config';
+import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
 
 //const DEBUG = process.env.NODE_ENV === 'development';
 const DEBUG = false;
@@ -32,6 +34,7 @@ interface ItemPreviewProps {
 
 const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
   const { getItemName, getItemDescription, getOptionText, getExtraText, getAddonText, t } = useTranslation();
+  const { allergiesVisible } = useAllergyVisibility();
 
   // Temporary debugging for addons and extras
   if (DEBUG) {
@@ -56,23 +59,23 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
           {item.item_price > 0 
             ? <div>
                 {item.hasOptions || (item.options && item.options.length > 0) ? (
-                <div className="text-green-600 text-base font-bold">
+                <div className={`${THEME_CONFIG.priceText} min-w-16 text-end text-base font-bold`}>
                   <span className="text-xs font-medium px-1">{t('from')}</span>{item.item_price.toFixed(2)} €
                 </div>
               ) : (
                 <div>
-                  <div className="text-green-600 text-base font-bold">{item.item_price.toFixed(2)} €</div>
+                  <div className={`${THEME_CONFIG.priceText} min-w-16 text-end text-base font-bold`}>{item.item_price.toFixed(2)} €</div>
                 </div>
               )}
             </div> 
             : <div>
-                <div className="text-green-600 text-base font-bold">
+                <div className={`${THEME_CONFIG.priceText} min-w-16 text-end text-base font-bold`}>
                   {item.options && item.options.length > 0 && (
                     <div>
                       {item.options.map((option, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-sm">
-                          <span className="text-green-600 text-xs font-medium px-2">{getOptionText(item, idx, option.option)}</span>
-                          <span className="text-green-600 font-bold">
+                        <div key={idx} className="text-base">
+                          <span className={`${THEME_CONFIG.priceText} text-xs font-medium px-2`}>{getOptionText(item, idx, option.option)}</span>
+                          <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end`}>
                              {option.price.toFixed(2)} €
                           </span>
                         </div>
@@ -104,11 +107,11 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Options */}
         {item.options && item.options.length > 0 && item.item_price > 0 && (
           <div className="mt-2 space-y-1"> 
-            <h4 className="text-xs font-medium text-amber-400">{t('options')}</h4>
+            <h4 className={`text-xs font-medium ${THEME_CONFIG.themeText}`}>{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600">{getOptionText(item, idx, option.option)}</span>
-                <span className="text-green-600 font-bold">{option.price.toFixed(2)} €</span>
+                <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end text-base`}>{option.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
@@ -117,11 +120,11 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         {/* Extras */}
         {item.extras && item.extras.length > 0 && (
           <div className="mt-2 space-y-1">
-            <h4 className="text-xs font-medium text-amber-400">{t('extras')}</h4>
+            <h4 className={`text-xs font-medium ${THEME_CONFIG.themeText}`}>{t('extras')}</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span className="text-gray-600">{getExtraText(item, idx, extra.item)}</span>
-                <span className="text-green-600 font-bold">+ {extra.price.toFixed(2)} €</span>
+                <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end`}>+ {extra.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
@@ -152,14 +155,14 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         )}
         
         {/* Allergies Section - Updated with Icons */}
-        {item.allergies && item.allergies.length > 0 && (
+        {allergiesVisible && item.allergies && item.allergies.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <h4 className="text-xs font-medium text-amber-400">{t('allergens')}</h4>
+            <h4 className={`text-xs font-medium ${THEME_CONFIG.themeText}`}>{t('allergens')}</h4>
             <div className="flex flex-wrap gap-1">
               {item.allergies.map((allergy, idx) => (
                 <span 
                   key={idx} 
-                  className="inline-flex items-center gap-1 text-xs bg-amber-400 px-1 py-1 rounded font-medium"
+                  className={`inline-flex items-center gap-1 text-xs ${THEME_CONFIG.themeColor} px-1 py-1 rounded font-medium`}
                 >
                   <AllergyIcon 
                     allergy={allergy} 

@@ -4,9 +4,10 @@ export const UI_TRANSLATIONS = {
   en: {
     // Labels
     from: 'from ',
-    options: 'Options:',
-    extras: 'Extras:',
-    allergens: 'Allergens:',
+    options: 'Options',
+    extras: 'Extras',
+    addons: 'Addons', 
+    allergens: 'Allergens',
     
     // Notice flags
     vegetarian: '🌱 Vegetarian',
@@ -34,9 +35,10 @@ export const UI_TRANSLATIONS = {
   es: {
     // Labels
     from: 'desde ',
-    options: 'Opciones:',
-    extras: 'Extras:',
-    allergens: 'Alérgenos:',
+    options: 'Opciones',
+    extras: 'Extras',
+    addons: 'Complementos', 
+    allergens: 'Alérgenos',
     
     // Notice flags
     vegetarian: '🌱 Vegetariano',
@@ -64,9 +66,10 @@ export const UI_TRANSLATIONS = {
   de: {
     // Labels
     from: 'ab ',
-    options: 'Optionen:',
-    extras: 'Extras:',
-    allergens: 'Allergene:',
+    options: 'Optionen',
+    extras: 'Extras',
+    addons: 'Addons', 
+    allergens: 'Allergene',
     
     // Notice flags
     vegetarian: '🌱 Vegetarisch',
@@ -94,9 +97,10 @@ export const UI_TRANSLATIONS = {
   nl: {
     // Labels
     from: 'vanaf ',
-    options: 'Opties:',
-    extras: 'Extra\'s:',
-    allergens: 'Allergenen:',
+    options: 'Opties',
+    extras: 'Extras',
+    addons: 'Addons', 
+    allergens: 'Allergenen',
     
     // Notice flags
     vegetarian: '🌱 Vegetarisch',
@@ -124,9 +128,10 @@ export const UI_TRANSLATIONS = {
   fr: {
     // Labels
     from: 'à partir de ',
-    options: 'Options:',
-    extras: 'Suppléments:',
-    allergens: 'Allergènes:',
+    options: 'Options',
+    extras: 'Suppléments',
+    addons: 'Addons', 
+    allergens: 'Allergènes',
     
     // Notice flags
     vegetarian: '🌱 Végétarien',
@@ -154,9 +159,10 @@ export const UI_TRANSLATIONS = {
   it: {
     // Labels
     from: 'da ',
-    options: 'Opzioni:',
-    extras: 'Extra:',
-    allergens: 'Allergeni:',
+    options: 'Opzioni',
+    extras: 'Extra',
+    addons: 'Addons', 
+    allergens: 'Allergeni',
     
     // Notice flags
     vegetarian: '🌱 Vegetariano',
@@ -184,9 +190,10 @@ export const UI_TRANSLATIONS = {
   pt: {
     // Labels
     from: 'a partir de ',
-    options: 'Opções:',
-    extras: 'Extras:',
-    allergens: 'Alérgenos:',
+    options: 'Opções',
+    extras: 'Extras',
+    addons: 'Addons', 
+    allergens: 'Alérgenos',
     
     // Notice flags
     vegetarian: '🌱 Vegetariano',

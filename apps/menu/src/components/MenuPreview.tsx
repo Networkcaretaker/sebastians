@@ -3,6 +3,7 @@ import React from 'react';
 import { MenuData } from '../services/menuService';
 import ItemPreview from './ItemPreview';
 import { useTranslation } from '../hooks/useTranslation';
+import { THEME_CONFIG } from '../services/config';
 
 interface MenuPreviewProps {
   menuData: MenuData;
@@ -11,7 +12,7 @@ interface MenuPreviewProps {
 const SHOW_IMAGE = true
 
 const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
-  const { getCategoryName, getCategoryHeader, getCategoryFooter, getCategoryDescription, getCategoryExtraText, getCategoryAddonText } = useTranslation();
+  const { t, getCategoryName, getCategoryHeader, getCategoryFooter, getCategoryDescription, getCategoryExtraText, getCategoryAddonText } = useTranslation();
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-4">
 
@@ -24,7 +25,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
           return (
             <div key={category.id} className="bg-white rounded-lg shadow-md">
               {/* Category Header */}
-              <div className=" bg-amber-400 rounded-t-lg p-4">
+              <div className={`${THEME_CONFIG.themeColor} rounded-t-lg p-4`}>
                 <div className=" flex justify-center items-center">
                   <h2 className="text-3xl font-light uppercase">{getCategoryName(category)}</h2>
                 </div>
@@ -75,11 +76,13 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
                 {/* Category Extras */}
                 {category.extras && category.extras.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="text-base font-bold pb-2">{category.cat_name} Extras</h3>
+                    <h3 className={`text-base font-bold pb-2 ${THEME_CONFIG.themeText}`}>{getCategoryName(category)}: {t("extras")}</h3>
                     {category.extras.map((extra, idx) => (
                       <div key={idx} className="flex justify-between">
-                        <span className="text-gray-600 text-sm">{getCategoryExtraText(category, idx, extra.item)}</span>
-                        <span className="text-green-600 text-sm font-bold">+ {extra.price.toFixed(2)} €</span>
+                        <span className="text-gray-600">{getCategoryExtraText(category, idx, extra.item)}</span>
+                        <div className="min-w-16 text-end">
+                          <span className={`${THEME_CONFIG.priceText} text-sm font-bold`}>+ {extra.price.toFixed(2)} €</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -88,7 +91,7 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menuData }) => {
                 {/* Category Add-ons */}
                 {category.addons && category.addons.length > 0 && (
                   <div className="mt-4">
-                    <h3 className="text-base font-bold pb-2">{category.cat_name} Add-ons</h3>
+                    <h3 className={`text-base font-bold pb-2 ${THEME_CONFIG.themeText}`}>{getCategoryName(category)}: {t("addons")}</h3>
                     <div className="flex flex-wrap">
                       {category.addons.map((addon, idx) => (
                         <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 m-1 rounded text-xs">

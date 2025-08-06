@@ -9,6 +9,8 @@ import MenuPreview from '../components/MenuPreview';
 import MenuFooter from '../components/Footer';
 import Allergies from '../components/Allergies';
 import MenuNavigation from '../components/MenuNavigation';
+import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
+import { THEME_CONFIG } from '../services/config';
 
 //LanguageSelector
 
@@ -17,6 +19,7 @@ const MenuDisplay: React.FC = () => {
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { allergiesVisible } = useAllergyVisibility();
 
   useEffect(() => {
     const loadMenu = async () => {
@@ -82,7 +85,7 @@ const MenuDisplay: React.FC = () => {
   return (
     <div className="min-h-screen bg-black">
       {/* Header with back button and language selector */}
-      <header className="bg-amber-400 shadow-sm sticky top-0 z-10">
+      <header className={`${THEME_CONFIG.themeColor} shadow-sm sticky top-0 z-10`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-4 lg:px-4">
           <div className="py-4 flex items-center justify-between">
             <Link
@@ -102,7 +105,7 @@ const MenuDisplay: React.FC = () => {
       {/* Replace the entire main section with MenuPreview component */}
       <main className="pb-4">
         <MenuPreview menuData={menuData} />
-        <Allergies />
+        {allergiesVisible && (<Allergies />)}
       </main>
       <footer>
         <MenuFooter />
