@@ -81,9 +81,3 @@ vite.config.ts.timestamp-*
 
 # Notes and docs
 .docs/
-
-# Import and Export Services
-importService.ts
-exportService.ts
-TestImport.tsx
-TestExport.tsx

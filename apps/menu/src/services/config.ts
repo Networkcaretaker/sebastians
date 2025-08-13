@@ -33,8 +33,17 @@ export const THEME_CONFIG = {
     light: "/Sebastian_Logo.png",
     dark: "/Sebastian_Logo.png"
   },
+  itemText: "text-black",
+  categoryText: "text-black",
+  headText: "text-black",
+  footText: "text-black",
+  descriptionText: "text-gray-600",
   themeText: "text-amber-400",
-  priceText: "text-green-600"
+  priceText: "text-green-600",
+  addonColor: {
+    background: "bg-amber-100",
+    text: "text-amber-500"
+  }
 }
 
 // App configuration
@@ -57,6 +66,7 @@ export const APP_CONFIG = {
   // Development settings - simplified for now
   isDevelopment: true, // Set to false in production
   enableMockData: true, // Set to false when you have real published menus
+  showImage: true
 };
 
 // Mock data for development (will be removed when using real data)

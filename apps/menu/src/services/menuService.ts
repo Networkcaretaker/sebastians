@@ -1,71 +1,16 @@
+// apps/menu/src/services/menuService.tsx
 // Menu Service for fetching published menu data from Firebase Storage JSON files
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { FIREBASE_CONFIG, APP_CONFIG, MOCK_PUBLISHED_MENUS } from './config';
-import { MenuImage } from '@sebastians/shared-types';
-
-// const DEBUG = process.env.NODE_ENV === 'development';
-const DEBUG = false;
-
-export interface MenuItem {
-  id: string;
-  item_name: string;
-  item_description?: string;
-  item_price: number;
-  item_order: number;
-  isActive: boolean;
-  vegetarian?: boolean;  // Add this
-  allergies: string[];   // Add this
-  options?: Array<{ option: string; price: number }>;  // Add this
-  extras?: Array<{ item: string; price: number }>;     // Add this
-  addons?: Array<{ item: string }>;                    // Add this
-  hasOptions?: boolean;  // Add this
-  translations?: Record<string, any>;
-}
-
-export interface MenuCategory {
-  id: string;
-  cat_name: string;
-  cat_description?: string;
-  cat_header?: string;
-  cat_footer?: string;
-  cat_order: number;
-  extras?: Array<{ item: string; price: number; }>;
-  addons?: Array<{ item: string; }>;
-  items: MenuItem[];
-  translations?: Record<string, any>;
-  image: MenuImage;
-}
-
-export interface MenuData {
-  id: string;
-  menu_name: string;
-  menu_description: string;
-  menu_type: 'web' | 'printable';
-  categories: MenuCategory[];
-  lastUpdated: string;
-  publishedUrl?: string;
-  translations?: Record<string, any>;
-  image: MenuImage;
-}
-
-export interface PublishedMenu {
-  id: string;
-  name: string;
-  description: string;
-  url: string;
-  lastUpdated: string;
-  slug?: string;
-  translations?: Record<string, any>;
-  image?: string;
-}
+import { MenuData, PublishedMenu } from "../types/menu.types"
 
 /**
  * Fetches the list of published menus from Firestore websiteConfig collection
  */
 export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
   try {
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('🔍 Fetching published menus from Firestore websiteConfig...');
     };
 
@@ -85,12 +30,12 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
     }
     
     const websiteConfig = websiteConfigSnap.data();
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('✅ Fetched websiteConfig:', websiteConfig);
     };
     
     const publishedMenus = websiteConfig.publishedMenus || [];
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('📋 Published menus array:', publishedMenus);
     };
     
@@ -136,26 +81,7 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
       })
     );
 
-    // Transform the Firestore data to match our interface
-    /*const transformedMenus = publishedMenus
-      .filter((menu: any) => menu.isActive !== false) // Only active menus
-      .map((menu: any) => {
-        console.log('🔍 Processing menu from Firestore:', menu);
-        console.log('📝 Menu ID from Firestore:', menu.menuId);
-        console.log('🔗 Published URL from Firestore:', menu.publishedUrl);
-        
-        return {
-          id: menu.menuId,
-          name: menu.name,
-          description: menu.description || '',
-          url: menu.publishedUrl,
-          lastUpdated: menu.publishedAt || new Date().toISOString(),
-          slug: menu.menuId,
-          translations: menu.translations || {}
-        };
-      });*/
-
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('🔄 Transformed published menus:', transformedMenus);
     };
     return transformedMenus;
@@ -179,7 +105,7 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
  */
 export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
   try {
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('🔍 Getting menu data for ID:', menuId);
     };
     
@@ -191,18 +117,18 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
     
     if (targetMenu && targetMenu.url) {
       menuUrl = targetMenu.url;
-      if (DEBUG) {
+      if (APP_CONFIG.isDevelopment) {
         console.log('✅ Using published URL from Firestore:', menuUrl);
       };
     } else {
       // Fallback: construct URL
       menuUrl = FIREBASE_CONFIG.getMenuFileUrl(`menu-${menuId}.json`);
-      if (DEBUG) {
+      if (APP_CONFIG.isDevelopment) {
         console.log('⚠️ Constructing URL as fallback:', menuUrl);
       };
     }
     
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('🔍 Fetching menu data from:', menuUrl);
     };
 
@@ -215,7 +141,7 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
       cache: 'no-cache'
     });
 
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('📡 Menu response status:', response.status);
     };
 
@@ -225,7 +151,7 @@ export const getMenuData = async (menuId: string): Promise<MenuData | null> => {
     }
 
     const data = await response.json();
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('✅ Successfully fetched menu data:', data);
     };
     return transformMenuData(data, menuId, menuUrl);
@@ -246,7 +172,7 @@ export const getMenuTranslations = async (menuUrl: string): Promise<{
   translations: Record<string, any>;
 } | null> => {
   try {
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log('🔍 Fetching menu translations from:', menuUrl);
     };
     

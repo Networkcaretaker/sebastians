@@ -2,9 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
-
-//const DEBUG = process.env.NODE_ENV === 'development';
-const DEBUG = false;
+import { APP_CONFIG } from '../services/config';
 
 // Declare global variables defined by Vite
 declare const __VITE_FIREBASE_API_KEY__: string;
@@ -24,7 +22,7 @@ const firebaseConfig = {
   appId: __VITE_FIREBASE_APP_ID__
 };
 
-if (DEBUG) {
+if (APP_CONFIG.isDevelopment) {
   console.log('🔧 Firebase config:', {
     projectId: firebaseConfig.projectId,
     authDomain: firebaseConfig.authDomain,
@@ -43,7 +41,7 @@ export const db = getFirestore(app);
 // Firestore Analytics
 export const analytics = getAnalytics(app); 
 
-if (DEBUG) {
+if (APP_CONFIG.isDevelopment) {
   console.log('✅ Firebase initialized for menu app');
 };
 

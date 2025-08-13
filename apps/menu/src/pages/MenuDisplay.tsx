@@ -1,18 +1,14 @@
 // apps/menu/src/pages/MenuDisplay.tsx
-// Keep all your existing imports and logic, just replace the main content section
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getMenuData, MenuData } from '../services/menuService';
-import { APP_CONFIG } from '../services/config';
+import { getMenuData } from '../services/menuService';
+import { MenuData } from "../types/menu.types"
+import { APP_CONFIG, THEME_CONFIG } from '../services/config';
 import MenuPreview from '../components/MenuPreview';
 import MenuFooter from '../components/Footer';
 import Allergies from '../components/Allergies';
 import MenuNavigation from '../components/MenuNavigation';
 import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
-import { THEME_CONFIG } from '../services/config';
-
-//LanguageSelector
 
 const MenuDisplay: React.FC = () => {
   const { menuId } = useParams<{ menuId: string }>();
@@ -57,7 +53,8 @@ const MenuDisplay: React.FC = () => {
     return (
       <div className="min-h-screen flex bg-black items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto"></div>
+          <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-amber-400 mx-auto">
+          </div>
           <p className="mt-4 text-white">Loading menu...</p>
         </div>
       </div>
@@ -96,7 +93,7 @@ const MenuDisplay: React.FC = () => {
             
             {/* Right side with language selector and back button */}
             <div className="flex items-center gap-3">
-              <MenuNavigation className="" />
+              <MenuNavigation />
             </div>
           </div>
         </div>

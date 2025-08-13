@@ -1,13 +1,13 @@
+// apps/menu/src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import { analytics } from './services/firebase';
+import { APP_CONFIG } from './services/config';
 
-//const DEBUG = process.env.NODE_ENV === 'development';
-const DEBUG = false;
 
-if (DEBUG) {
+if (APP_CONFIG.isDevelopment) {
   console.log('📊 Firebase Analytics initialized:', !!analytics);
 };
 

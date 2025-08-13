@@ -2,9 +2,7 @@
 import { useEffect } from 'react';
 import { logEvent } from 'firebase/analytics';
 import { analytics } from '../services/firebase';
-
-//const DEBUG = process.env.NODE_ENV === 'development';
-const DEBUG = false;
+import { APP_CONFIG } from '../services/config';
 
 export const usePageTracking = (pageName: string) => {
   useEffect(() => {
@@ -20,7 +18,7 @@ export const usePageTracking = (pageName: string) => {
       timestamp: new Date().toISOString()
     });
     
-    if (DEBUG) {
+    if (APP_CONFIG.isDevelopment) {
       console.log(`📊 Analytics: Tracked page view for ${pageName}`);
     };
   }, [pageName]);

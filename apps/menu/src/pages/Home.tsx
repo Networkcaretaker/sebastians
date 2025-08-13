@@ -7,16 +7,7 @@ import LanguageSelector from '../components/LanguageSelector';
 import { useTranslation } from '../hooks/useTranslation';
 import { usePageTracking } from '../hooks/usePageTracking';
 import { APP_CONFIG, THEME_CONFIG } from '../services/config';
-
-interface PublishedMenu {
-  id: string;
-  name: string;
-  description: string;
-  lastUpdated: string;
-  url: string;
-  translations?: Record<string, any>;
-  image?: string;
-}
+import { PublishedMenu } from "../types/menu.types"
 
 const Home: React.FC = () => {
   const { t, getMenuName, getMenuDescription } = useTranslation();

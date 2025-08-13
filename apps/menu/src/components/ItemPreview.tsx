@@ -2,31 +2,9 @@
 import React from 'react';
 import AllergyIcon from './AllergyIcon';
 import { useTranslation } from '../hooks/useTranslation';
-import { THEME_CONFIG } from '../services/config';
+import { APP_CONFIG, THEME_CONFIG } from '../services/config';
 import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
-
-//const DEBUG = process.env.NODE_ENV === 'development';
-const DEBUG = false;
-
-// Corrected interface to match your actual data structure
-interface MenuItem {
-  id: string;
-  item_name: string;
-  item_description?: string;
-  item_price: number;
-  item_order: number;
-  isActive: boolean;
-  // Fixed: allergies should be an array of strings, not array of arrays
-  vegetarian?: boolean;
-  vegan?: boolean;
-  spicy?: boolean;
-  allergies: string[];  // Changed from Array<[string]> to string[]
-  options?: Array<{ option: string; price: number }>;
-  extras?: Array<{ item: string; price: number }>;
-  addons?: Array<{ item: string }>;
-  hasOptions?: boolean;
-  translations?: Record<string, any>;
-}
+import { MenuItem } from "../types/menu.types"
 
 interface ItemPreviewProps {
   item: MenuItem;
@@ -37,7 +15,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
   const { allergiesVisible } = useAllergyVisibility();
 
   // Temporary debugging for addons and extras
-  if (DEBUG) {
+  if (APP_CONFIG.isDevelopment) {
     console.log('Item:', item.item_name);
     console.log('Item translations:', item.translations);
     if (item.addons && item.addons.length > 0) {
@@ -53,7 +31,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
       <div className="">
         <div className="flex justify-between items-start">
           <div className="flex gap-2">
-            <h3 className="text-base font-bold">{getItemName(item)}</h3>
+            <h3 className={`${THEME_CONFIG.itemText} text-base font-bold`}>{getItemName(item)}</h3>
           </div>
 
           {item.item_price > 0 
@@ -83,21 +61,21 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
                     </div>
                   )}
                 </div>
-              </div>}
-
+              </div>
+            }
         </div>
       </div>
       
       <div className="space-y-2">
         <div className="">
-          <p className="text-gray-600 text-sm">{getItemDescription(item)}</p>
+          <p className={`${THEME_CONFIG.descriptionText} text-sm`}>{getItemDescription(item)}</p>
         </div>
 
         {/* Add-ons */}
         {item.addons && item.addons.length > 0 && (
           <div className="flex flex-wrap gap-1 my-2">
             {item.addons.map((addon, idx) => (
-              <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              <span key={idx} className={`text-xs ${THEME_CONFIG.addonColor.background} ${THEME_CONFIG.addonColor.text} px-2 py-1 rounded`}>
                 {getAddonText(item, idx, addon.item)}
               </span>
             ))}
@@ -110,8 +88,8 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             <h4 className={`text-xs font-medium ${THEME_CONFIG.themeText}`}>{t('options')}</h4>
             {item.options.map((option, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span className="text-gray-600">{getOptionText(item, idx, option.option)}</span>
-                <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end text-base`}>{option.price.toFixed(2)} €</span>
+                <span className={`${THEME_CONFIG.descriptionText}`}>{getOptionText(item, idx, option.option)}</span>
+                <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end text-sm`}>{option.price.toFixed(2)} €</span>
               </div>
             ))}
           </div>
@@ -123,7 +101,7 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
             <h4 className={`text-xs font-medium ${THEME_CONFIG.themeText}`}>{t('extras')}</h4>
             {item.extras.map((extra, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span className="text-gray-600">{getExtraText(item, idx, extra.item)}</span>
+                <span className={`${THEME_CONFIG.descriptionText}`}>{getExtraText(item, idx, extra.item)}</span>
                 <span className={`${THEME_CONFIG.priceText} font-bold min-w-16 text-end`}>+ {extra.price.toFixed(2)} €</span>
               </div>
             ))}
@@ -131,7 +109,6 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
         )}
 
         {/* Notice Flags */}
-        {/* Display vegetarian indicator if applicable */}        
         {item.vegetarian && (
           <div className="flex text-center mt-2">
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
@@ -167,7 +144,6 @@ const ItemPreview: React.FC<ItemPreviewProps> = ({ item }) => {
                   <AllergyIcon 
                     allergy={allergy} 
                     size="sm"
-                    className="text-red-800"
                   />
                 </span>
               ))}

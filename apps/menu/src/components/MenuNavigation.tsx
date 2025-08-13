@@ -1,7 +1,8 @@
 // apps/menu/src/components/MenuNavigation.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getPublishedMenus, PublishedMenu } from '../services/menuService';
+import { getPublishedMenus } from '../services/menuService';
+import { PublishedMenu } from "../types/menu.types"
 import { useTranslation } from '../hooks/useTranslation';
 import { useAllergyVisibility } from '../contexts/AllergyVisibilityContext';
 import LanguageSelector from '../components/LanguageSelector';
@@ -165,13 +166,6 @@ const MenuNavigation: React.FC<MenuNavigationProps> = ({ className = '' }) => {
                 />
               </button>
             </div>
-            
-            {/* Alternative Text Display (optional - can be removed if you prefer just the toggle) */}
-            {/*
-              <div className="text-xs text-gray-500 text-center pb-2">
-                {allergiesVisible ? '🔍 Allergies shown' : '🚫 Allergies hidden'}
-              </div>
-             */}
             
             {/* Language Selector */}
             <div className="flex mx-auto text-xs justify-center pt-4 pb-4 border-t">
