@@ -8,6 +8,7 @@ import {
   initializeWebsiteConfig 
 } from '../services/websiteService';
 import { WebsiteConfig, MenuWithPublishStatus } from '@sebastians/shared-types';
+import DevMessage from '../components/common/devMessage'
 
 const Website: React.FC = () => {
   const [websiteConfig, setWebsiteConfig] = useState<WebsiteConfig | null>(null);
@@ -221,50 +222,11 @@ const Website: React.FC = () => {
       {/* Menu Publishing Tab */}
       {activeTab === 'menus' && (
         <div>
-          {/* Published Menus Summary */}
-          {websiteConfig && websiteConfig.publishedMenus.length > 0 && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-              <h3 className="text-lg font-semibold text-green-800 mb-2">
-                Currently Published Menus
-              </h3>
-              <div className="space-y-2">
-                {websiteConfig.publishedMenus.map((menu) => (
-                  <div key={menu.menuId} className="flex items-center justify-between">
-                    <div>
-                      <span className="font-medium text-green-700">{menu.name}</span>
-                      <span className="text-green-600 text-sm ml-2">
-                        (Published: {menu.publishedAt.toLocaleDateString()})
-                      </span>
-                    </div>
-                    {menu.publishedUrl && (
-                      <a
-                        href={menu.publishedUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        View JSON →
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          
 
           {/* All Menus Table */}
           <div className="bg-white shadow-sm rounded-lg border">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-900">All Menus</h2>
-                <Link
-                  to="/menus"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Manage Menus
-                </Link>
-              </div>
-            </div>
+
 
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -405,12 +367,44 @@ const Website: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Published Menus Summary */}
+          {websiteConfig && websiteConfig.publishedMenus.length > 0 && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 my-4">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">
+                Currently Published Menus
+              </h3>
+              <div className="space-y-2">
+                {websiteConfig.publishedMenus.map((menu) => (
+                  <div key={menu.menuId} className="flex items-center justify-between">
+                    <div>
+                      <span className="font-medium text-green-700">{menu.name}</span>
+                      <span className="text-green-600 text-sm ml-2">
+                        (Published: {menu.publishedAt.toLocaleDateString()})
+                      </span>
+                    </div>
+                    {menu.publishedUrl && (
+                      <a
+                        href={menu.publishedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        View JSON →
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Website Settings Tab */}
       {activeTab === 'settings' && (
         <div>
+          <DevMessage />
           {websiteConfig && (
             <div className="space-y-6">
               {/* Restaurant Information */}

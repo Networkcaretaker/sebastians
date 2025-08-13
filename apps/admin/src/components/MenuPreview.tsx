@@ -175,6 +175,12 @@ const MenuPreview: React.FC<MenuPreviewProps> = ({ menu }) => {
                 </h2>
               </div>
             )}
+
+            {category.image && (
+              <div className="flex justify-center items-center">
+                <img src={`${category.image.largeUrl}`} alt="" className="max-w-xl"></img>
+              </div>
+            )}
             
             {category.cat_description && (
               <div className="mb-4">

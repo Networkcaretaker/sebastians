@@ -23,7 +23,6 @@ type ColumnCount = 2 | 3;
 
 const COLLECTION_NAME = 'categories';
 
-
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<MenuCategory | null>(null);

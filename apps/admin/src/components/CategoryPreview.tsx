@@ -23,9 +23,12 @@ const CategoryPreview: React.FC<CategoryPreviewProps> = ({ category, menuItems }
         <div className="flex justify-center items-center border-b pb-3 mb-3">
           <h2 className="text-lg text-center font-bold"><i>{category.header}</i></h2>
         </div>
+        <div className="flex justify-center items-center">
+          <img src={`${category.image?.largeUrl}`} alt="" className="max-w-xl"></img>
+        </div>
         <div className="space-y-4">
           <div>
-            <p className="mt-1">{category.cat_description}</p>
+            <p className="mt-1 text-center">{category.cat_description}</p>
           </div>
 
           {/* Menu Items Section - Now using sortedMenuItems instead of menuItems */}
@@ -54,7 +57,7 @@ const CategoryPreview: React.FC<CategoryPreviewProps> = ({ category, menuItems }
                 <h3 className="text-xl font-bold pb-2">{category.cat_name} Extras</h3>
                 {category.extras.map((extra, idx) => (
                   <div key={idx} className="flex justify-between">
-                    <span className="text-base font-base px-4">{extra.item}</span>
+                    <span className="text-base font-base">{extra.item}</span>
                     <span className="text-green-600 font-medium">{extra.price.toFixed(2)}€</span>
                   </div>
                 ))}

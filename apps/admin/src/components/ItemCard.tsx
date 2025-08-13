@@ -99,7 +99,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
             </div>
           )}
 
-                    {/* Add-ons */}
+          {/* Add-ons */}
           {item.addons.length > 0 && (
             <div>
               <p className="font-medium text-xs mb-2">Addons:</p>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import DevMessage from '../components/common/devMessage'
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'general' | 'account' | 'usage'>('general');
@@ -54,6 +55,7 @@ const Settings: React.FC = () => {
       {activeTab === 'general' && (
         <div className="bg-white shadow-sm rounded-lg border p-6">
           <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">General Settings</h3>
+          <DevMessage />
           <div className="py-4 border-b">
             <p className="text-lg font-semibold text-gray-900 pb-2">Import/Export Data</p>
             <Link 
@@ -76,6 +78,7 @@ const Settings: React.FC = () => {
       {activeTab === 'account' && (
         <div className="bg-white shadow-sm rounded-lg border p-6">
           <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">Account Settings</h3>
+          <DevMessage />
           <div className="py-4 border-b"></div>
         </div>   
       )}
@@ -84,6 +87,7 @@ const Settings: React.FC = () => {
       {activeTab === 'usage' && (
         <div className="bg-white shadow-sm rounded-lg border p-6">
           <h3 className="text-2xl font-semibold text-gray-900 pb-6 border-b">Account Usage</h3>
+          <DevMessage />
           <div className="py-4 border-b">
              <p className="text-lg font-semibold text-gray-900 pb-2">Google Translate API</p>
              <p>Characters: <span className="text-gray-500 italic">Max 500,000 per month</span></p>

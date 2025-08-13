@@ -64,8 +64,10 @@ export const APP_CONFIG = {
   },
   
   // Development settings - simplified for now
-  isDevelopment: true, // Set to false in production
-  enableMockData: true, // Set to false when you have real published menus
+  isDevelopment: false, // Set to false in production
+  enableMockData: false, // Set to false when you have real published menus
+
+  //Show Images
   showImage: true
 };
 
