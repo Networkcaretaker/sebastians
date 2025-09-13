@@ -1,7 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-
-// We'll create these components in the next steps
 import Home from './pages/Home';
 import MenuDisplay from './pages/MenuDisplay';
 import { AllergyVisibilityProvider } from './contexts/AllergyVisibilityContext';

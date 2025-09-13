@@ -10,10 +10,12 @@
   "scripts": {
     "dev:admin": "npm run dev --workspace=apps/admin",
     "dev:menu": "npm run dev --workspace=apps/menu",
+    "dev:design": "npm run dev --workspace=apps/design",
     "dev:all": "concurrently \"npm run dev:admin\" \"npm run dev:menu\"",
     "build:packages": "npm run build --workspace=packages/shared-types && npm run build --workspace=packages/firebase-config",
     "build:admin": "npm run build:packages && npm run build --workspace=apps/admin",
     "build:menu": "npm run build:packages && npm run build --workspace=apps/menu",
+    "build:design": "npm run build:packages && npm run build --workspace=apps/design",
     "build:all": "npm run build:packages && npm run build:admin && npm run build:menu",
     "deploy:menu": "firebase deploy --only hosting:menu",
     "deploy:admin": "firebase deploy --only hosting:admin",

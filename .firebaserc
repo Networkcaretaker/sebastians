@@ -10,6 +10,9 @@
         ],
         "admin": [
           "admin-sebastians-cafe"
+        ],
+        "design": [
+          "design-sebastians-cafe"
         ]
       }
     },
@@ -20,6 +23,9 @@
         ],
         "admin": [
           "admin-sebastians-cafe"
+        ],
+        "design": [
+          "design-sebastians-cafe"
         ]
       }
     }
