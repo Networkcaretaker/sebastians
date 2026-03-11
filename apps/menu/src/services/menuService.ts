@@ -56,6 +56,7 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
       .map((menu: any) => ({
         id: menu.menuId,
         name: menu.name,
+        type: menu.type,
         description: menu.description || '',
         url: menu.publishedUrl,
         lastUpdated: menu.publishedAt || new Date().toISOString(),
@@ -63,8 +64,14 @@ export const getPublishedMenus = async (): Promise<PublishedMenu[]> => {
         translations: {},
         image: menu.image
       }));
+    const webMenus = basicMenus.filter((menu: any) => menu.type === 'web');
+
+    if (APP_CONFIG.isDevelopment) {
+      console.log(`✅ Filtered web menus: ${webMenus.length} of ${publishedMenus.length}`);
+    };
+
     const transformedMenus = await Promise.all(
-      basicMenus.map(async (menu) => {
+      webMenus.map(async (menu) => {
         const translationData = await getMenuTranslations(menu.url);
         
         if (translationData) {

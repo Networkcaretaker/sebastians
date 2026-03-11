@@ -15,6 +15,8 @@ import MenuDetail from './pages/MenuDetail';
 import Settings from './pages/Settings';
 import ExportData from './pages/ExportData';
 import ImportData from './pages/ImportData';
+import Documents from './pages/Documents';
+import PrintPreview from './pages/PrintPreview';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
@@ -46,6 +48,8 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
       <Route path="/test-export" element={<ProtectedRoute element={<ExportData />} />} />
       <Route path="/test-import" element={<ProtectedRoute element={<ImportData />} />} />
+      <Route path="/documents" element={<ProtectedRoute element={<Documents />} />} />
+      <Route path="/documents/print/:menuId" element={<ProtectedRoute element={<PrintPreview />} />} />
     </Routes>
   );
 }

@@ -76,6 +76,7 @@ export const MOCK_PUBLISHED_MENUS = [
   {
     id: 'lunch-menu',
     name: 'Lunch Menu',
+    type: 'web',
     description: 'Fresh lunch options available daily',
     url: FIREBASE_CONFIG.getMenuFileUrl('menu-lunch-menu.json'),
     lastUpdated: '2025-06-15T12:00:00Z'
@@ -83,6 +84,7 @@ export const MOCK_PUBLISHED_MENUS = [
   {
     id: 'dinner-menu',
     name: 'Dinner Menu',
+    type: 'web',
     description: 'Evening dining selections',
     url: FIREBASE_CONFIG.getMenuFileUrl('menu-dinner-menu.json'),
     lastUpdated: '2025-06-14T18:00:00Z'
@@ -90,6 +92,7 @@ export const MOCK_PUBLISHED_MENUS = [
   {
     id: 'brunch-menu',
     name: 'Weekend Brunch',
+    type: 'web',
     description: 'Special weekend brunch offerings',
     url: FIREBASE_CONFIG.getMenuFileUrl('menu-brunch-menu.json'),
     lastUpdated: '2025-06-13T10:00:00Z'

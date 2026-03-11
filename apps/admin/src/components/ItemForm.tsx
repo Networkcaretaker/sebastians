@@ -70,6 +70,10 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
   const [newOption, setNewOption] = useState<MenuItemOption>({ option: '', price: 0 });
   const [newExtra, setNewExtra] = useState<MenuItemExtra>({ item: '', price: 0 });
   const [newAddon, setNewAddon] = useState<string>('');
+  const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(null);
+  const [editingOptionPrice, setEditingOptionPrice] = useState<string>('');
+  const [editingExtraIndex, setEditingExtraIndex] = useState<number | null>(null);
+  const [editingExtraPrice, setEditingExtraPrice] = useState<string>('');
   
   // Add state for categories
   const [categories, setCategories] = useState<MenuCategory[]>([]);
@@ -177,6 +181,32 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
     }
   };
 
+  const handleRemoveOption = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleEditOptionPrice = (index: number) => {
+    setEditingOptionIndex(index);
+    setEditingOptionPrice(formData.options[index].price.toFixed(2));
+  };
+
+  const handleSaveOptionPrice = (index: number) => {
+    const parsed = parseFloat(editingOptionPrice);
+    if (!isNaN(parsed) && parsed >= 0) {
+      setFormData(prev => ({
+        ...prev,
+        options: prev.options.map((opt, i) =>
+          i === index ? { ...opt, price: parsed } : opt
+        )
+      }));
+    }
+    setEditingOptionIndex(null);
+    setEditingOptionPrice('');
+  };
+
   const handleAddExtra = () => {
     if (newExtra.item && newExtra.price >= 0) {
       setFormData(prev => ({
@@ -186,6 +216,32 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
       }));
       setNewExtra({ item: '', price: 0 });
     }
+  };
+
+  const handleRemoveExtra = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      extras: prev.extras.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleEditExtraPrice = (index: number) => {
+    setEditingExtraIndex(index);
+    setEditingExtraPrice(formData.extras[index].price.toFixed(2));
+  };
+
+  const handleSaveExtraPrice = (index: number) => {
+    const parsed = parseFloat(editingExtraPrice);
+    if (!isNaN(parsed) && parsed >= 0) {
+      setFormData(prev => ({
+        ...prev,
+        extras: prev.extras.map((ext, i) =>
+          i === index ? { ...ext, price: parsed } : ext
+        )
+      }));
+    }
+    setEditingExtraIndex(null);
+    setEditingExtraPrice('');
   };
 
   // Function to handle custom addon
@@ -368,11 +424,63 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
             Add
           </button>
         </div>
+        {/* OPTIONS SECTION */}
         <div className="space-y-2">
           {formData.options.map((option, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{option.option}</span>
-              <span>{option.price.toFixed(2)}€</span>
+              <div className="flex items-center space-x-2">
+                {editingOptionIndex === index ? (
+                  <>
+                    <input
+                      type="number"
+                      value={editingOptionPrice}
+                      onChange={(e) => setEditingOptionPrice(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveOptionPrice(index);
+                        if (e.key === 'Escape') setEditingOptionIndex(null);
+                      }}
+                      className="w-24 p-1 border rounded text-sm"
+                      min="0"
+                      step="0.01"
+                      autoFocus
+                    />
+                    <span className="text-gray-500">€</span>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveOptionPrice(index)}
+                      className="text-green-600 hover:text-green-800 font-medium text-sm"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingOptionIndex(null)}
+                      className="text-gray-400 hover:text-gray-600 text-sm"
+                    >
+                      ✕
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleEditOptionPrice(index)}
+                      className="mr-1 text-gray-700 hover:text-blue-600 hover:underline text-sm"
+                      title="Click to edit price"
+                    >
+                      {option.price.toFixed(2)}€
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveOption(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      ✕
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -410,7 +518,58 @@ const ItemForm: React.FC<MenuItemFormProps> = ({ onSubmit, initialData }) => {
           {formData.extras.map((extra, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
               <span>{extra.item}</span>
-              <span>{extra.price.toFixed(2)}€</span>
+              <div className="flex items-center space-x-2">
+                {editingExtraIndex === index ? (
+                  <>
+                    <input
+                      type="number"
+                      value={editingExtraPrice}
+                      onChange={(e) => setEditingExtraPrice(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveExtraPrice(index);
+                        if (e.key === 'Escape') setEditingExtraIndex(null);
+                      }}
+                      className="w-24 p-1 border rounded text-sm"
+                      min="0"
+                      step="0.01"
+                      autoFocus
+                    />
+                    <span className="text-gray-500">€</span>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveExtraPrice(index)}
+                      className="text-green-600 hover:text-green-800 font-medium text-sm"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingExtraIndex(null)}
+                      className="text-gray-400 hover:text-gray-600 text-sm"
+                    >
+                      ✕
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleEditExtraPrice(index)}
+                      className="mr-1 text-gray-700 hover:text-blue-600 hover:underline text-sm"
+                      title="Click to edit price"
+                    >
+                      {extra.price.toFixed(2)}€
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExtra(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      ✕
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>

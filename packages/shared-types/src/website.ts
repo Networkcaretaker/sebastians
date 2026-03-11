@@ -19,6 +19,7 @@ export interface PublishedMenu {
   menuId: string;
   name: string;
   slug: string;
+  type?: string;
   description: string;
   isActive: boolean;
   order: number;

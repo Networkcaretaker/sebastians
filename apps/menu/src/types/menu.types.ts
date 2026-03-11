@@ -48,6 +48,7 @@ export interface PublishedMenu {
   id: string;
   name: string;
   description: string;
+  type: string;
   url: string;
   lastUpdated: string;
   slug?: string;
