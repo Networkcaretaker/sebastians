@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
 import { documentService } from '../services/documentService';
 
 const PrintPreview: React.FC = () => {
@@ -7,10 +8,18 @@ const PrintPreview: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   
+  // Reference to the printable area
+  const componentRef = useRef<HTMLDivElement>(null);
+
   const size = searchParams.get('size') || 'A4';
   const lang = searchParams.get('lang') || 'en';
+
+  // React-to-print hook
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `${data?.restaurant?.name || 'Menu'}-${lang}`,
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -19,24 +28,21 @@ const PrintPreview: React.FC = () => {
         setLoading(true);
         const json = await documentService.getMenuData(menuId);
         
-        // Use the transformation logic from your website app to avoid 'undefined' errors
+        // Data sanitization/transformation
         const sanitizedData = {
           ...json,
           categories: (json.categories || []).map((cat: any) => ({
             ...cat,
             items: (cat.items || []).map((item: any) => ({
               ...item,
-              // Use translated name if it exists for the current lang
               display_name: item.translations?.[lang]?.name || item.name || item.item_name,
               display_description: item.translations?.[lang]?.description || item.description || item.item_description,
               display_price: parseFloat(item.price || item.item_price || '0')
             }))
           }))
         };
-
         setData(sanitizedData);
-      } catch (err: any) {
-        setError("Menu not found. Has it been published yet?");
+      } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -45,52 +51,51 @@ const PrintPreview: React.FC = () => {
     loadData();
   }, [menuId, lang]);
 
-  if (loading) return <div className="p-20 text-center font-sans">Loading {lang.toUpperCase()} Menu...</div>;
-  if (error) return <div className="p-20 text-center text-red-500 font-bold">{error}</div>;
-  
-  // Guard clause: If data is null or categories missing, don't try to render
-  if (!data || !data.categories) return <div className="p-20 text-center">No categories found in this menu.</div>;
+  if (loading) return <div className="p-20 text-center">Loading {lang.toUpperCase()} Menu...</div>;
+  if (!data) return <div className="p-20 text-center">Menu not found.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-500 p-8 flex flex-col items-center print:bg-white print:p-0">
-      <div className="mb-6 flex gap-4 print:hidden">
+    <div className="min-h-screen bg-gray-600 p-8 flex flex-col items-center">
+      
+      {/* UI Control Panel - This never prints */}
+      <div className="mb-8 flex gap-4 bg-white p-4 rounded-lg shadow-xl print:hidden">
         <button 
-          onClick={() => window.print()}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded shadow-lg font-bold"
+          onClick={() => handlePrint()}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded font-bold uppercase tracking-tight"
         >
-          Print {size} Menu
+          🖨️ Print {size} Menu
         </button>
+        <div className="flex items-center text-sm text-gray-500 px-4 border-l">
+          <p>Format: <strong>{size}</strong> | Language: <strong>{lang.toUpperCase()}</strong></p>
+        </div>
       </div>
 
-      <div className={`bg-white shadow-2xl p-[20mm] box-border print:shadow-none
-          ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}>
-        
-        <header className="text-center mb-12 border-b-2 border-black pb-6">
-          <h1 className="text-4xl font-bold uppercase mb-2">
-            {data.restaurant?.name || "Restaurant"}
-          </h1>
-          <p className="text-gray-600 italic">
-            {data.menu?.translations?.[lang]?.name || data.menu?.name}
-          </p>
-        </header>
+      {/* The Printable Paper - Attached to componentRef */}
+      <div 
+        ref={componentRef}
+        className={`bg-white shadow-2xl p-[15mm] md:p-[20mm] box-border
+          ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
+      >
 
-        <div className="space-y-8">
+        <div className="space-y-12">
           {data.categories.map((cat: any) => (
-            <section key={cat.id || Math.random()}>
-              <h2 className="text-2xl font-bold border-b border-gray-300 mb-6 uppercase tracking-wider">
+            <section key={cat.id || Math.random()} className="break-inside-avoid">
+
+              <h2 className="text-2xl text-center font-bold border-b-2 border-black mb-6 uppercase tracking-widest pb-1">
                 {cat.translations?.[lang]?.name || cat.name}
               </h2>
+
               <div className="space-y-2">
                 {cat.items.map((item: any) => (
-                  <div key={item.id || Math.random()} className="flex justify-between items-start gap-4">
+                  <div key={item.id || Math.random()} className="flex justify-between items-start gap-10">
                     <div className="flex-grow">
-                      <h3 className="text-lg font-bold">{item.display_name}</h3>
-                      <p className="text-sm text-gray-500 italic mt-1 leading-relaxed">
+                      <h3 className="text-md font-bold uppercase">{item.display_name}</h3>
+                      <p className="text-xs text-gray-600 italic mt-1 leading-snug">
                         {item.display_description}
                       </p>
                     </div>
-                    <div className="font-mono font-bold text-lg">
-                      €{item.display_price.toFixed(2)}
+                    <div className="font-bold text-md whitespace-nowrap">
+                      € {item.display_price.toFixed(2)}
                     </div>
                   </div>
                 ))}
@@ -98,13 +103,30 @@ const PrintPreview: React.FC = () => {
             </section>
           ))}
         </div>
+
+        {/* Optional Footer for VAT/IVA (Common in Mallorca) */}
+        <footer className="mt-20 pt-8 border-t border-gray-200 text-center text-xs text-gray-400">
+          <p>IVA incluido / VAT included</p>
+          <p className="mt-1">{data.restaurant?.name} - {new Date().getFullYear()}</p>
+        </footer>
       </div>
 
+      {/* Internal Print CSS Injection */}
       <style>{`
         @media print {
-          @page { size: ${size} portrait; margin: 0; }
-          body { background: white; -webkit-print-color-adjust: exact; }
-          .min-h-screen { padding: 0 !important; background: white !important; }
+          @page { 
+            size: ${size === 'A3' ? 'A3' : 'A4'} portrait; 
+            margin: 0; 
+          }
+          body { 
+            margin: 0; 
+            -webkit-print-color-adjust: exact; 
+          }
+          /* This ensures your categories don't get split awkwardly across two pages */
+          .break-inside-avoid {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
         }
       `}</style>
     </div>
