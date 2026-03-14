@@ -29,7 +29,7 @@ const PrintPreview: React.FC = () => {
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
-    documentTitle: `${data?.restaurant?.name || 'Menu'}-${lang}`,
+    documentTitle: `${data?.restaurant?.name || 'Menu'}-${menuId}-${lang}`,
   });
 
   useEffect(() => {
