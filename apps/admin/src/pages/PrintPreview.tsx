@@ -12,6 +12,20 @@ const PrintPreview: React.FC = () => {
   const componentRef = useRef<HTMLDivElement>(null);
   const size = searchParams.get('size') || 'A4';
   const lang = searchParams.get('lang') || 'en';
+  const columns = parseInt(searchParams.get('columns') || '1', 10) as 1 | 2;
+  const spacing = searchParams.get('spacing') || 'md';
+
+  const spacingMap: Record<string, { category: string; item: string }> = {
+    xs:  { category: 'space-y-4',  item: 'gap-y-1' },
+    sm:  { category: 'space-y-6',  item: 'gap-y-2' },
+    md:  { category: 'space-y-8',  item: 'gap-y-3' },
+    lg:  { category: 'space-y-10', item: 'gap-y-4' },
+    xl:  { category: 'space-y-11', item: 'gap-y-5' },
+    '2xl': { category: 'space-y-12', item: 'gap-y-6' },
+    '3xl': { category: 'space-y-12', item: 'gap-y-7' },
+    '4xl': { category: 'space-y-14', item: 'gap-y-8' },
+  };
+  const { category: categorySpacing, item: itemSpacing } = spacingMap[spacing] ?? spacingMap['md'];
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -95,7 +109,7 @@ const PrintPreview: React.FC = () => {
       <div className="bg-white border-b sticky top-0 z-10 p-4 mb-8 flex justify-between items-center px-8 shadow-sm print:hidden">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Print Preview</h1>
-          <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size}</p>
+          <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size} | Columns: {columns} | Spacing: {spacing}</p>
         </div>
         <button 
           onClick={() => handlePrint()}
@@ -111,10 +125,13 @@ const PrintPreview: React.FC = () => {
       {/* Printable Area */}
       <div 
         ref={componentRef}
-        className={`bg-white mx-auto shadow-2xl print:shadow-none p-10 sm:p-12 ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
+        className={`bg-white mx-auto shadow-2xl print:shadow-none p-10 pt-16 ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
       >
 
-        <div className="space-y-12">
+        <div
+          className={categorySpacing}
+          style={columns === 2 ? { columnCount: 2, columnGap: '2rem' } : undefined}
+        >
           {data.categories.map((category: any) => (
             <section key={category.id} className="break-inside-avoid">
               <div className="text-center mb-6">
@@ -128,7 +145,7 @@ const PrintPreview: React.FC = () => {
                 )}
               </div>
 
-              <div className={`grid ${size === 'A3' ? 'grid-cols-2' : 'grid-cols-1'} gap-x-12 gap-y-3`}>
+              <div className={`flex flex-col ${itemSpacing}`}>
                 {category.items.map((item: any) => (
                   <div key={item.id} className="flex flex-col ">
                     <div className="flex justify-between items-start">
@@ -190,7 +207,7 @@ const PrintPreview: React.FC = () => {
               {/* Category Footer Addons & Extras (Matching Website) */}
               
                 {(category.category_addons.length > 0 || category.category_extras.length > 0) && (
-                  <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                  <div className="mt-4 pt-2 border-t border-b border-dashed border-gray-200">
                   <div className="mb-2">
                     <h4 className="text-xs font-bold uppercase text-gray-400 mb-2 tracking-widest text-center">
                       Options & Sides
@@ -225,7 +242,7 @@ const PrintPreview: React.FC = () => {
         @media print {
           @page { 
             size: ${size === 'A3' ? 'A3' : 'A4'} portrait; 
-            margin: 0mm; 
+            margin: 10mm; 
           }
           body { margin: 0; }
           .break-inside-avoid { page-break-inside: avoid; }

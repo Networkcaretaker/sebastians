@@ -12,6 +12,8 @@ const Documents: React.FC = () => {
   // States for print configuration
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
+  const [columns, setColumns] = useState<1 | 2>(1);
+  const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>('md');
 
   useEffect(() => {
     const loadMenus = async () => {
@@ -31,7 +33,7 @@ const Documents: React.FC = () => {
 
   const handlePrintRedirect = (menuId: string) => {
     // Navigate to the preview with settings as search params
-    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}`);
+    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}`);
   };
 
   if (loading) return <div className="p-8 text-center">Loading Printable Menus...</div>;
@@ -61,6 +63,39 @@ const Documents: React.FC = () => {
               onClick={() => setPaperSize('A3')}
               className={`px-2 py-1 rounded ${paperSize === 'A3' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
             >A3</button>
+          </div>
+          <div className="border-l h-6"></div>
+          <div className="flex items-center space-x-2 text-sm px-2">
+            <button
+              onClick={() => setColumns(1)}
+              className={`px-2 py-1 rounded ${columns === 1 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+              title="1 Column"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="4" y="3" width="16" height="18" rx="1"/>
+              </svg>
+            </button>
+            <button
+              onClick={() => setColumns(2)}
+              className={`px-2 py-1 rounded ${columns === 2 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+              title="2 Columns"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="18" rx="1"/>
+                <rect x="14" y="3" width="7" height="18" rx="1"/>
+              </svg>
+            </button>
+          </div>
+          <div className="border-l h-6"></div>
+          <div className="flex items-center space-x-2 text-sm px-2">
+            <span className="text-gray-400 text-xs">Spacing</span>
+            {(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSpacing(s)}
+                className={`px-2 py-1 rounded text-xs ${spacing === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+              >{s}</button>
+            ))}
           </div>
         </div>
       </header>
