@@ -9,13 +9,10 @@ const PrintPreview: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  // Reference to the printable area
   const componentRef = useRef<HTMLDivElement>(null);
-
   const size = searchParams.get('size') || 'A4';
   const lang = searchParams.get('lang') || 'en';
 
-  // React-to-print hook
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: `${data?.restaurant?.name || 'Menu'}-${lang}`,
@@ -28,22 +25,60 @@ const PrintPreview: React.FC = () => {
         setLoading(true);
         const json = await documentService.getMenuData(menuId);
         
-        // Data sanitization/transformation
+        // Data transformation logic
         const sanitizedData = {
           ...json,
-          categories: (json.categories || []).map((cat: any) => ({
-            ...cat,
-            items: (cat.items || []).map((item: any) => ({
-              ...item,
-              display_name: item.translations?.[lang]?.name || item.name || item.item_name,
-              display_description: item.translations?.[lang]?.description || item.description || item.item_description,
-              display_price: parseFloat(item.price || item.item_price || '0')
+          categories: (json.categories || [])
+            .sort((a: any, b: any) => (a.cat_order || 0) - (b.cat_order || 0))
+            .map((cat: any) => ({
+              ...cat,
+              display_name: cat.translations?.[lang]?.name || cat.name,
+              display_header: cat.translations?.[lang]?.header || cat.header,
+              display_footer: cat.translations?.[lang]?.footer || cat.footer,
+              // Map Category Addons & Extras (Relative prices)
+              category_addons: (cat.addons || []).map((addon: any, idx: number) => ({
+                text: cat.translations?.[lang]?.translated_addons?.[idx] || addon.item
+              })),
+              category_extras: (cat.extras || []).map((extra: any, idx: number) => ({
+                text: cat.translations?.[lang]?.translated_extras?.[idx] || extra.item,
+                price: extra.price
+              })),
+              items: (cat.items || [])
+                .filter((item: any) => item.isActive !== false)
+                .map((item: any) => {
+                  const hasOptions = item.options && item.options.length > 0;
+                  const basePrice = item.item_price || item.price || 0;
+                  
+                  return {
+                    ...item,
+                    display_name: item.translations?.[lang]?.name || item.item_name || item.name,
+                    display_description: item.translations?.[lang]?.description || item.item_description || item.description,
+                    display_price: basePrice,
+                    show_from: hasOptions && basePrice > 0,
+                    // Filter and map Options (Absolute prices)
+                    display_options: (item.options || [])
+                      .filter((opt: any) => opt.price > 0)
+                      .map((opt: any, idx: number) => ({
+                        text: item.translations?.[lang]?.options?.[idx]?.option || opt.option,
+                        price: opt.price
+                      })),
+                    // Map Item Addons (Simple text)
+                    display_addons: (item.addons || []).map((addon: any, idx: number) => ({
+                      text: item.translations?.[lang]?.addons?.[idx]?.item || addon.item
+                    })),
+                    // Map Item Extras (Relative prices)
+                    display_extras: (item.extras || []).map((extra: any, idx: number) => ({
+                      text: item.translations?.[lang]?.extras?.[idx]?.item || extra.item,
+                      price: extra.price
+                    }))
+                  };
+                })
             }))
-          }))
         };
+        
         setData(sanitizedData);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load menu data", err);
       } finally {
         setLoading(false);
       }
@@ -51,82 +86,137 @@ const PrintPreview: React.FC = () => {
     loadData();
   }, [menuId, lang]);
 
-  if (loading) return <div className="p-20 text-center">Loading {lang.toUpperCase()} Menu...</div>;
-  if (!data) return <div className="p-20 text-center">Menu not found.</div>;
+  if (loading) return <div className="p-10 text-center">Loading Preview...</div>;
+  if (!data) return <div className="p-10 text-center">Menu not found.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-600 p-8 flex flex-col items-center">
-      
-      {/* UI Control Panel - This never prints */}
-      <div className="mb-8 flex gap-4 bg-white p-4 rounded-lg shadow-xl print:hidden">
+    <div className="bg-gray-100 min-h-screen pb-20">
+      {/* Control Bar */}
+      <div className="bg-white border-b sticky top-0 z-10 p-4 mb-8 flex justify-between items-center px-8 shadow-sm print:hidden">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Print Preview</h1>
+          <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size}</p>
+        </div>
         <button 
           onClick={() => handlePrint()}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded font-bold uppercase tracking-tight"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
         >
-          🖨️ Print {size} Menu
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+          </svg>
+          Print Menu
         </button>
-        <div className="flex items-center text-sm text-gray-500 px-4 border-l">
-          <p>Format: <strong>{size}</strong> | Language: <strong>{lang.toUpperCase()}</strong></p>
-        </div>
       </div>
 
-      {/* The Printable Paper - Attached to componentRef */}
+      {/* Printable Area */}
       <div 
         ref={componentRef}
-        className={`bg-white shadow-2xl p-[15mm] md:p-[20mm] box-border
-          ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
+        className={`bg-white mx-auto shadow-2xl print:shadow-none p-10 sm:p-12 ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
       >
 
         <div className="space-y-12">
-          {data.categories.map((cat: any) => (
-            <section key={cat.id || Math.random()} className="break-inside-avoid">
+          {data.categories.map((category: any) => (
+            <section key={category.id} className="break-inside-avoid">
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold uppercase border-b-2 border-black inline-block pb-1 px-4 mb-2">
+                  {category.display_name}
+                </h2>
+                {category.display_header && (
+                  <p className="text-sm text-gray-500 italic max-w-lg mx-auto leading-relaxed">
+                    {category.display_header}
+                  </p>
+                )}
+              </div>
 
-              <h2 className="text-2xl text-center font-bold border-b-2 border-black mb-6 uppercase tracking-widest pb-1">
-                {cat.translations?.[lang]?.name || cat.name}
-              </h2>
-
-              <div className="space-y-2">
-                {cat.items.map((item: any) => (
-                  <div key={item.id || Math.random()} className="flex justify-between items-start gap-10">
-                    <div className="flex-grow">
-                      <h3 className="text-md font-bold uppercase">{item.display_name}</h3>
-                      <p className="text-xs text-gray-600 italic mt-1 leading-snug">
+              <div className={`grid ${size === 'A3' ? 'grid-cols-2' : 'grid-cols-1'} gap-x-12 gap-y-3`}>
+                {category.items.map((item: any) => (
+                  <div key={item.id} className="flex flex-col ">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-md font-bold uppercase leading-tight">{item.display_name}</h3>
+                      <div className="font-bold text-md whitespace-nowrap ml-4">
+                        {item.show_from && <span className="text-xs font-normal lowercase mr-1">from</span>}
+                        € {item.display_price.toFixed(2)}
+                      </div>
+                    </div>
+                    
+                    {item.display_description && (
+                      <p className="text-xs text-gray-600 italic leading-snug">
                         {item.display_description}
                       </p>
-                    </div>
-                    <div className="font-bold text-md whitespace-nowrap">
-                      € {item.display_price.toFixed(2)}
-                    </div>
+                    )}
+
+                    {/* Item Options (Absolute Prices) */}
+                    {item.display_options.length > 0 && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                        {item.display_options.map((opt: any, i: number) => (
+                          <span key={i} className="text-xs text-gray-700 font-medium">
+                            {opt.text}: €{opt.price.toFixed(2)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Item Addons & Extras (Relative Prices) */}
+                    {(item.display_addons.length > 0 || item.display_extras.length > 0) && (
+                      <div className="flex flex-wrap items-center gap-x-2 mt-1">
+                        {item.display_addons.map((addon: any, i: number) => (
+                          <span key={`a-${i}`} className="text-xs bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 italic">
+                            {addon.text}
+                          </span>
+                        ))}
+                        {item.display_extras.map((extra: any, i: number) => (
+                          <span key={`e-${i}`} className="text-xs font-semibold text-gray-800">
+                            + {extra.text} (€{extra.price.toFixed(2)})
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+
+              {/* Category Footer Addons & Extras (Matching Website) */}
+              
+                {(category.category_addons.length > 0 || category.category_extras.length > 0) && (
+                  <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                  <div className="mb-2">
+                    <h4 className="text-xs font-bold uppercase text-gray-400 mb-2 tracking-widest text-center">
+                      Options & Sides
+                    </h4>
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                      {category.category_addons.map((addon: any, i: number) => (
+                        <span key={i} className="text-[11px] text-gray-700">+ {addon.text}</span>
+                      ))}
+                      {category.category_extras.map((extra: any, i: number) => (
+                        <span key={i} className="text-[11px] text-gray-700">
+                          {extra.text} <span className="font-bold">+€{extra.price.toFixed(2)}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  </div>
+                )}
+                
+                {/*category.display_footer && (
+                  <div className="text-center text-xs text-gray-400 italic">
+                    {category.display_footer}
+                  </div>
+                )*/}
+  
             </section>
           ))}
         </div>
 
-        {/* Optional Footer for VAT/IVA (Common in Mallorca) */}
-        <footer className="mt-20 pt-8 border-t border-gray-200 text-center text-xs text-gray-400">
-          <p>IVA incluido / VAT included</p>
-          <p className="mt-1">{data.restaurant?.name} - {new Date().getFullYear()}</p>
-        </footer>
       </div>
 
-      {/* Internal Print CSS Injection */}
       <style>{`
         @media print {
           @page { 
             size: ${size === 'A3' ? 'A3' : 'A4'} portrait; 
-            margin: 0; 
+            margin: 0mm; 
           }
-          body { 
-            margin: 0; 
-            -webkit-print-color-adjust: exact; 
-          }
-          /* This ensures your categories don't get split awkwardly across two pages */
-          .break-inside-avoid {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
+          body { margin: 0; }
+          .break-inside-avoid { page-break-inside: avoid; }
         }
       `}</style>
     </div>
