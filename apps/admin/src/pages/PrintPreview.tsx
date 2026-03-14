@@ -37,10 +37,10 @@ const PrintPreview: React.FC = () => {
               display_footer: cat.translations?.[lang]?.footer || cat.footer,
               // Map Category Addons & Extras (Relative prices)
               category_addons: (cat.addons || []).map((addon: any, idx: number) => ({
-                text: cat.translations?.[lang]?.translated_addons?.[idx] || addon.item
+                text: cat.translations?.[lang]?.addons?.[idx] || addon.item
               })),
               category_extras: (cat.extras || []).map((extra: any, idx: number) => ({
-                text: cat.translations?.[lang]?.translated_extras?.[idx] || extra.item,
+                text: cat.translations?.[lang]?.extras?.[idx] || extra.item,
                 price: extra.price
               })),
               items: (cat.items || [])
@@ -59,16 +59,16 @@ const PrintPreview: React.FC = () => {
                     display_options: (item.options || [])
                       .filter((opt: any) => opt.price > 0)
                       .map((opt: any, idx: number) => ({
-                        text: item.translations?.[lang]?.options?.[idx]?.option || opt.option,
+                        text: item.translations?.[lang]?.options?.[idx] || opt.option,
                         price: opt.price
                       })),
                     // Map Item Addons (Simple text)
                     display_addons: (item.addons || []).map((addon: any, idx: number) => ({
-                      text: item.translations?.[lang]?.addons?.[idx]?.item || addon.item
+                      text: item.translations?.[lang]?.addons?.[idx] || addon.item
                     })),
                     // Map Item Extras (Relative prices)
                     display_extras: (item.extras || []).map((extra: any, idx: number) => ({
-                      text: item.translations?.[lang]?.extras?.[idx]?.item || extra.item,
+                      text: item.translations?.[lang]?.extras?.[idx] || extra.item,
                       price: extra.price
                     }))
                   };
@@ -133,10 +133,22 @@ const PrintPreview: React.FC = () => {
                   <div key={item.id} className="flex flex-col ">
                     <div className="flex justify-between items-start">
                       <h3 className="text-md font-bold uppercase leading-tight">{item.display_name}</h3>
-                      <div className="font-bold text-md whitespace-nowrap ml-4">
-                        {item.show_from && <span className="text-xs font-normal lowercase mr-1">from</span>}
-                        € {item.display_price.toFixed(2)}
-                      </div>
+                      {item.display_price > 0 ? (
+                        // Case 1: Item has a base price — show it, with "from" prefix if options exist
+                        <div className="font-bold text-md whitespace-nowrap ml-4">
+                          {item.show_from && <span className="text-xs font-normal lowercase mr-1">from</span>}
+                          <span className="text-sm mr-1">€</span>{item.display_price.toFixed(2)}
+                        </div>
+                      ) : item.display_options.length > 0 ? (
+                        // Case 2: No base price but has options — show options inline in the price area
+                        <div className="flex flex-col items-end ml-4 gap-y-0.5">
+                          {item.display_options.map((opt: any, i: number) => (
+                            <div key={i} className="font-bold text-md whitespace-nowrap">
+                              <span className="text-xs font-normal mr-1">{opt.text}</span><span className="text-sm mr-1">€</span>{opt.price.toFixed(2)}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     
                     {item.display_description && (
@@ -145,12 +157,12 @@ const PrintPreview: React.FC = () => {
                       </p>
                     )}
 
-                    {/* Item Options (Absolute Prices) */}
-                    {item.display_options.length > 0 && (
+                    {/* Item Options (Absolute Prices) — only shown below when item has a base price */}
+                    {item.show_from && item.display_options.length > 0 && (
                       <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                         {item.display_options.map((opt: any, i: number) => (
                           <span key={i} className="text-xs text-gray-700 font-medium">
-                            {opt.text}: €{opt.price.toFixed(2)}
+                            {opt.text}: <span className="text-sm font-normal lowercase mr-1">€</span>{opt.price.toFixed(2)}
                           </span>
                         ))}
                       </div>

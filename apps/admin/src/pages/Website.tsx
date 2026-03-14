@@ -187,7 +187,7 @@ const Website: React.FC = () => {
     <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Website Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Menu Publishing</h1>
         <p className="text-gray-600 mt-2">
           Manage your restaurant's website, published menus, and settings
         </p>
@@ -223,7 +223,6 @@ const Website: React.FC = () => {
       {activeTab === 'menus' && (
         <div>
           
-
           {/* All Menus Table */}
           <div className="bg-white shadow-sm rounded-lg border">
 
