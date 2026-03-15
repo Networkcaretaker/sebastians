@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { documentService } from '../services/documentService';
+import AllergyLegend from '../components/AllergyLegend';
 
 const PREDEFINED_ALLERGIES: string[] = [
   'Celery', 'Corn', 'Dairy', 'Eggs', 'Fish', 'Gluten', 'Lupin',
@@ -14,6 +15,7 @@ const PrintPreview: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const showAllergens = searchParams.get('allergens') === 'true';
   
   const componentRef = useRef<HTMLDivElement>(null);
   const size = searchParams.get('size') || 'A4';
@@ -167,7 +169,7 @@ const PrintPreview: React.FC = () => {
                           .filter((n: number) => n > 0)
                           .sort((a: number, b: number) => a - b)
                           .map((n: number) => (
-                            <span key={n} className="ml-1 text-[10px] font-normal text-orange-400 leading-tight">
+                            <span key={n} className="ml-2 text-[10px] font-bold text-orange-500 leading-tight">
                               {n}
                             </span>
                           ))
@@ -210,9 +212,9 @@ const PrintPreview: React.FC = () => {
 
                     {/* Item Addons & Extras (Relative Prices) */}
                     {(item.display_addons.length > 0 || item.display_extras.length > 0) && (
-                      <div className="flex flex-wrap items-center gap-x-2 mt-1">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
                         {item.display_addons.map((addon: any, i: number) => (
-                          <span key={`a-${i}`} className="text-xs bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 italic">
+                          <span key={`a-${i}`} className="text-[10px] bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 italic">
                             {addon.text}
                           </span>
                         ))}
@@ -257,8 +259,9 @@ const PrintPreview: React.FC = () => {
   
             </section>
           ))}
+          {showAllergens && <AllergyLegend lang={lang} />}
         </div>
-
+        
       </div>
 
       <style>{`

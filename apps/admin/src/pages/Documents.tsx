@@ -4,22 +4,32 @@ import { getMenusWithPublishStatus } from '../services/websiteService';
 import { MenuWithPublishStatus, MENU_TYPES } from '@sebastians/shared-types';
 import { PaperSize } from '../types/documents';
 
+const LANGUAGES = [
+  { code: 'en', label: 'EN' },
+  { code: 'es', label: 'ES' },
+  { code: 'de', label: 'DE' },
+  //{ code: 'fr', label: 'FR' },
+  //{ code: 'it', label: 'IT' },
+  //{ code: 'nl', label: 'NL' },
+  //{ code: 'pt', label: 'PT' },
+];
+
 const Documents: React.FC = () => {
   const navigate = useNavigate();
   const [menus, setMenus] = useState<MenuWithPublishStatus[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // States for print configuration
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
   const [paperSize, setPaperSize] = useState<PaperSize>('A4');
   const [columns, setColumns] = useState<1 | 2>(1);
   const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>('md');
+  const [showAllergens, setShowAllergens] = useState<boolean>(false);
 
   useEffect(() => {
     const loadMenus = async () => {
       try {
         const data = await getMenusWithPublishStatus();
-        // Filter only for printable menus
         const printableOnes = data.filter(m => m.menu_type === MENU_TYPES.PRINTABLE && m.isActive !== false);
         setMenus(printableOnes);
       } catch (err) {
@@ -32,40 +42,50 @@ const Documents: React.FC = () => {
   }, []);
 
   const handlePrintRedirect = (menuId: string) => {
-    // Navigate to the preview with settings as search params
-    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}`);
+    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}&allergens=${showAllergens}`);
   };
 
   if (loading) return <div className="p-8 text-center">Loading Printable Menus...</div>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <header className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Printable Documents</h1>
-        <div className="flex space-x-4 bg-white p-2 rounded-lg shadow-sm border">
-          <select 
-            value={selectedLanguage} 
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="border-none text-sm focus:ring-0"
-          >
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="de">Deutsch</option>
-            {/* Add more as per your supported languages */}
-          </select>
-          <div className="border-l h-6"></div>
-          <div className="flex items-center space-x-2 text-sm px-2">
-            <button 
-              onClick={() => setPaperSize('A4')}
-              className={`px-2 py-1 rounded ${paperSize === 'A4' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-            >A4</button>
-            <button 
-              onClick={() => setPaperSize('A3')}
-              className={`px-2 py-1 rounded ${paperSize === 'A3' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-            >A3</button>
+      <header className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Printable Documents</h1>
+
+        <div className="flex items-center space-x-4 bg-white p-2 rounded-lg shadow-sm border">
+
+          {/* Language */}
+          <div className="flex items-center space-x-1 text-sm px-2">
+            {LANGUAGES.map(({ code, label }) => (
+              <button
+                key={code}
+                onClick={() => setSelectedLanguage(code)}
+                className={`px-2 py-1 rounded text-xs font-medium ${selectedLanguage === code ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
-          <div className="border-l h-6"></div>
-          <div className="flex items-center space-x-2 text-sm px-2">
+
+          <div className="border-l h-6" />
+
+          {/* Paper Size */}
+          <div className="flex items-center space-x-1 text-sm px-2">
+            {(['A4', 'A3'] as PaperSize[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setPaperSize(s)}
+                className={`px-2 py-1 rounded ${paperSize === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+
+          <div className="border-l h-6" />
+
+          {/* Columns */}
+          <div className="flex items-center space-x-1 text-sm px-2">
             <button
               onClick={() => setColumns(1)}
               className={`px-2 py-1 rounded ${columns === 1 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
@@ -86,17 +106,40 @@ const Documents: React.FC = () => {
               </svg>
             </button>
           </div>
-          <div className="border-l h-6"></div>
-          <div className="flex items-center space-x-2 text-sm px-2">
-            <span className="text-gray-400 text-xs">Spacing</span>
+
+          <div className="border-l h-6" />
+
+          {/* Spacing */}
+          <div className="flex items-center space-x-1 text-sm px-2">
+            <span className="text-gray-400 text-xs mr-1">Spacing</span>
             {(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setSpacing(s)}
                 className={`px-2 py-1 rounded text-xs ${spacing === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              >{s}</button>
+              >
+                {s}
+              </button>
             ))}
           </div>
+
+          <div className="border-l h-6" />
+
+          {/* Allergens Toggle */}
+          <div className="flex items-center gap-2 px-2">
+            <span className="text-xs text-gray-400">Allergens</span>
+            <button
+              onClick={() => setShowAllergens(prev => !prev)}
+              className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${showAllergens ? 'bg-blue-600' : 'bg-gray-200'}`}
+              role="switch"
+              aria-checked={showAllergens}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${showAllergens ? 'translate-x-4' : 'translate-x-0'}`}
+              />
+            </button>
+          </div>
+
         </div>
       </header>
 
@@ -112,7 +155,7 @@ const Documents: React.FC = () => {
                 <h3 className="font-semibold text-lg">{menu.menu_name}</h3>
                 <p className="text-sm text-gray-500">{menu.menu_description}</p>
               </div>
-              <button 
+              <button
                 onClick={() => handlePrintRedirect(menu.id!)}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors"
               >
