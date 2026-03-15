@@ -149,7 +149,15 @@ const PrintPreview: React.FC = () => {
                 {category.items.map((item: any) => (
                   <div key={item.id} className="flex flex-col ">
                     <div className="flex justify-between items-start">
-                      <h3 className="text-md font-bold uppercase leading-tight">{item.display_name}</h3>
+                      <h3 className="text-md font-bold uppercase leading-tight">
+                        {item.display_name}
+                        {/* Allergies to map*/} 
+                        <span className="ml-1 px-1 text-[10px] rounded-full bg-orange-400 text-white">1</span>
+                        {/* Vegiterian */} 
+                        {item.flags.vegetarian === true && (<span className="ml-1 text-xs">🌿</span>)}
+                        {/* Spicey */}
+                        {item.flags.spicy === true && (<span className="ml-1 text-xs">🌶</span>)}
+                      </h3>
                       {item.display_price > 0 ? (
                         // Case 1: Item has a base price — show it, with "from" prefix if options exist
                         <div className="font-bold text-md whitespace-nowrap ml-4">
