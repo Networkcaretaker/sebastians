@@ -3,6 +3,12 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { documentService } from '../services/documentService';
 
+const PREDEFINED_ALLERGIES: string[] = [
+  'Celery', 'Corn', 'Dairy', 'Eggs', 'Fish', 'Gluten', 'Lupin',
+  'Milk', 'Molluscs', 'Mustard', 'Nuts', 'Peanuts', 'Propolis',
+  'Sesame', 'Shellfish', 'Soya', 'Sulphites', 'Wheat'
+];
+
 const PrintPreview: React.FC = () => {
   const { menuId } = useParams();
   const [searchParams] = useSearchParams();
@@ -151,12 +157,21 @@ const PrintPreview: React.FC = () => {
                     <div className="flex justify-between items-start">
                       <h3 className="text-md font-bold uppercase leading-tight">
                         {item.display_name}
-                        {/* Allergies to map*/} 
-                        <span className="ml-1 px-1 text-[10px] rounded-full bg-orange-400 text-white">1</span>
                         {/* Vegiterian */} 
                         {item.flags.vegetarian === true && (<span className="ml-1 text-xs">🌿</span>)}
                         {/* Spicey */}
                         {item.flags.spicy === true && (<span className="ml-1 text-xs">🌶</span>)}
+                        {/* Allergies*/} 
+                        {(item.allergies || [])
+                          .map((a: string) => PREDEFINED_ALLERGIES.indexOf(a) + 1)
+                          .filter((n: number) => n > 0)
+                          .sort((a: number, b: number) => a - b)
+                          .map((n: number) => (
+                            <span key={n} className="ml-1 text-[10px] font-normal text-orange-400 leading-tight">
+                              {n}
+                            </span>
+                          ))
+                        }
                       </h3>
                       {item.display_price > 0 ? (
                         // Case 1: Item has a base price — show it, with "from" prefix if options exist
