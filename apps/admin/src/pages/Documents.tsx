@@ -14,17 +14,40 @@ const LANGUAGES = [
   //{ code: 'pt', label: 'PT' },
 ];
 
+const PRINT_CONFIG_SESSION_KEY = 'documents_print_config';
+
+const getSessionConfig = () => {
+  try {
+    const stored = sessionStorage.getItem(PRINT_CONFIG_SESSION_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
 const Documents: React.FC = () => {
   const navigate = useNavigate();
   const [menus, setMenus] = useState<MenuWithPublishStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // States for print configuration
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
-  const [paperSize, setPaperSize] = useState<PaperSize>('A4');
-  const [columns, setColumns] = useState<1 | 2>(1);
-  const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>('md');
-  const [showAllergens, setShowAllergens] = useState<boolean>(false);
+  // States for print configuration — restored from sessionStorage if available
+  const session = getSessionConfig();
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(session?.selectedLanguage ?? 'en');
+  const [paperSize, setPaperSize] = useState<PaperSize>(session?.paperSize ?? 'A4');
+  const [columns, setColumns] = useState<1 | 2>(session?.columns ?? 1);
+  const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>(session?.spacing ?? 'md');
+  const [showAllergens, setShowAllergens] = useState<boolean>(session?.showAllergens ?? false);
+
+  // Persist config to sessionStorage whenever any option changes
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(PRINT_CONFIG_SESSION_KEY, JSON.stringify({
+        selectedLanguage, paperSize, columns, spacing, showAllergens
+      }));
+    } catch {
+      // sessionStorage unavailable — silently ignore
+    }
+  }, [selectedLanguage, paperSize, columns, spacing, showAllergens]);
 
   useEffect(() => {
     const loadMenus = async () => {

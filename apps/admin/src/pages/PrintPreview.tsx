@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import { documentService } from '../services/documentService';
 import AllergyLegend from '../components/AllergyLegend';
@@ -13,6 +13,7 @@ const PREDEFINED_ALLERGIES: string[] = [
 const PrintPreview: React.FC = () => {
   const { menuId } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const showAllergens = searchParams.get('allergens') === 'true';
@@ -115,9 +116,21 @@ const PrintPreview: React.FC = () => {
     <div className="bg-gray-100 min-h-screen pb-20">
       {/* Control Bar */}
       <div className="bg-white border-b sticky top-0 z-10 p-4 mb-8 flex justify-between items-center px-8 shadow-sm print:hidden">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">Print Preview</h1>
-          <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size} | Columns: {columns} | Spacing: {spacing}</p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-medium">Back</span>
+          </button>
+          <div className="border-l h-6" />
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">Print Preview</h1>
+            <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size} | Columns: {columns} | Spacing: {spacing}</p>
+          </div>
         </div>
         <button 
           onClick={() => handlePrint()}
