@@ -16,6 +16,18 @@ const LANGUAGES = [
 
 const PRINT_CONFIG_SESSION_KEY = 'documents_print_config';
 
+type PrintFont = 'default' | 'inter' | 'roboto' | 'raleway' | 'oswald' | 'merriweather' | 'dancingScript';
+
+const FONT_OPTIONS: { value: PrintFont; label: string }[] = [
+  { value: 'default', label: 'Default' },
+  { value: 'inter',   label: 'Inter' },
+  { value: 'roboto',  label: 'Roboto' },
+  { value: 'raleway',  label: 'Raleway' },
+  { value: 'oswald',  label: 'Oswald' },
+  { value: 'merriweather',  label: 'Merriweather' },
+  { value: 'dancingScript',  label: 'Dancing Script' },
+];
+
 const getSessionConfig = () => {
   try {
     const stored = sessionStorage.getItem(PRINT_CONFIG_SESSION_KEY);
@@ -37,17 +49,18 @@ const Documents: React.FC = () => {
   const [columns, setColumns] = useState<1 | 2>(session?.columns ?? 1);
   const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>(session?.spacing ?? 'md');
   const [showAllergens, setShowAllergens] = useState<boolean>(session?.showAllergens ?? false);
+  const [font, setFont] = useState<PrintFont>(session?.font ?? 'default');
 
   // Persist config to sessionStorage whenever any option changes
   useEffect(() => {
     try {
       sessionStorage.setItem(PRINT_CONFIG_SESSION_KEY, JSON.stringify({
-        selectedLanguage, paperSize, columns, spacing, showAllergens
+        selectedLanguage, paperSize, columns, spacing, showAllergens, font
       }));
     } catch {
       // sessionStorage unavailable — silently ignore
     }
-  }, [selectedLanguage, paperSize, columns, spacing, showAllergens]);
+  }, [selectedLanguage, paperSize, columns, spacing, showAllergens, font]);
 
   useEffect(() => {
     const loadMenus = async () => {
@@ -65,7 +78,7 @@ const Documents: React.FC = () => {
   }, []);
 
   const handlePrintRedirect = (menuId: string) => {
-    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}&allergens=${showAllergens}`);
+    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}&allergens=${showAllergens}&font=${font}`);
   };
 
   if (loading) return <div className="p-8 text-center">Loading Printable Menus...</div>;
@@ -161,6 +174,22 @@ const Documents: React.FC = () => {
                 className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${showAllergens ? 'translate-x-4' : 'translate-x-0'}`}
               />
             </button>
+          </div>
+
+          <div className="border-l h-6" />
+
+          {/* Font */}
+          <div className="flex items-center gap-2 px-2">
+            <span className="text-xs text-gray-400">Font</span>
+            <select
+              value={font}
+              onChange={(e) => setFont(e.target.value as PrintFont)}
+              className="text-xs text-gray-700 border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {FONT_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
           </div>
 
         </div>

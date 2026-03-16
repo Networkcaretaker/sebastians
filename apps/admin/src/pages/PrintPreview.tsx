@@ -23,6 +23,39 @@ const PrintPreview: React.FC = () => {
   const lang = searchParams.get('lang') || 'en';
   const columns = parseInt(searchParams.get('columns') || '1', 10) as 1 | 2;
   const spacing = searchParams.get('spacing') || 'md';
+  const font = searchParams.get('font') || 'default';
+
+  const GOOGLE_FONTS: Record<string, string> = {
+    inter:  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+    roboto: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap',
+    raleway: 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;700&display=swap',
+    oswald: 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap',
+    merriweather: 'https://fonts.googleapis.com/css2?family=Merriweather:wght@400;500;700&display=swap',
+    dancingScript: 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;700&display=swap',
+  };
+
+  const FONT_FAMILY: Record<string, string> = {
+    inter:  "'Inter', sans-serif",
+    roboto: "'Roboto', sans-serif",
+    raleway: "'Raleway', sans-serif",
+    oswald: "'Oswald', sans-serif",
+    merriweather: "'Merriweather', sans-serif",
+    dancingScript: "'Dancing Script', sans-serif",
+  };
+
+  // Inject Google Font <link> into <head> when font changes
+  useEffect(() => {
+    if (font === 'default') return;
+    const url = GOOGLE_FONTS[font];
+    if (!url) return;
+    const id = `gfont-${font}`;
+    if (document.getElementById(id)) return; // already loaded
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = url;
+    document.head.appendChild(link);
+  }, [font]);
 
   const spacingMap: Record<string, { category: string; item: string }> = {
     xs:  { category: 'space-y-4',  item: 'gap-y-1' },
@@ -129,7 +162,7 @@ const PrintPreview: React.FC = () => {
           <div className="border-l h-6" />
           <div>
             <h1 className="text-xl font-bold text-gray-800">Print Preview</h1>
-            <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size} | Columns: {columns} | Spacing: {spacing}</p>
+            <p className="text-sm text-gray-500">Language: <span className="uppercase font-semibold">{lang}</span> | Size: {size} | Columns: {columns} | Spacing: {spacing} | Font: {font}</p>
           </div>
         </div>
         <button 
@@ -147,6 +180,7 @@ const PrintPreview: React.FC = () => {
       <div 
         ref={componentRef}
         className={`bg-white mx-auto shadow-2xl print:shadow-none p-10 pt-16 ${size === 'A3' ? 'w-[297mm] min-h-[420mm]' : 'w-[210mm] min-h-[297mm]'}`}
+        style={font !== 'default' ? { fontFamily: FONT_FAMILY[font] } : undefined}
       >
 
         <div
@@ -156,11 +190,11 @@ const PrintPreview: React.FC = () => {
           {data.categories.map((category: any) => (
             <section key={category.id} className="break-inside-avoid">
               <div className="text-center mb-6">
-                <h2 className="text-xl font-bold uppercase border-b-2 border-black inline-block pb-1 px-4 mb-2">
+                <h2 className="text-xl font-bold border-b-2 border-black inline-block pb-1 px-4 mb-2"> {/*add uppercase option*/}
                   {category.display_name}
                 </h2>
                 {category.display_header && (
-                  <p className="text-sm text-gray-500 italic max-w-lg mx-auto leading-relaxed">
+                  <p className="text-sm text-gray-500 italic mx-auto leading-relaxed">
                     {category.display_header}
                   </p>
                 )}
@@ -170,7 +204,7 @@ const PrintPreview: React.FC = () => {
                 {category.items.map((item: any) => (
                   <div key={item.id} className="flex flex-col ">
                     <div className="flex justify-between items-start">
-                      <h3 className="text-md font-bold uppercase leading-tight">
+                      <h3 className="text-md font-bold leading-tight"> {/*add options for uppercase and change text size*/}
                         {item.display_name}
                         {/* Vegiterian */} 
                         {item.flags.vegetarian === true && (<span className="ml-1 text-xs">🌿</span>)}
