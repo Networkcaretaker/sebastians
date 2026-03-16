@@ -24,6 +24,30 @@ const PrintPreview: React.FC = () => {
   const columns = parseInt(searchParams.get('columns') || '1', 10) as 1 | 2;
   const spacing = searchParams.get('spacing') || 'md';
   const font = searchParams.get('font') || 'default';
+  const uppercase = searchParams.get('uppercase') === 'true';
+  const textSize = searchParams.get('textSize') || 'sm';
+  const allergyColor = searchParams.get('allergyColor') || 'orange';
+  const textColor = searchParams.get('textColor') || 'black';
+
+  const ALLERGY_COLOR_HEX: Record<string, string> = {
+    orange: '#f97316',
+    blue:   '#3b82f6',
+    red:    '#ef4444',
+    green:  '#22c55e',
+    purple: '#a855f7',
+  };
+
+  const TEXT_COLOR_HEX: Record<string, string> = {
+    black:  '#111111',
+    blue:   '#3b82f6',
+    red:    '#ef4444',
+    green:  '#22c55e',
+    purple: '#a855f7',
+    orange: '#f97316',
+  };
+
+  const allergyColorHex = ALLERGY_COLOR_HEX[allergyColor] ?? ALLERGY_COLOR_HEX['orange'];
+  const textColorHex    = TEXT_COLOR_HEX[textColor]       ?? TEXT_COLOR_HEX['black'];
 
   const GOOGLE_FONTS: Record<string, string> = {
     inter:  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
@@ -68,6 +92,17 @@ const PrintPreview: React.FC = () => {
     '4xl': { category: 'space-y-14', item: 'gap-y-8' },
   };
   const { category: categorySpacing, item: itemSpacing } = spacingMap[spacing] ?? spacingMap['md'];
+
+  const textSizeMap: Record<string, {
+    categoryName: string; categoryHeader: string;
+    itemName: string; itemPrice: string;
+    itemDescription: string; optText: string; optPrice: string;
+  }> = {
+    sm: { categoryName: 'text-2xl',  categoryHeader: 'text-sm', itemName: 'text-md', itemPrice: 'text-md', itemDescription: 'text-xs', optText: 'text-xs', optPrice: 'text-xs' },
+    md: { categoryName: 'text-3xl', categoryHeader: 'text-md', itemName: 'text-lg', itemPrice: 'text-lg', itemDescription: 'text-sm', optText: 'text-sm', optPrice: 'text-sm' },
+    lg: { categoryName: 'text-4xl', categoryHeader: 'text-lg', itemName: 'text-xl', itemPrice: 'text-xl', itemDescription: 'text-md', optText: 'text-md', optPrice: 'text-md' },
+  };
+  const ts = textSizeMap[textSize] ?? textSizeMap['sm'];
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -190,11 +225,14 @@ const PrintPreview: React.FC = () => {
           {data.categories.map((category: any) => (
             <section key={category.id} className="break-inside-avoid">
               <div className="text-center mb-6">
-                <h2 className="text-xl font-bold border-b-2 border-black inline-block pb-1 px-4 mb-2"> {/*add uppercase option*/}
+                <h2
+                  className={`${ts.categoryName} font-bold border-b-2 border-black inline-block pb-1 px-4 mb-2 ${uppercase ? 'uppercase' : 'normal-case'}`}
+                  style={{ color: textColorHex }}
+                >
                   {category.display_name}
                 </h2>
                 {category.display_header && (
-                  <p className="text-sm text-gray-500 italic mx-auto leading-relaxed">
+                  <p className={`${ts.categoryHeader} text-gray-500 italic mx-auto leading-relaxed`}>
                     {category.display_header}
                   </p>
                 )}
@@ -204,7 +242,10 @@ const PrintPreview: React.FC = () => {
                 {category.items.map((item: any) => (
                   <div key={item.id} className="flex flex-col ">
                     <div className="flex justify-between items-start">
-                      <h3 className="text-md font-bold leading-tight"> {/*add options for uppercase and change text size*/}
+                      <h3
+                        className={`${ts.itemName} font-bold leading-tight ${uppercase ? 'uppercase' : 'normal-case'}`}
+                        style={{ color: textColorHex }}
+                      >
                         {item.display_name}
                         {/* Vegiterian */} 
                         {item.flags.vegetarian === true && (<span className="ml-1 text-xs">🌿</span>)}
@@ -216,7 +257,7 @@ const PrintPreview: React.FC = () => {
                           .filter((n: number) => n > 0)
                           .sort((a: number, b: number) => a - b)
                           .map((n: number) => (
-                            <span key={n} className="ml-2 text-[10px] font-bold text-orange-500 leading-tight">
+                            <span key={n} className="ml-2 text-[10px] font-bold leading-tight" style={{ color: allergyColorHex }}>
                               {n}
                             </span>
                           ))
@@ -224,7 +265,7 @@ const PrintPreview: React.FC = () => {
                       </h3>
                       {item.display_price > 0 ? (
                         // Case 1: Item has a base price — show it, with "from" prefix if options exist
-                        <div className="font-bold text-md whitespace-nowrap ml-4">
+                        <div className={`${ts.itemPrice} font-bold whitespace-nowrap ml-4`} style={{ color: textColorHex }}>
                           {item.show_from && <span className="text-xs font-normal lowercase mr-1">from</span>}
                           <span className="text-sm mr-1">€</span>{item.display_price.toFixed(2)}
                         </div>
@@ -232,8 +273,8 @@ const PrintPreview: React.FC = () => {
                         // Case 2: No base price but has options — show options inline in the price area
                         <div className="flex flex-col items-end ml-4 gap-y-0.5">
                           {item.display_options.map((opt: any, i: number) => (
-                            <div key={i} className="font-bold text-md whitespace-nowrap">
-                              <span className="text-xs font-normal mr-1">{opt.text}</span><span className="text-sm mr-1">€</span>{opt.price.toFixed(2)}
+                            <div key={i} className={`${ts.itemPrice} font-bold whitespace-nowrap`} style={{ color: textColorHex }}>
+                              <span className={`${ts.optText} font-normal mr-1`} style={{ color: textColorHex }}>{opt.text}</span><span className="text-sm mr-1">€</span>{opt.price.toFixed(2)}
                             </div>
                           ))}
                         </div>
@@ -241,7 +282,7 @@ const PrintPreview: React.FC = () => {
                     </div>
                     
                     {item.display_description && (
-                      <p className="text-xs text-gray-600 italic leading-snug">
+                      <p className={`${ts.itemDescription} text-gray-600 italic leading-snug`}>
                         {item.display_description}
                       </p>
                     )}
@@ -250,8 +291,8 @@ const PrintPreview: React.FC = () => {
                     {item.show_from && item.display_options.length > 0 && (
                       <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                         {item.display_options.map((opt: any, i: number) => (
-                          <span key={i} className="text-xs text-gray-700 font-medium">
-                            {opt.text}: <span className="text-sm font-normal lowercase mr-1">€</span>{opt.price.toFixed(2)}
+                          <span key={i} className={`${ts.optText} text-gray-700 font-medium`}>
+                            {opt.text}: <span className={`${ts.optPrice} font-normal lowercase mr-1`}>€</span>{opt.price.toFixed(2)}
                           </span>
                         ))}
                       </div>
@@ -306,7 +347,7 @@ const PrintPreview: React.FC = () => {
   
             </section>
           ))}
-          {showAllergens && <AllergyLegend lang={lang} />}
+          {showAllergens && <AllergyLegend lang={lang} allergyColor={allergyColorHex} />}
         </div>
         
       </div>

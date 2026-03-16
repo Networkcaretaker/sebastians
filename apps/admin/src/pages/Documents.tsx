@@ -17,15 +17,35 @@ const LANGUAGES = [
 const PRINT_CONFIG_SESSION_KEY = 'documents_print_config';
 
 type PrintFont = 'default' | 'inter' | 'roboto' | 'raleway' | 'oswald' | 'merriweather' | 'dancingScript';
+type TextSize  = 'sm' | 'md' | 'lg';
+type AccentColor = 'orange' | 'blue' | 'red' | 'green' | 'purple';
+type TextColor   = 'black' | 'blue' | 'red' | 'green' | 'purple' | 'orange';
 
 const FONT_OPTIONS: { value: PrintFont; label: string }[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'inter',   label: 'Inter' },
-  { value: 'roboto',  label: 'Roboto' },
-  { value: 'raleway',  label: 'Raleway' },
-  { value: 'oswald',  label: 'Oswald' },
-  { value: 'merriweather',  label: 'Merriweather' },
-  { value: 'dancingScript',  label: 'Dancing Script' },
+  { value: 'default',      label: 'Default' },
+  { value: 'inter',        label: 'Inter' },
+  { value: 'roboto',       label: 'Roboto' },
+  { value: 'raleway',      label: 'Raleway' },
+  { value: 'oswald',       label: 'Oswald' },
+  { value: 'merriweather', label: 'Merriweather' },
+  { value: 'dancingScript',label: 'Dancing Script' },
+];
+
+const ALLERGY_COLOR_OPTIONS: { value: AccentColor; hex: string }[] = [
+  { value: 'orange', hex: '#f97316' },
+  { value: 'blue',   hex: '#3b82f6' },
+  { value: 'red',    hex: '#ef4444' },
+  { value: 'green',  hex: '#22c55e' },
+  { value: 'purple', hex: '#a855f7' },
+];
+
+const TEXT_COLOR_OPTIONS: { value: TextColor; hex: string }[] = [
+  { value: 'black',  hex: '#111111' },
+  { value: 'blue',   hex: '#3b82f6' },
+  { value: 'red',    hex: '#ef4444' },
+  { value: 'green',  hex: '#22c55e' },
+  { value: 'purple', hex: '#a855f7' },
+  { value: 'orange', hex: '#f97316' },
 ];
 
 const getSessionConfig = () => {
@@ -50,17 +70,21 @@ const Documents: React.FC = () => {
   const [spacing, setSpacing] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'>(session?.spacing ?? 'md');
   const [showAllergens, setShowAllergens] = useState<boolean>(session?.showAllergens ?? false);
   const [font, setFont] = useState<PrintFont>(session?.font ?? 'default');
+  const [uppercase, setUppercase] = useState<boolean>(session?.uppercase ?? false);
+  const [textSize, setTextSize] = useState<TextSize>(session?.textSize ?? 'sm');
+  const [allergyColor, setAllergyColor] = useState<AccentColor>(session?.allergyColor ?? 'orange');
+  const [textColor, setTextColor] = useState<TextColor>(session?.textColor ?? 'black');
 
   // Persist config to sessionStorage whenever any option changes
   useEffect(() => {
     try {
       sessionStorage.setItem(PRINT_CONFIG_SESSION_KEY, JSON.stringify({
-        selectedLanguage, paperSize, columns, spacing, showAllergens, font
+        selectedLanguage, paperSize, columns, spacing, showAllergens, font, uppercase, textSize, allergyColor, textColor
       }));
     } catch {
       // sessionStorage unavailable — silently ignore
     }
-  }, [selectedLanguage, paperSize, columns, spacing, showAllergens, font]);
+  }, [selectedLanguage, paperSize, columns, spacing, showAllergens, font, uppercase, textSize, allergyColor, textColor]);
 
   useEffect(() => {
     const loadMenus = async () => {
@@ -78,7 +102,7 @@ const Documents: React.FC = () => {
   }, []);
 
   const handlePrintRedirect = (menuId: string) => {
-    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}&allergens=${showAllergens}&font=${font}`);
+    navigate(`/documents/print/${menuId}?lang=${selectedLanguage}&size=${paperSize}&columns=${columns}&spacing=${spacing}&allergens=${showAllergens}&font=${font}&uppercase=${uppercase}&textSize=${textSize}&allergyColor=${allergyColor}&textColor=${textColor}`);
   };
 
   if (loading) return <div className="p-8 text-center">Loading Printable Menus...</div>;
@@ -88,108 +112,175 @@ const Documents: React.FC = () => {
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Printable Documents</h1>
 
-        <div className="flex items-center space-x-4 bg-white p-2 rounded-lg shadow-sm border">
+        <div className="flex flex-col bg-white rounded-lg shadow-sm border divide-y">
 
-          {/* Language */}
-          <div className="flex items-center space-x-1 text-sm px-2">
-            {LANGUAGES.map(({ code, label }) => (
-              <button
-                key={code}
-                onClick={() => setSelectedLanguage(code)}
-                className={`px-2 py-1 rounded text-xs font-medium ${selectedLanguage === code ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          {/* Row 1 — Language, Size, Columns, Spacing, Allergens, Allergy Colour, Font */}
+          <div className="flex flex-wrap items-center gap-x-1 p-2">
 
-          <div className="border-l h-6" />
-
-          {/* Paper Size */}
-          <div className="flex items-center space-x-1 text-sm px-2">
-            {(['A4', 'A3'] as PaperSize[]).map((s) => (
-              <button
-                key={s}
-                onClick={() => setPaperSize(s)}
-                className={`px-2 py-1 rounded ${paperSize === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          <div className="border-l h-6" />
-
-          {/* Columns */}
-          <div className="flex items-center space-x-1 text-sm px-2">
-            <button
-              onClick={() => setColumns(1)}
-              className={`px-2 py-1 rounded ${columns === 1 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              title="1 Column"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="4" y="3" width="16" height="18" rx="1"/>
-              </svg>
-            </button>
-            <button
-              onClick={() => setColumns(2)}
-              className={`px-2 py-1 rounded ${columns === 2 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              title="2 Columns"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="18" rx="1"/>
-                <rect x="14" y="3" width="7" height="18" rx="1"/>
-              </svg>
-            </button>
-          </div>
-
-          <div className="border-l h-6" />
-
-          {/* Spacing */}
-          <div className="flex items-center space-x-1 text-sm px-2">
-            <span className="text-gray-400 text-xs mr-1">Spacing</span>
-            {(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'] as const).map((s) => (
-              <button
-                key={s}
-                onClick={() => setSpacing(s)}
-                className={`px-2 py-1 rounded text-xs ${spacing === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          <div className="border-l h-6" />
-
-          {/* Allergens Toggle */}
-          <div className="flex items-center gap-2 px-2">
-            <span className="text-xs text-gray-400">Allergens</span>
-            <button
-              onClick={() => setShowAllergens(prev => !prev)}
-              className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${showAllergens ? 'bg-blue-600' : 'bg-gray-200'}`}
-              role="switch"
-              aria-checked={showAllergens}
-            >
-              <span
-                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${showAllergens ? 'translate-x-4' : 'translate-x-0'}`}
-              />
-            </button>
-          </div>
-
-          <div className="border-l h-6" />
-
-          {/* Font */}
-          <div className="flex items-center gap-2 px-2">
-            <span className="text-xs text-gray-400">Font</span>
-            <select
-              value={font}
-              onChange={(e) => setFont(e.target.value as PrintFont)}
-              className="text-xs text-gray-700 border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              {FONT_OPTIONS.map(({ value, label }) => (
-                <option key={value} value={value}>{label}</option>
+            {/* Language */}
+            <div className="flex items-center space-x-1 text-sm px-2">
+              {LANGUAGES.map(({ code, label }) => (
+                <button
+                  key={code}
+                  onClick={() => setSelectedLanguage(code)}
+                  className={`px-2 py-1 rounded text-xs font-medium ${selectedLanguage === code ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                >
+                  {label}
+                </button>
               ))}
-            </select>
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Paper Size */}
+            <div className="flex items-center space-x-1 text-sm px-2">
+              {(['A4', 'A3'] as PaperSize[]).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setPaperSize(s)}
+                  className={`px-2 py-1 rounded text-xs ${paperSize === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Columns */}
+            <div className="flex items-center space-x-1 text-sm px-2">
+              <button
+                onClick={() => setColumns(1)}
+                className={`px-2 py-1 rounded ${columns === 1 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                title="1 Column"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="4" y="3" width="16" height="18" rx="1"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setColumns(2)}
+                className={`px-2 py-1 rounded ${columns === 2 ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                title="2 Columns"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="7" height="18" rx="1"/>
+                  <rect x="14" y="3" width="7" height="18" rx="1"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Spacing */}
+            <div className="flex items-center space-x-1 text-sm px-2">
+              <span className="text-gray-400 text-xs mr-1">Spacing</span>
+              {(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSpacing(s)}
+                  className={`px-2 py-1 rounded text-xs ${spacing === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Allergens Toggle */}
+            <div className="flex items-center gap-2 px-2">
+              <span className="text-xs text-gray-400">Allergens</span>
+              <button
+                onClick={() => setShowAllergens(prev => !prev)}
+                className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${showAllergens ? 'bg-blue-600' : 'bg-gray-200'}`}
+                role="switch"
+                aria-checked={showAllergens}
+              >
+                <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${showAllergens ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Allergy Number Colour */}
+            <div className="flex items-center gap-1.5 px-2">
+              <span className="text-xs text-gray-400">Allergy #</span>
+              {ALLERGY_COLOR_OPTIONS.map(({ value, hex }) => (
+                <button
+                  key={value}
+                  onClick={() => setAllergyColor(value)}
+                  title={value}
+                  className={`w-5 h-5 rounded-full border-2 transition-all ${allergyColor === value ? 'border-gray-500 scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+            </div>
+
+            <div className="border-l h-6" />
+          </div>
+
+          {/* Row 2 — Uppercase, Text Size, Text Colour */}
+          <div className="flex flex-wrap items-center gap-x-1 p-2">
+            {/* Font */}
+            <div className="flex items-center gap-2 px-2">
+              <span className="text-xs text-gray-400">Font</span>
+              <select
+                value={font}
+                onChange={(e) => setFont(e.target.value as PrintFont)}
+                className="text-xs text-gray-700 border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {FONT_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Uppercase Toggle */}
+            <div className="flex items-center gap-2 px-2">
+              <span className="text-xs text-gray-400">Uppercase</span>
+              <button
+                onClick={() => setUppercase(prev => !prev)}
+                className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${uppercase ? 'bg-blue-600' : 'bg-gray-200'}`}
+                role="switch"
+                aria-checked={uppercase}
+              >
+                <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${uppercase ? 'translate-x-4' : 'translate-x-0'}`} />
+              </button>
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Text Size */}
+            <div className="flex items-center space-x-1 text-sm px-2">
+              <span className="text-gray-400 text-xs mr-1">Text Size</span>
+              {(['sm', 'md', 'lg'] as TextSize[]).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setTextSize(s)}
+                  className={`px-2 py-1 rounded text-xs ${textSize === s ? 'bg-blue-600 text-white' : 'text-gray-600'}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <div className="border-l h-6" />
+
+            {/* Text Colour */}
+            <div className="flex items-center gap-1.5 px-2">
+              <span className="text-xs text-gray-400">Text Color</span>
+              {TEXT_COLOR_OPTIONS.map(({ value, hex }) => (
+                <button
+                  key={value}
+                  onClick={() => setTextColor(value)}
+                  title={value}
+                  className={`w-5 h-5 rounded-full border-2 transition-all ${textColor === value ? 'border-gray-500 scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+            </div>
+
           </div>
 
         </div>

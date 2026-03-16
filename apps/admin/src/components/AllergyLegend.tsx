@@ -11,6 +11,7 @@ interface AllergyEntry {
 
 interface AllergyLegendProps {
   lang?: string;
+  allergyColor?: string;
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ const HEADINGS: Record<SupportedLang, { title: string; subtitle: string }> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const AllergyLegend: React.FC<AllergyLegendProps> = ({ lang = 'en' }) => {
+const AllergyLegend: React.FC<AllergyLegendProps> = ({ lang = 'en', allergyColor = '#f97316' }) => {
   const resolvedLang: SupportedLang = (lang in HEADINGS ? lang : 'en') as SupportedLang;
   const { title, subtitle } = HEADINGS[resolvedLang];
 
@@ -69,7 +70,7 @@ const AllergyLegend: React.FC<AllergyLegendProps> = ({ lang = 'en' }) => {
       <div className="grid grid-cols-6 gap-x-6 gap-y-2 border-b pb-4">
         {ALLERGY_DATA.map((allergy) => (
           <div key={allergy.number} className="flex items-center gap-2">
-            <span className="flex-shrink-0 text-orange-500 text-[10px] font-bold flex items-center justify-center w-3">
+            <span className="flex-shrink-0 text-[10px] font-bold flex items-center justify-center w-3" style={{ color: allergyColor }}>
               {allergy.number}
             </span>
             <span className="text-xs text-gray-800">
